@@ -12,7 +12,7 @@ module "scheduled-function" {
   job_name="<NAME_OF_JOB>"
   schedule="<CRON_SYNTAX_SCHEDULE"
   function_entry_point="<NAME_OF_FUNCTION>"
-  function_source_directory="<DIRECTORY_OF_FUNCTION_SOURCE"
+  function_source_directory="<DIRECTORY_OF_FUNCTION_SOURCE>"
   name="<RESOURCE_NAMES>"
   region="<REGION>"
 }
@@ -75,7 +75,7 @@ In order to operate with the Service Account you must activate the following API
 ## Install
 
 ### Terraform
-Be sure you have the correct Terraform version (0.10.x), you can choose the binary here:
+Be sure you have the correct Terraform version (0.11.x), you can choose the binary here:
 - https://releases.hashicorp.com/terraform/
 
 ## File structure
@@ -92,12 +92,12 @@ The project has the following folders and files:
 ## Testing and documentation generation
 
 ### Requirements
-- [jq](https://stedolan.github.io/jq/) 1.5
+- [docker](https://docker.com)
 - [terraform-docs](https://github.com/segmentio/terraform-docs/releases) 0.3.0
 
 ### Integration test
 ##### Terraform integration tests
-The integration tests for this module are built with bats, basically the test checks the following:
+It is recommended to to run the integration tests via docker. To do so, run `make test_integration_docker`. In containers, this will
 - Perform `terraform init` command
 - Perform `terraform get` command
 - Perform `terraform plan` command and check that it'll create *n* resources, modify 0 resources and delete 0 resources

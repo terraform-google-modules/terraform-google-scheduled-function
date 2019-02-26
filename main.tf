@@ -19,17 +19,6 @@
 	Scheduled Function Definition
  *****************************************/
 
-#fixme remove?
-provider "google-beta" {
-  project = "${var.project_id}"
-  region  = "${var.region}"
-}
-
-provider "google" {
-  project = "${var.project_id}"
-  region  = "${var.region}"
-}
-
 resource "google_cloud_scheduler_job" "job" {
   provider = "google-beta"
   name     = "${var.job_name}"

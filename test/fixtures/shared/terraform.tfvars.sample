@@ -1,5 +1,4 @@
-FIXME="FIXME REMOVE ID AND DIR"
-project_id="simple-sample-project-cae8"
+project_id=""
 job_name="test-jobber"
 job_description="test job"
 function_entry_point="doSomething"

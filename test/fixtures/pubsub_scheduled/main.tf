@@ -14,8 +14,20 @@
  * limitations under the License.
  */
 
+provider "google-beta" {
+  project = "${var.project_id}"
+  region  = "${var.region}"
+}
+
+provider "google" {
+  project = "${var.project_id}"
+  region  = "${var.region}"
+}
+
 module "pubsub_scheduled_example" {
   source = "../../../examples/pubsub_scheduled"
   project_id = "${var.project_id}"
   function_source = "../../../examples/pubsub_scheduled/function_source"
+
+
 }

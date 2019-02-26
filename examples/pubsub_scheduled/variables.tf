@@ -18,6 +18,11 @@ variable "project_id" {
   description = "The project ID to host the network in"
 }
 
+variable "region" {
+  description = "The region the project is in (app engine specific)"
+  default     = "us-central1-b"
+}
+
 variable "function_source" {
   type        = "string"
   description = "The directory of the source code for the cloud functions function"
