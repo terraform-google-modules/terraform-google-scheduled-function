@@ -44,6 +44,7 @@ Then perform the following commands on the root folder:
 | job\_description | Addition text to describet the job | string | `""` | no |
 | job\_name | The name of the scheduled job to run | string | n/a | yes |
 | job\_schedule | The job frequency, in cron syntax | string | `"*/2 * * * *"` | no |
+| message\_data | The data to send in the pub/sub message. | string | `"dGVzdA=="` | no |
 | name | The name to apply to any nameable resources. | string | n/a | yes |
 | project\_id | The ID of the project where this VPC will be created | string | n/a | yes |
 | region | The region in which resources will be applied. | string | n/a | yes |
@@ -59,7 +60,7 @@ Then perform the following commands on the root folder:
 
 ## Requirements
 ### Terraform plugins
-- [Terraform](https://www.terraform.io/downloads.html) 0.10.x
+- [Terraform](https://www.terraform.io/downloads.html) 0.11.x
 - [terraform-provider-google](https://github.com/terraform-providers/terraform-provider-google) plugin v1.12.0
 
 ### Configure a Service Account

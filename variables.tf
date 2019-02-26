@@ -108,3 +108,9 @@ variable "topic_name" {
   description = "Name of pubsub topic connecting the scheduled job and the function"
   default     = "test-topic"
 }
+
+variable "message_data" {
+  type        = "string"
+  description = "The data to send in the pub/sub message."
+  default     = "dGVzdA=="
+}
