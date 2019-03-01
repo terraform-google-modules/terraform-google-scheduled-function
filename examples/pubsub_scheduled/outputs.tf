@@ -21,5 +21,5 @@ output "name" {
 
 output "project_id" {
   value       = "${var.project_id}"
-  description = "The prject id"
+  description = "The project ID"
 }

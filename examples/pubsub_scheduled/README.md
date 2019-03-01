@@ -1,6 +1,6 @@
 # Simple Project
 
-This example creates a scheduled job to run every 5 minutes, drop a message into PubSub, which triggers a function to run.
+This example module schedules a job to publish a message to a Pub/Sub topic every 5 minutes, which will trigger a CloudFunctions function.
 
 [^]: (autogen_docs_start)
 

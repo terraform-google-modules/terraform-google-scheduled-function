@@ -19,7 +19,6 @@
  *****************************************/
 
 resource "google_cloud_scheduler_job" "job" {
-  provider    = "google-beta"
   name        = "${var.job_name}"
   description = "${var.job_description}"
   schedule    = "${var.job_schedule}"
@@ -35,7 +34,7 @@ resource "google_cloud_scheduler_job" "job" {
  *****************************************/
 
 module "pubsub_topic" {
-  source     = "github.com/terraform-google-modules/terraform-google-pubsub"
+  source     = "github.com/terraform-google-modules/terraform-google-pubsub?ref=v0.1.0"
   topic      = "${var.topic_name}"
   project_id = "${var.project_id}"
 }
@@ -45,7 +44,6 @@ module "pubsub_topic" {
  *****************************************/
 
 resource "google_cloudfunctions_function" "main" {
-  provider              = "google-beta"
   name                  = "${var.name}"
   source_archive_bucket = "${google_storage_bucket.main.name}"
   source_archive_object = "${google_storage_bucket_object.main.name}"
@@ -83,7 +81,6 @@ resource "random_string" "random_suffix" {
 }
 
 resource "google_storage_bucket" "main" {
-  provider      = "google-beta"
   name          = "${var.name}"
   force_destroy = "true"
   location      = "${var.region}"
@@ -93,7 +90,6 @@ resource "google_storage_bucket" "main" {
 }
 
 resource "google_storage_bucket_object" "main" {
-  provider            = "google-beta"
   name                = "event_function-${random_string.random_suffix.result}.zip"
   bucket              = "${google_storage_bucket.main.name}"
   source              = "${data.archive_file.main.output_path}"

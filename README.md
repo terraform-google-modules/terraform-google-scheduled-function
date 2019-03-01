@@ -1,4 +1,4 @@
-# Terraform Network Module
+# Terraform Google Scheduled Functions Module
 This modules makes it easy to set up a scheduled job to trigger events/run functions.
 
 ## Usage
@@ -64,7 +64,14 @@ Then perform the following commands on the root folder:
 - [terraform-provider-google](https://github.com/terraform-providers/terraform-provider-google) plugin v1.12.0
 
 ### Configure a Service Account
-In order to execute this module you must have a Service Account with permissions to create PubSub topics, create and deploy Cloud Functions, and create a Cloud Scheduler Job.
+In order to execute this module you must have a Service Account with the following roles.
+
+- roles/storage.admin
+- roles/pubsub.editor
+- roles/cloudscheduler.admin
+- roles/cloudfunctions.developer
+- roles/iam.serviceAccountUser
+
 
 ### Enable API's
 In order to operate with the Service Account you must activate the following API on the project where the Service Account was created:
@@ -79,17 +86,6 @@ In order to operate with the Service Account you must activate the following API
 Be sure you have the correct Terraform version (0.11.x), you can choose the binary here:
 - https://releases.hashicorp.com/terraform/
 
-## File structure
-The project has the following folders and files:
-
-- /: root folder
-- /examples: examples for using this module
-- /test: Folders with files for testing the module (see Testing section on this file)
-- /main.tf: main file for this module, contains all the resources to create
-- /variables.tf: all the variables for the module
-- /output.tf: the outputs of the module
-- /README.md: this file
-
 ## Testing and documentation generation
 
 ### Requirements
@@ -101,10 +97,9 @@ The project has the following folders and files:
 It is recommended to to run the integration tests via docker. To do so, run `make test_integration_docker`. In containers, this will
 - Perform `terraform init` command
 - Perform `terraform get` command
-- Perform `terraform plan` command and check that it'll create *n* resources, modify 0 resources and delete 0 resources
-- Perform `terraform apply -auto-approve` command and check that it has created the *n* resources, modified 0 resources and deleted 0 resources
-- Perform several `gcloud` commands and check the infrastructure is in the desired state
-- Perform `terraform destroy -force` command and check that it has destroyed the *n* resources
+- Perform `terraform validate` command
+- Perform `terraform apply -auto-approve` command and check that it has created the appropriate resources
+- Perform `terraform destroy -force` command and check that it has destroyed the appropriate resources
 
 ### Autogeneration of documentation from .tf files
 Run

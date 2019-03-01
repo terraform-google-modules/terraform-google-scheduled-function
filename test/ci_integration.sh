@@ -58,7 +58,7 @@ main() {
   # Execute the test lifecycle
   bundle install --path vendor
   bundle exec kitchen create
-  bundle exec kitchen converge -c 4
+  bundle exec kitchen converge
   bundle exec kitchen verify
 }
 

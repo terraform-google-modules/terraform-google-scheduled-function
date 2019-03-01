@@ -20,7 +20,7 @@ variable "project_id" {
 
 variable "region" {
   description = "The region the project is in (app engine specific)"
-  default     = "us-central1-b"
+  default     = "us-central1"
 }
 
 variable "function_source" {
