@@ -1,8 +1,0 @@
-FIXME="FIXME REMOVE ID AND DIR"
-project_id="simple-sample-project-cae8"
-job_name="test-jobber"
-job_description="test job"
-function_entry_point="doSomething"
-function_source_directory="../../examples/pubsub_scheduled/function_source"
-name="testbucket-foo"
-region="us-central1"
