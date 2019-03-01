@@ -25,9 +25,7 @@ provider "google" {
 }
 
 module "pubsub_scheduled_example" {
-  source = "../../../examples/pubsub_scheduled"
-  project_id = "${var.project_id}"
+  source          = "../../../examples/pubsub_scheduled"
+  project_id      = "${var.project_id}"
   function_source = "../../../examples/pubsub_scheduled/function_source"
-
-
 }
