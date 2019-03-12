@@ -101,7 +101,7 @@ variable "bucket_name" {
 
 variable "function_name" {
   type        = "string"
-  description = "The name to apply to the cloud function"
+  description = "The name to apply to the function"
 }
 
 variable "region" {
