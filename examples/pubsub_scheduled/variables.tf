@@ -25,6 +25,6 @@ variable "region" {
 
 variable "function_source" {
   type        = "string"
-  description = "The directory of the source code for the cloud functions function"
+  description = "The directory of the source code for the function"
   default     = "./function_source"
 }
