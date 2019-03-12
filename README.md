@@ -65,7 +65,7 @@ Then perform the following commands on the root folder:
 - [terraform-provider-google](https://github.com/terraform-providers/terraform-provider-google) plugin v2.1
 
 ### App Engine
-Note that this module requires a App Engine being configured in the specified project/region. 
+Note that this module requires App Engine being configured in the specified project/region. 
 This is because Google Cloud Scheduler is dependent on the project being configured with App Engine.
 Documentation on the App Engine dependency is here: https://cloud.google.com/scheduler/docs/ 
 
