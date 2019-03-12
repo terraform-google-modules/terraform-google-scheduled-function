@@ -62,7 +62,7 @@ Then perform the following commands on the root folder:
 ## Requirements
 ### Terraform plugins
 - [Terraform](https://www.terraform.io/downloads.html) 0.11.x
-- [terraform-provider-google](https://github.com/terraform-providers/terraform-provider-google) plugin v1.12.0
+- [terraform-provider-google](https://github.com/terraform-providers/terraform-provider-google) plugin v2.1
 
 ### Configure a Service Account
 In order to execute this module you must have a Service Account with the following roles.
