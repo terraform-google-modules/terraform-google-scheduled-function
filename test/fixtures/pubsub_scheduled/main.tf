@@ -15,6 +15,7 @@
  */
 
 module "pubsub_scheduled_example" {
-  source          = "../../../examples/pubsub_scheduled"
-  project_id      = "${var.project_id}"
+  source     = "../../../examples/pubsub_scheduled"
+  project_id = "${var.project_id}"
+  region     = "${var.region}"
 }

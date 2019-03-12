@@ -22,9 +22,3 @@ variable "region" {
   description = "The region the project is in (App Engine specific)"
   default     = "us-central1"
 }
-
-variable "function_source" {
-  type        = "string"
-  description = "The directory of the source code for the function"
-  default     = "./function_source"
-}
