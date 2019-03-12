@@ -20,7 +20,6 @@ provider "google-beta" {
 }
 
 module "pubsub_scheduled_example" {
-
   providers = {
     google = "google-beta"
   }
@@ -31,7 +30,7 @@ module "pubsub_scheduled_example" {
   job_schedule              = "*/5 * * * *"
   function_entry_point      = "doSomething"
   function_source_directory = "${var.function_source}"
-  name                      = "testfunction-foo"
+  function_name             = "testfunction-foo"
   region                    = "us-central1"
   topic_name                = "pubsub_example_topic"
 }

@@ -10,13 +10,13 @@ This example module schedules a job to publish a message to a Pub/Sub topic ever
 |------|-------------|:----:|:-----:|:-----:|
 | function\_source | The directory of the source code for the cloud functions function | string | `"./function_source"` | no |
 | project\_id | The project ID to host the network in | string | n/a | yes |
-| region | The region the project is in (app engine specific) | string | `"us-central1-b"` | no |
+| region | The region the project is in (app engine specific) | string | `"us-central1"` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
 | name | The name of the job created |
-| project\_id | The prject id |
+| project\_id | The project ID |
 
 [^]: (autogen_docs_end)

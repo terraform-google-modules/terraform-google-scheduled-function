@@ -93,9 +93,15 @@ variable "function_timeout_s" {
   description = "The amount of time in seconds allotted for the execution of the function."
 }
 
-variable "name" {
+variable "bucket_name" {
   type        = "string"
-  description = "The name to apply to any nameable resources."
+  default     = ""
+  description = "The name to apply to the cloud storage bucket. Will default to a string of <project-id>-scheduled-function-XXXX> with XXXX being random characters."
+}
+
+variable "function_name" {
+  type        = "string"
+  description = "The name to apply to the cloud function"
 }
 
 variable "region" {

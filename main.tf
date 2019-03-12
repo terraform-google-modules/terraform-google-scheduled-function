@@ -44,7 +44,7 @@ module "pubsub_topic" {
  *****************************************/
 
 resource "google_cloudfunctions_function" "main" {
-  name                  = "${var.name}"
+  name                  = "${var.function_name}"
   source_archive_bucket = "${google_storage_bucket.main.name}"
   source_archive_object = "${google_storage_bucket_object.main.name}"
   description           = "${var.function_description}"
@@ -81,7 +81,7 @@ resource "random_string" "random_suffix" {
 }
 
 resource "google_storage_bucket" "main" {
-  name          = "${var.name}"
+  name          = "${coalesce(var.bucket_name, "${var.project_id}-scheduled-function-${random_string.random_suffix.result}")}"
   force_destroy = "true"
   location      = "${var.region}"
   project       = "${var.project_id}"

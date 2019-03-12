@@ -31,12 +31,14 @@ Then perform the following commands on the root folder:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+| bucket\_name | The name to apply to the cloud storage bucket. Will default to a string of <project-id>-scheduled-function-XXXX> with XXXX being random characters. | string | `""` | no |
 | function\_available\_memory\_mb | The amount of memory in megabytes allotted for the function to use. | string | `"256"` | no |
 | function\_description | The description of the function. | string | `"Processes log export events provided through a Pub/Sub topic subscription."` | no |
 | function\_entry\_point | The name of a method in the function source which will be invoked when the function is executed. | string | n/a | yes |
 | function\_environment\_variables | A set of key/value environment variable pairs to assign to the function. | map | `<map>` | no |
 | function\_event\_trigger\_failure\_policy\_retry | A toggle to determine if the function should be retried on failure. | string | `"false"` | no |
 | function\_labels | A set of key/value label pairs to assign to the function. | map | `<map>` | no |
+| function\_name | The name to apply to the cloud function | string | n/a | yes |
 | function\_runtime | The runtime in which the function will be executed. | string | `"nodejs6"` | no |
 | function\_source\_archive\_bucket\_labels | A set of key/value label pairs to assign to the function source archive bucket. | map | `<map>` | no |
 | function\_source\_directory | The contents of this directory will be archived and used as the function source. | string | n/a | yes |
@@ -45,7 +47,6 @@ Then perform the following commands on the root folder:
 | job\_name | The name of the scheduled job to run | string | n/a | yes |
 | job\_schedule | The job frequency, in cron syntax | string | `"*/2 * * * *"` | no |
 | message\_data | The data to send in the pub/sub message. | string | `"dGVzdA=="` | no |
-| name | The name to apply to any nameable resources. | string | n/a | yes |
 | project\_id | The ID of the project where this VPC will be created | string | n/a | yes |
 | region | The region in which resources will be applied. | string | n/a | yes |
 | topic\_name | Name of pubsub topic connecting the scheduled job and the function | string | `"test-topic"` | no |
