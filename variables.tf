@@ -96,7 +96,7 @@ variable "function_timeout_s" {
 variable "bucket_name" {
   type        = "string"
   default     = ""
-  description = "The name to apply to the cloud storage bucket. Will default to a string of <project-id>-scheduled-function-XXXX> with XXXX being random characters."
+ description = "The name to apply to the bucket. Will default to a string of <project-id>-scheduled-function-XXXX> with XXXX being random characters."
 }
 
 variable "function_name" {
