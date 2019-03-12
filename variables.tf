@@ -117,6 +117,6 @@ variable "topic_name" {
 
 variable "message_data" {
   type        = "string"
-  description = "The data to send in the pub/sub message."
+  description = "The data to send in the topic message."
   default     = "dGVzdA=="
 }
