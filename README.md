@@ -91,7 +91,7 @@ Be sure you have the correct Terraform version (0.11.x), you can choose the bina
 
 ### Requirements
 - [docker](https://docker.com)
-- [terraform-docs](https://github.com/segmentio/terraform-docs/releases) 0.3.0
+- [terraform-docs](https://github.com/segmentio/terraform-docs/releases) 0.6.0
 
 ### Integration test
 ##### Terraform integration tests

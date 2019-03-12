@@ -29,8 +29,6 @@ suites:
       name: "terraform"
       command_timeout: 1800
       root_module_directory: test/fixtures/pubsub_scheduled
-      variable_files:
-          - terraform.tfvars
     verifier:
       name: terraform
       color: true
