@@ -1,0 +1,7 @@
+terraform.tfstate
+*.tfstate.*
+.terraform
+credentials.json
+*.iml
+.idea
+
