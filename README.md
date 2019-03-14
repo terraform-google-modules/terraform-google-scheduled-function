@@ -67,7 +67,10 @@ Then perform the following commands on the root folder:
 ### App Engine
 Note that this module requires App Engine being configured in the specified project/region. 
 This is because Google Cloud Scheduler is dependent on the project being configured with App Engine.
-Documentation on the App Engine dependency is here: https://cloud.google.com/scheduler/docs/ 
+Refer to the [Google Cloud Scheduler documentation](https://cloud.google.com/scheduler/docs/) for more information on the App Engine dependency.
+
+The recommended way to create projects with App Engine enabled is via the [Project Factory module](https://github.com/terraform-google-modules/terraform-google-project-factory). 
+There is an example of how to create the project [within that module](https://github.com/terraform-google-modules/terraform-google-project-factory/tree/master/examples/app_engine)
 
 ### Configure a Service Account
 In order to execute this module you must have a Service Account with the following roles.

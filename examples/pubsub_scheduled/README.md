@@ -2,9 +2,8 @@
 
 This example module schedules a job to publish a message to a Pub/Sub topic every 5 minutes, which will trigger a CloudFunctions function.
 
-Note that this example requires an app_engine app in the specified project/region. This is because scheduled functions are dependent on the project being configured with app engine.
-
-Documentation on the app engine dependency is here: https://cloud.google.com/scheduler/docs/ 
+Running this module requires an App Engine app in the specified project/region, which is not handled by this example. 
+More information is in the [root readme](../../README.md#app-engine)
 
 [^]: (autogen_docs_start)
 
