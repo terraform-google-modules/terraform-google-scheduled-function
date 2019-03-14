@@ -3,7 +3,7 @@
 This example module schedules a job to publish a message to a Pub/Sub topic every 5 minutes, which will trigger a CloudFunctions function.
 
 Running this module requires an App Engine app in the specified project/region, which is not handled by this example. 
-More information is in the [root readme](../../README.md#app-engine)
+More information is in the [root readme](../../README.md#app-engine).
 
 [^]: (autogen_docs_start)
 
