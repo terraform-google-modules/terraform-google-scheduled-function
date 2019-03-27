@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
 
+## Unreleased
+
+### Added
+
+- Ability to specify a service account for functions to run as
+
 ## 0.1.0 - 2018-08-08
 
 ### Added
