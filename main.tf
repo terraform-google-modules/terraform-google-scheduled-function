@@ -66,6 +66,7 @@ resource "google_cloudfunctions_function" "main" {
   environment_variables = "${var.function_environment_variables}"
   project               = "${var.project_id}"
   region                = "${var.region}"
+  service_account_email = "${var.function_service_account_email}"
 }
 
 data "archive_file" "main" {

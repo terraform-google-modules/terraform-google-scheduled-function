@@ -93,6 +93,12 @@ variable "function_timeout_s" {
   description = "The amount of time in seconds allotted for the execution of the function."
 }
 
+variable "function_service_account_email" {
+  type        = "string"
+  default     = ""
+  description = "The service account to run the function as."
+}
+
 variable "bucket_name" {
   type        = "string"
   default     = ""
