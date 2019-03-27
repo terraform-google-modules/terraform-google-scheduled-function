@@ -5,3 +5,5 @@ credentials.json
 *.iml
 .idea
 
+examples/**/*.zip
+examples/**/terraform.tfvars
