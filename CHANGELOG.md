@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 - Ability to specify a service account for functions to run as
 
-## [0.1.0] - 2018-08-08
+## [0.1.0] - 2019-03-14
 
 ### Added
 
