@@ -5,6 +5,8 @@ This is a simple utility that scans a GCP organization for projects matching cer
 - **Age:** Only projects older than the configured age, in hours, will be marked for deletion.
 - **Key-Value Pair:** Only projects whose labels contain the provided key-value pair will be marked for deletion.
 
+Both of these criteria must be met for a project to be deleted.
+
 ## Environment Configuration
 
 The following environment variables may be specified to configure the cleanup utility:
