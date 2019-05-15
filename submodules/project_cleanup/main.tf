@@ -24,18 +24,21 @@ resource "google_project_service" "cloudfunctions" {
   project                    = "${var.project_id}"
   service                    = "cloudfunctions.googleapis.com"
   disable_dependent_services = true
+  disable_on_destroy         = false
 }
 
 resource "google_project_service" "cloudscheduler" {
   project                    = "${google_project_service.cloudfunctions.project}"
   service                    = "cloudscheduler.googleapis.com"
   disable_dependent_services = true
+  disable_on_destroy         = false
 }
 
 resource "google_project_service" "cloudresourcemanager" {
   project                    = "${google_project_service.cloudscheduler.project}"
   service                    = "cloudresourcemanager.googleapis.com"
   disable_dependent_services = true
+  disable_on_destroy         = false
 }
 
 resource "google_service_account" "project_cleaner_function" {
