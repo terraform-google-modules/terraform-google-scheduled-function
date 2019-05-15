@@ -73,24 +73,34 @@ func deleteProjectsMatchingTag(ctx context.Context, key string, value string, ac
 	req := cloudResourceManagerService.Projects.List()
 	if err := req.Pages(ctx, func(page *cloudresourcemanager.ListProjectsResponse) error {
 		for _, project := range page.Projects {
-			if val, ok := project.Labels[key]; ok && val == value {
-				logger.Println(fmt.Sprintf("Considering project %s...", project.ProjectId))
-				if project.LifecycleState == "ACTIVE" {
-					projectCreatedAt, err := time.Parse(time.RFC3339, project.CreateTime)
-					if err != nil {
-						return err
-					}
-					if projectCreatedAt.Before(resourceCreationCutoff) {
-						logger.Println(fmt.Sprintf("Project %s was created at %s, is active, and is older than %d hours. Deleting.", project.ProjectId, project.CreateTime, acceptableAgeInHours))
-						_, err = cloudResourceManagerService.Projects.Delete(project.ProjectId).Do()
-						if err != nil {
-							logger.Fatal(err)
-							return err
-						}
-						logger.Println(fmt.Sprintf("Requested deletion of project %s.", project.ProjectId))
-					}
-				}
+			if val, ok := project.Labels[key]; !(ok && val == value) {
+				logger.Println(fmt.Sprintf("Rejecting project %s because of missing label", project.ProjectId))
+				continue
 			}
+
+			if project.LifecycleState != "ACTIVE" {
+				logger.Println(fmt.Sprintf("Rejecting project %s because lifecycle state is not ACTIVE", project.ProjectId))
+				continue
+			}
+
+			projectCreatedAt, err := time.Parse(time.RFC3339, project.CreateTime)
+			if err != nil {
+				return err
+			}
+
+			if !projectCreatedAt.Before(resourceCreationCutoff) {
+				logger.Println(fmt.Sprintf("Rejecting project %s because it was created too recently", project.ProjectId))
+				continue
+			}
+
+			logger.Println(fmt.Sprintf("Project %s was created at %s, is active, and is older than %d hours. Deleting.", project.ProjectId, project.CreateTime, acceptableAgeInHours))
+
+			_, err = cloudResourceManagerService.Projects.Delete(project.ProjectId).Do()
+			if err != nil {
+				logger.Fatal(err)
+				return err
+			}
+			logger.Println(fmt.Sprintf("Requested deletion of project %s.", project.ProjectId))
 		}
 		return nil
 	}); err != nil {
