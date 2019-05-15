@@ -19,4 +19,4 @@ The following environment variables may be specified to configure the cleanup ut
 
 ## Required Permissions
 
-This Cloud Function must be run as a Service Account with the `owner` role at an organization level.
+This Cloud Function must be run as a Service Account with the `Organization Administrator` role.
