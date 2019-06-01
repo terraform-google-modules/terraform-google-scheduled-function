@@ -7,3 +7,5 @@ credentials.json
 
 examples/**/*.zip
 examples/**/terraform.tfvars
+modules/**/terraform.tfvars
+submodules/**/terraform.tfvars
