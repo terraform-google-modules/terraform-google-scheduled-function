@@ -68,13 +68,13 @@ module "scheduled_project_cleaner" {
   region                         = "${var.region}"
   topic_name                     = "pubsub_scheduled_project_cleaner"
   function_available_memory_mb   = "128"
-  function_description           = "Clean up GCP projects older than 6 hours matching particular tags"
+  function_description           = "Clean up GCP projects older than ${var.max_project_age_in_hours} hours matching particular tags"
   function_runtime               = "go111"
   function_service_account_email = "${google_service_account.project_cleaner_function.email}"
 
   function_environment_variables = {
-    TARGET_TAG_NAME       = "cft-ephemeral"
-    TARGET_TAG_VALUE      = "true"
-    MAX_PROJECT_AGE_HOURS = "6"
+    TARGET_TAG_NAME       = "${var.target_tag_name}"
+    TARGET_TAG_VALUE      = "${var.target_tag_value}"
+    MAX_PROJECT_AGE_HOURS = "${var.max_project_age_in_hours}"
   }
 }

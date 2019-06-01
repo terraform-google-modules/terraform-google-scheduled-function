@@ -25,3 +25,18 @@ variable "project_id" {
 variable "region" {
   description = "The region the project is in (App Engine specific)"
 }
+
+variable "target_tag_name" {
+  description = "The name of a tag to filter GCP projects on for consideration by the cleanup utility"
+  default     = "cft-ephemeral"
+}
+
+variable "target_tag_value" {
+  description = "The value of a tag to filter GCP projects on for consideration by the cleanup utility"
+  default     = "true"
+}
+
+variable "max_project_age_in_hours" {
+  description = "The maximum number of hours that a GCP project, selected by `target_tag_name` and `target_tag_value`, can exist"
+  default     = "6"
+}
