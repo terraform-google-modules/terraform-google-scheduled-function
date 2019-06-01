@@ -1,8 +1,8 @@
 # Old Project Cleanup Utility Module
 
-This example module schedules a job to clean up GCP projects older than a specified length of time, that match a particular key-value pair. This job runs every 5 minutes via Google Cloud Scheduled Functions. Please see the [utility's readme](./function_source/README.md) for more information as to its operation and configuration.
+This module schedules a job to clean up GCP projects older than a specified length of time, that match a particular key-value pair. This job runs every 5 minutes via Google Cloud Scheduled Functions. Please see the [utility's readme](./function_source/README.md) for more information as to its operation and configuration.
 
-Running this module requires an App Engine app in the specified project/region, which is not handled by this example. More information is in the [root readme](../../README.md#app-engine).
+Running this module requires an App Engine app in the specified project/region. More information is in the [root readme](../../README.md#app-engine).
 
 [^]: (autogen_docs_start)
 
