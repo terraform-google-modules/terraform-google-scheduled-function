@@ -2,7 +2,19 @@
 
 This module schedules a job to clean up GCP projects older than a specified length of time, that match a particular key-value pair. This job runs every 5 minutes via Google Cloud Scheduled Functions. Please see the [utility's readme](./function_source/README.md) for more information as to its operation and configuration.
 
+## Requirements
+
+### App Engine
+
 Running this module requires an App Engine app in the specified project/region. More information is in the [root readme](../../README.md#app-engine).
+
+### Enabled Services
+
+The following services must be enabled on the project housing the cleanup function prior to invoking this module:
+
+- Cloud Functions (`cloudfunctions.googleapis.com`)
+- Cloud Scheduler (`cloudscheduler.googleapis.com`)
+- Cloud Resource Manager (`cloudresourcemanager.googleapis.com`)
 
 [^]: (autogen_docs_start)
 

@@ -14,33 +14,6 @@
  * limitations under the License.
  */
 
-provider "google-beta" {
-  version = "~> 2.1"
-  project = "${var.project_id}"
-  region  = "${var.region}"
-}
-
-resource "google_project_service" "cloudfunctions" {
-  project                    = "${var.project_id}"
-  service                    = "cloudfunctions.googleapis.com"
-  disable_dependent_services = true
-  disable_on_destroy         = false
-}
-
-resource "google_project_service" "cloudscheduler" {
-  project                    = "${google_project_service.cloudfunctions.project}"
-  service                    = "cloudscheduler.googleapis.com"
-  disable_dependent_services = true
-  disable_on_destroy         = false
-}
-
-resource "google_project_service" "cloudresourcemanager" {
-  project                    = "${google_project_service.cloudscheduler.project}"
-  service                    = "cloudresourcemanager.googleapis.com"
-  disable_dependent_services = true
-  disable_on_destroy         = false
-}
-
 resource "google_service_account" "project_cleaner_function" {
   project      = "${var.project_id}"
   account_id   = "project-cleaner-function"
@@ -54,12 +27,8 @@ resource "google_organization_iam_member" "project_owner" {
 }
 
 module "scheduled_project_cleaner" {
-  providers = {
-    google = "google-beta"
-  }
-
   source                         = "../../"
-  project_id                     = "${google_project_service.cloudresourcemanager.project}"
+  project_id                     = "${var.project_id}"
   job_name                       = "project-cleaner"
   job_schedule                   = "*/5 * * * *"
   function_entry_point           = "CleanUpProjects"
