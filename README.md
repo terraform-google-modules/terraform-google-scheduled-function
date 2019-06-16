@@ -50,6 +50,7 @@ Then perform the following commands on the root folder:
 | project\_id | The ID of the project where this VPC will be created | string | n/a | yes |
 | region | The region in which resources will be applied. | string | n/a | yes |
 | topic\_name | Name of pubsub topic connecting the scheduled job and the function | string | `"test-topic"` | no |
+| time\_zone | The timezone to be used in scheduler job | string | `"Etc/UTC"` | no |
 
 ## Outputs
 
