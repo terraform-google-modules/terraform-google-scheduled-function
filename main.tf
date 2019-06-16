@@ -22,6 +22,7 @@ resource "google_cloud_scheduler_job" "job" {
   name        = "${var.job_name}"
   description = "${var.job_description}"
   schedule    = "${var.job_schedule}"
+  time_zone   = "${var.time_zone}"
 
   pubsub_target = {
     topic_name = "projects/${var.project_id}/topics/${module.pubsub_topic.topic}"
