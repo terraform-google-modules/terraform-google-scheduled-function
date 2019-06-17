@@ -126,3 +126,9 @@ variable "message_data" {
   description = "The data to send in the topic message."
   default     = "dGVzdA=="
 }
+
+variable "time_zone" {
+  type        = "string"
+  description = "The timezone to use in scheduler"
+  default     = "Etc/UTC"
+}
