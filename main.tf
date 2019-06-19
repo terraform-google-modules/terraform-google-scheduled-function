@@ -47,61 +47,29 @@ module "pubsub_topic" {
 	Cloud Function Resource Definitions
  *****************************************/
 
-resource "google_cloudfunctions_function" "main" {
-  name                  = var.function_name
-  source_archive_bucket = google_storage_bucket.main.name
-  source_archive_object = google_storage_bucket_object.main.name
-  description           = var.function_description
-  available_memory_mb   = var.function_available_memory_mb
-  timeout               = var.function_timeout_s
-  entry_point           = var.function_entry_point
+module "main" {
+  source  = "terraform-google-modules/event-function/google"
+  version = "~> 1.1"
 
-  event_trigger {
+  entry_point = var.function_entry_point
+  event_trigger = {
     event_type = "google.pubsub.topic.publish"
     resource   = module.pubsub_topic.topic
-
-    failure_policy {
-      retry = var.function_event_trigger_failure_policy_retry
-    }
   }
+  name             = var.function_name
+  project_id       = var.project_id
+  region           = var.region
+  runtime          = var.function_runtime
+  source_directory = var.function_source_directory
 
-  labels                = var.function_labels
-  runtime               = var.function_runtime
-  environment_variables = var.function_environment_variables
-  project               = var.project_id
-  region                = var.region
-  service_account_email = var.function_service_account_email
-}
-
-data "archive_file" "main" {
-  type        = "zip"
-  output_path = pathexpand("${var.function_source_directory}.zip")
-  source_dir  = pathexpand(var.function_source_directory)
-}
-
-resource "random_string" "random_suffix" {
-  length  = 4
-  upper   = "false"
-  special = "false"
-}
-
-resource "google_storage_bucket" "main" {
-  name = coalesce(
-    var.bucket_name,
-    "${var.project_id}-scheduled-function-${random_string.random_suffix.result}",
-  )
-  force_destroy = "true"
-  location      = var.region
-  project       = var.project_id
-  storage_class = "REGIONAL"
-  labels        = var.function_source_archive_bucket_labels
-}
-
-resource "google_storage_bucket_object" "main" {
-  name                = "event_function-${random_string.random_suffix.result}.zip"
-  bucket              = google_storage_bucket.main.name
-  source              = data.archive_file.main.output_path
-  content_disposition = "attachment"
-  content_encoding    = "gzip"
-  content_type        = "application/zip"
+  available_memory_mb                = var.function_available_memory_mb
+  bucket_force_destroy               = var.bucket_force_destroy
+  bucket_labels                      = var.source_archive_bucket_labels
+  bucket_name                        = var.bucket_name
+  description                        = var.function_description
+  environment_variables              = var.function_environment_variables
+  event_trigger_failure_policy_retry = var.function_event_trigger_failure_policy_retry
+  labels                             = var.function_labels
+  service_account_email              = var.function_service_account_email
+  timeout_s                          = var.function_timeout_s
 }
