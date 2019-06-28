@@ -6,7 +6,7 @@ You can go to the examples folder, however the usage of the module could be like
 
 ```hcl
 module "scheduled-function" {
-  source  = "terraform-google-modules/scheduled-function/google"
+  source  = "terraform-google-modules/scheduled-functions/google"
   version = "0.1.0"
   project_id   = "<PROJECT ID>"
   job_name="<NAME_OF_JOB>"
