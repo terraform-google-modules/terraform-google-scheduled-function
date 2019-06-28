@@ -13,7 +13,7 @@ module "scheduled-function" {
   schedule="<CRON_SYNTAX_SCHEDULE"
   function_entry_point="<NAME_OF_FUNCTION>"
   function_source_directory="<DIRECTORY_OF_FUNCTION_SOURCE>"
-  name="<RESOURCE_NAMES>"
+  function_name="<RESOURCE_NAMES>"
   region="<REGION>"
 }
 ```
