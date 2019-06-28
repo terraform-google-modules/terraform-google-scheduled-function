@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-locals {
-  // we append the app hash to the filename as a temporary workaround for https://github.com/terraform-providers/terraform-provider-google/issues/1938
-  md5_hash = "${lower(replace(base64encode(data.archive_file.main.output_md5), "=", ""))}"
-  storage_object_name = "event_function-${random_string.random_suffix.result}-${local.md5_hash}.zip"
-}
-
 /******************************************
 	Scheduled Function Definition
  *****************************************/
 
 resource "google_cloud_scheduler_job" "job" {
   name        = "${var.job_name}"
-  project     = "${var.project_id}"
-  region      = "${var.region}"
   description = "${var.job_description}"
   schedule    = "${var.job_schedule}"
   time_zone   = "${var.time_zone}"
@@ -100,7 +92,7 @@ resource "google_storage_bucket" "main" {
 }
 
 resource "google_storage_bucket_object" "main" {
-  name                = "${local.storage_object_name}"
+  name                = "event_function-${random_string.random_suffix.result}.zip"
   bucket              = "${google_storage_bucket.main.name}"
   source              = "${data.archive_file.main.output_path}"
   content_disposition = "attachment"
