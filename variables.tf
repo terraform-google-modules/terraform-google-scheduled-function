@@ -15,7 +15,7 @@
  */
 
 variable "project_id" {
-  description = "The ID of the project where the resources will be created"
+  description = "The ID of the project where this VPC will be created"
 }
 
 variable "job_name" {
