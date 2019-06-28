@@ -20,7 +20,6 @@
 
 resource "google_cloud_scheduler_job" "job" {
   name        = "${var.job_name}"
-  project     = "${var.project_id}"
   description = "${var.job_description}"
   schedule    = "${var.job_schedule}"
   time_zone   = "${var.time_zone}"
