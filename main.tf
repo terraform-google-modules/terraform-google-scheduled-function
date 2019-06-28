@@ -70,6 +70,7 @@ resource "google_cloudfunctions_function" "main" {
   project               = "${var.project_id}"
   region                = "${var.region}"
   service_account_email = "${var.function_service_account_email}"
+  depends_on            = ["google_storage_bucket_object.main"]
 }
 
 data "archive_file" "main" {
