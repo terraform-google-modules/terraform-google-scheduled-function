@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 ## [Unreleased]
 
+## [0.4.1] - 2019-07-03
+
+### Fixed
+
+- Project and region are applied to the scheduler job. [#8]
+
 ## [0.4.0] - 2019-06-17
 
 ### Added
@@ -32,12 +38,14 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 - Initial release
 
-[Unreleased]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/releases/tag/v0.1.0
 
+[#8]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/8
 [#5]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/5
 
 [keepachangelog-site]: https://keepachangelog.com/en/1.0.0/
