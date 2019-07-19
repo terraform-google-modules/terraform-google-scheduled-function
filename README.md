@@ -66,11 +66,12 @@ Then perform the following commands on the root folder:
 - [terraform-provider-google](https://github.com/terraform-providers/terraform-provider-google) plugin v2.1
 
 ### App Engine
-Note that this module requires App Engine being configured in the specified project/region. 
+Note that this module requires App Engine being configured in the specified project/region.
 This is because Google Cloud Scheduler is dependent on the project being configured with App Engine.
-Refer to the [Google Cloud Scheduler documentation](https://cloud.google.com/scheduler/docs/) for more information on the App Engine dependency.
+Refer to the [Google Cloud Scheduler documentation](https://cloud.google.com/scheduler/docs/) for more
+information on the App Engine dependency.
 
-The recommended way to create projects with App Engine enabled is via the [Project Factory module](https://github.com/terraform-google-modules/terraform-google-project-factory). 
+The recommended way to create projects with App Engine enabled is via the [Project Factory module](https://github.com/terraform-google-modules/terraform-google-project-factory).
 There is an example of how to create the project [within that module](https://github.com/terraform-google-modules/terraform-google-project-factory/tree/master/examples/app_engine)
 
 ### Configure a Service Account
