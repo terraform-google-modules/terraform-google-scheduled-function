@@ -17,25 +17,3 @@
 terraform {
   required_version = ">= 0.12"
 }
-
-provider "google-beta" {
-  version = "~> 2.5"
-  project = var.project_id
-  region  = var.region
-}
-
-module "pubsub_scheduled_example" {
-  providers = {
-    google = google-beta
-  }
-
-  source                    = "../../"
-  project_id                = var.project_id
-  job_name                  = "pubsub-example"
-  job_schedule              = "*/5 * * * *"
-  function_entry_point      = "doSomething"
-  function_source_directory = "${path.module}/function_source"
-  function_name             = "testfunction-foo"
-  region                    = var.region
-  topic_name                = "pubsub_example_topic"
-}

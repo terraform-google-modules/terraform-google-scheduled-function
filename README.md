@@ -1,5 +1,13 @@
 # Terraform Google Scheduled Functions Module
+
 This modules makes it easy to set up a scheduled job to trigger events/run functions.
+
+## Compatibility
+
+This module is meant for use with Terraform 0.12. If you haven't
+[upgraded](https://www.terraform.io/upgrade-guides/0-12.html) and need a Terraform 0.11.x-compatible
+version of this module, the last released version intended for Terraform 0.11.x
+is [v0.4.1](https://registry.terraform.io/modules/terraform-google-modules/scheduled-function/google/0.4.1).
 
 ## Usage
 You can go to the examples folder, however the usage of the module could be like this in your own main.tf file:
@@ -62,7 +70,7 @@ Then perform the following commands on the root folder:
 
 ## Requirements
 ### Terraform plugins
-- [Terraform](https://www.terraform.io/downloads.html) 0.11.x
+- [Terraform](https://www.terraform.io/downloads.html) 0.12.x
 - [terraform-provider-google](https://github.com/terraform-providers/terraform-provider-google) plugin v2.1
 
 ### App Engine
@@ -94,7 +102,7 @@ In order to operate with the Service Account you must activate the following API
 ## Install
 
 ### Terraform
-Be sure you have the correct Terraform version (0.11.x), you can choose the binary here:
+Be sure you have the correct Terraform version (0.12.x), you can choose the binary here:
 - https://releases.hashicorp.com/terraform/
 
 ## Testing and documentation generation

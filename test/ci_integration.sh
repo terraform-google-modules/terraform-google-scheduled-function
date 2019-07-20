@@ -46,7 +46,7 @@ setup_environment() {
   export TF_VAR_project_id="${PROJECT_ID}"
   export TF_VAR_region="${REGION:-us-central1}"
 
-  # Stubs for module/project_cleanup
+  # Stubs for module/project_cleanup (for linters to pass)
   export TF_VAR_job_name=""
   export TF_VAR_function_entry_point=""
   export TF_VAR_function_source_directory=""

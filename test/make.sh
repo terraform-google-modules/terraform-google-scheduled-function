@@ -40,6 +40,7 @@ find_files() {
     -path '*/.git' \
     -o -path '*/.terraform' \
     -o -path '*/.kitchen' \
+    -o -path '*.zip' \
     ')' \
     -prune -o -type f "$@"
 }
