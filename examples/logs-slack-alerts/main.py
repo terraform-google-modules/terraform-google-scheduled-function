@@ -35,7 +35,7 @@ def query_for_errors(incoming_request):
 
   bq_client = bigquery.Client()
   logging.info("Running: {0}".format(QUERY))
-  query_job = bq_client.query(query)
+  query_job = bq_client.query(QUERY)
 
   if list(query_job):
     for row in list(query_job):
