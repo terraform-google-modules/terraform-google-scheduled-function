@@ -4,22 +4,30 @@ from google.cloud import bigquery
 
 
 logging.getLogger().setLevel(logging.INFO)
-SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXX"
+
+#Fill in variables with your project setup
+variables ={
+  "SLACK_WEBHOOK_URL": "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXX",
+  "DATASET_NAME": "mydataset",
+  "AUDIT_LOG_TABLE":  "audit_table_name",
+  "TIME_COLUMN": "time_column",
+  "ERROR_MESSAGE_COLUMN":"error_message_column"
+}
 QUERY = """
 WITH
   errors AS (
   SELECT
-    protopayload_auditlog.servicedata_v1_bigquery.jobInsertResponse.resource.jobStatus.error.message AS error_message,
+    {ERROR_MESSAGE_COLUMN} AS error_message,
     EXTRACT(HOUR FROM current_timestamp) as hr,
   FROM
-    dataset.cloudaudit_googleapis_com_data_access
+    {DATASET_NAME}.{AUDIT_LOG_TABLE}
   WHERE
-    protopayload_auditlog.servicedata_v1_bigquery.jobInsertResponse.resource.jobStatus.error.message IS NOT NULL
+    {ERROR_MESSAGE_COLUMN} IS NOT NULL
     AND EXTRACT(HOUR
     FROM
       current_timestamp) = EXTRACT(HOUR
     FROM
-      protopayload_auditlog.servicedata_v1_bigquery.jobInsertResponse.resource.jobStatistics.createTime))
+     {TIME_COLUMN}))
 SELECT
   error_message as Error,
   hr,
@@ -28,8 +36,7 @@ FROM
   errors
 GROUP BY
   1,2
-
-"""
+""".format(**variables)
 
 def query_for_errors(incoming_request):
 
