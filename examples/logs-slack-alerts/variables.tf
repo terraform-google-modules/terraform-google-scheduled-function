@@ -1,13 +1,44 @@
-variable "cron_schedule" {
-  description = "Cron schedule for Google Cloud Scheduler"
-  default = "55 * * * *"
+/**
+ * Copyright 2019 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+variable "project_id" {
+  description = "The project ID to host the network in"
 }
 
-variable "loader_alert_cloud_function_bucket"{
-  description = "GCS bucket where python script + requirements.txt is located"
+variable "slack_webhook"{
+	description = "Slack webhook to send alerts"
 }
 
-variable "loader_alert_cloud_function_zip"{
-  description = "Zip file in Cloud Function Bucket which contains requirements.txt and python script"
-  default = "audit_slack_alerts.zip"
+variable "dataset_name"{
+	description = "BigQuery Dataset where logs are sent"
+}
+
+variable "audit_log_table"{
+	description = "BigQuery Table where logs are sent"
+}
+
+variable "time_column"{
+	description = "BigQuery Column in audit log table representing logging time"
+}
+
+variable "error_message_column"{
+	description = "BigQuery Column in audit log table representing logging error"
+}
+
+variable "region" {
+  description = "The region the project is in (App Engine specific)"
+  default     = "us-central1"
 }
