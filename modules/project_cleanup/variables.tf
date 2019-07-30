@@ -15,28 +15,34 @@
  */
 
 variable "organization_id" {
+  type        = string
   description = "The organization ID whose projects to clean up"
 }
 
 variable "project_id" {
+  type        = string
   description = "The project ID to host the scheduled function in"
 }
 
 variable "region" {
+  type        = string
   description = "The region the project is in (App Engine specific)"
 }
 
 variable "target_tag_name" {
+  type        = string
   description = "The name of a tag to filter GCP projects on for consideration by the cleanup utility"
   default     = "cft-ephemeral"
 }
 
 variable "target_tag_value" {
+  type        = string
   description = "The value of a tag to filter GCP projects on for consideration by the cleanup utility"
   default     = "true"
 }
 
 variable "max_project_age_in_hours" {
+  type        = number
   description = "The maximum number of hours that a GCP project, selected by `target_tag_name` and `target_tag_value`, can exist"
-  default     = "6"
+  default     = 6
 }

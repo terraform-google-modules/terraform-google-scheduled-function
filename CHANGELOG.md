@@ -5,8 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
-
 ## [Unreleased]
+
+## [1.0.0] - 2019-07-30
+
+### Changed
+
+- Supported version of Terraform is 0.12. [#11]
 
 ## [0.4.1] - 2019-07-03
 
@@ -38,13 +43,15 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 - Initial release
 
-[Unreleased]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.4.1...v1.0.0
 [0.4.1]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/releases/tag/v0.1.0
 
+[#11]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/11
 [#8]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/8
 [#5]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/5
 
