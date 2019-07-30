@@ -18,6 +18,11 @@ variable "project_id" {
   description = "The project ID to host the network in"
 }
 
+variable "job_schedule" {
+  description = "The cron schedule for triggering the cloud function"
+  default     = "55 * * * *"
+}
+
 variable "slack_webhook" {
   description = "Slack webhook to send alerts"
 }

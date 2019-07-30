@@ -54,22 +54,22 @@ GROUP BY
   1,2
 """.format(**variables)
 
-def query_for_errors(incoming_request):
+def query_for_errors(pubsub_event, pubsub_context):
 
-  logging.info("Running: {0}".format(QUERY))
+  logging.info("Running: %s" % QUERY)
   query_job = bq_client.query(QUERY)
 
   if list(query_job):
     for row in list(query_job):
-      text = ("Alert: Error {0} has occurred {1} times"
+      text = ("Alert: Error {0}... has occurred {1} times"
       "in the past hour - {2}:00 PST. "
       "Please file a bug ticket to have").format(
-      str(row["Error"][:500]),
+      (row["Error"][:500]),
       str(row["Count"]),
       str(row["hr"]))
-      logging.info("Posting to slack: {0}".format(text))
+      logging.info("Posting to Slack: %s" % text)
       r=requests.post(url=SLACK_URL_HOOK, data = str({"text": text}))
       logging.info(r.text)
 
 if __name__ == "__main__":
-  query_for_errors(None)
+  query_for_errors(None,None)
