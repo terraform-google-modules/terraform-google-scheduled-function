@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 """
- 
+
 import os
 import logging
 import requests
 from google.cloud import bigquery
 
-bq_client = bigquery.Client()
+BQ_CLIENT = bigquery.Client()
 logging.getLogger().setLevel(logging.INFO)
 
-variables ={
-  "SLACK_WEBHOOK_URL": os.getenv("SLACK_WEBHOOK_URL"),
-  "DATASET_NAME": os.getenv("DATASET_NAME"),
-  "AUDIT_LOG_TABLE":  os.getenv("AUDIT_LOG_TABLE"),
-  "TIME_COLUMN": os.getenv("TIME_COLUMN"),
-  "ERROR_MESSAGE_COLUMN": os.getenv("ERROR_MESSAGE_COLUMN")
+VARIABLES = {
+    "SLACK_WEBHOOK_URL": os.getenv("SLACK_WEBHOOK_URL"),
+    "DATASET_NAME": os.getenv("DATASET_NAME"),
+    "AUDIT_LOG_TABLE":  os.getenv("AUDIT_LOG_TABLE"),
+    "TIME_COLUMN": os.getenv("TIME_COLUMN"),
+    "ERROR_MESSAGE_COLUMN": os.getenv("ERROR_MESSAGE_COLUMN")
 }
 QUERY = """
 WITH
@@ -52,24 +52,29 @@ FROM
   errors
 GROUP BY
   1,2
-""".format(**variables)
+""".format(**VARIABLES)
 
 def query_for_errors(pubsub_event, pubsub_context):
+    """
+    Cloud Function to query audit logs for errors
+    and send alerts to Slack Webhook
+    """
+    
+    logging.info("Running: %s", QUERY)
+    query_job = BQ_CLIENT.query(QUERY)
 
-  logging.info("Running: %s" % QUERY)
-  query_job = bq_client.query(QUERY)
-
-  if list(query_job):
-    for row in list(query_job):
-      text = ("Alert: Error {0}... has occurred {1} times"
-      "in the past hour - {2}:00 PST. "
-      "Please file a bug ticket to have").format(
-      (row["Error"][:500]),
-      str(row["Count"]),
-      str(row["hr"]))
-      logging.info("Posting to Slack: %s" % text)
-      r=requests.post(url=SLACK_URL_HOOK, data = str({"text": text}))
-      logging.info(r.text)
+    if list(query_job):
+        for row in list(query_job):
+            text = ("Alert: Error {0}... has occurred {1} times"
+                    "in the past hour - {2}:00 PST. "
+                    "Please file a bug ticket to have").format(
+                        (row["Error"][:500]),
+                        str(row["Count"]),
+                        str(row["hr"]))
+            logging.info("Posting to Slack: %s", text)
+            req = requests.post(url=VARIABLES['SLACK_WEBHOOK_URL'],
+                                data=str({"text": text}))
+            logging.info(req.text)
 
 if __name__ == "__main__":
-  query_for_errors(None,None)
+    query_for_errors(None, None)
