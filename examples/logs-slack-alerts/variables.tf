@@ -18,24 +18,24 @@ variable "project_id" {
   description = "The project ID to host the network in"
 }
 
-variable "slack_webhook"{
-	description = "Slack webhook to send alerts"
+variable "slack_webhook" {
+  description = "Slack webhook to send alerts"
 }
 
-variable "dataset_name"{
-	description = "BigQuery Dataset where logs are sent"
+variable "dataset_name" {
+  description = "BigQuery Dataset where logs are sent"
 }
 
-variable "audit_log_table"{
-	description = "BigQuery Table where logs are sent"
+variable "audit_log_table" {
+  description = "BigQuery Table where logs are sent"
 }
 
-variable "time_column"{
-	description = "BigQuery Column in audit log table representing logging time"
+variable "time_column" {
+  description = "BigQuery Column in audit log table representing logging time"
 }
 
-variable "error_message_column"{
-	description = "BigQuery Column in audit log table representing logging error"
+variable "error_message_column" {
+  description = "BigQuery Column in audit log table representing logging error"
 }
 
 variable "region" {
