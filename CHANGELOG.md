@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 ## [Unreleased]
 
-## [1.0.0] - 2019-YY-ZZ
+## [1.0.0] - 2019-07-30
 
 ### Changed
 
@@ -43,7 +43,8 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 - Initial release
 
-[Unreleased]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.4.1...v1.0.0
 [0.4.1]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.2.0...v0.3.0
