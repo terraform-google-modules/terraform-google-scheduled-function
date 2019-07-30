@@ -15,6 +15,6 @@
  */
 
 output "name" {
-  value       = "${google_cloud_scheduler_job.job.name}"
+  value       = google_cloud_scheduler_job.job.name
   description = "The name of the job created"
 }
