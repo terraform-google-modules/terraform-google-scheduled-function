@@ -16,17 +16,17 @@
 
 provider "google-beta" {
   version = "~> 2.1"
-  project = "${var.project_id}"
-  region  = "${var.region}"
+  project = var.project_id
+  region  = var.region
 }
 
 module "log_slack_alerts_example" {
   providers = {
-    google = "google-beta"
+    google = google-beta
   }
 
   source                    = "../../"
-  project_id                = "${var.project_id}"
+  project_id                = var.project_id
   job_name                  = "logs_query"
   job_description           = "Scheduled time to run audit query to check for errors"
   job_schedule              = "55 * * * *"
@@ -34,15 +34,16 @@ module "log_slack_alerts_example" {
   function_source_directory = "${path.module}/function_source"
   function_name             = "logs_query_alerting"
   function_description      = "Cloud Function to query audit logs for errors"
-  region                    = "${var.region}"
+  region                    = var.region
   topic_name                = "logs_query_topic"
   function_runtime          = "python37"
 
   function_environment_variables = {
-    SLACK_WEBHOOK        = "${var.slack_webhook}"
-    DATASET_NAME         = "${var.dataset_name}"
-    AUDIT_LOG_TABLE      = "${var.audit_log_table}"
-    TIME_COLUMN          = "${var.time_column}"
-    ERROR_MESSAGE_COLUMN = "${var.error_message_column}"
+    SLACK_WEBHOOK        = var.slack_webhook
+    DATASET_NAME         = var.dataset_name
+    AUDIT_LOG_TABLE      = var.audit_log_table
+    TIME_COLUMN          = var.time_column
+    ERROR_MESSAGE_COLUMN = var.error_message_column
   }
 }
+
