@@ -34,7 +34,7 @@ WITH
   errors AS (
   SELECT
     {ERROR_MESSAGE_COLUMN} AS error_message,
-    EXTRACT(HOUR FROM current_timestamp) as hr,
+    EXTRACT(HOUR FROM current_timestamp) as hr
   FROM
     {DATASET_NAME}.{AUDIT_LOG_TABLE}
   WHERE
