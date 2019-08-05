@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 ## [Unreleased]
 
+### Added
+
+- The `logs-slack-alerts` example. [#13]
+
 ## [1.0.0] - 2019-07-30
 
 ### Changed
@@ -51,6 +55,7 @@ and this project adheres to [Semantic Versioning][semver-site].
 [0.2.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/releases/tag/v0.1.0
 
+[#13]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/13
 [#11]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/11
 [#8]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/8
 [#5]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/5
