@@ -14,15 +14,6 @@
  * limitations under the License.
  */
 
-module "app-engine" {
-  source  = "terraform-google-modules/project-factory/google//modules/app_engine"
-  version = "~> 3.0"
-
-  location_id = "us-central"
-
-  project_id = var.project_id
-}
-
 module "pubsub_scheduled_example" {
   source     = "../../../examples/pubsub_scheduled"
   project_id = var.project_id
