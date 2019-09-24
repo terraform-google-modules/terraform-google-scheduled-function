@@ -33,32 +33,32 @@ Then perform the following commands on the root folder:
 - `terraform apply` to apply the infrastructure build
 - `terraform destroy` to destroy the built infrastructure
 
-[^]: (autogen_docs_start)
-
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 | bucket\_name | The name to apply to the bucket. Will default to a string of <project-id>-scheduled-function-XXXX> with XXXX being random characters. | string | `""` | no |
-| function\_available\_memory\_mb | The amount of memory in megabytes allotted for the function to use. | string | `"256"` | no |
+| function\_available\_memory\_mb | The amount of memory in megabytes allotted for the function to use. | number | `"256"` | no |
 | function\_description | The description of the function. | string | `"Processes log export events provided through a Pub/Sub topic subscription."` | no |
 | function\_entry\_point | The name of a method in the function source which will be invoked when the function is executed. | string | n/a | yes |
-| function\_environment\_variables | A set of key/value environment variable pairs to assign to the function. | map | `<map>` | no |
-| function\_event\_trigger\_failure\_policy\_retry | A toggle to determine if the function should be retried on failure. | string | `"false"` | no |
-| function\_labels | A set of key/value label pairs to assign to the function. | map | `<map>` | no |
+| function\_environment\_variables | A set of key/value environment variable pairs to assign to the function. | map(string) | `<map>` | no |
+| function\_event\_trigger\_failure\_policy\_retry | A toggle to determine if the function should be retried on failure. | bool | `"false"` | no |
+| function\_labels | A set of key/value label pairs to assign to the function. | map(string) | `<map>` | no |
 | function\_name | The name to apply to the function | string | n/a | yes |
 | function\_runtime | The runtime in which the function will be executed. | string | `"nodejs6"` | no |
-| function\_source\_archive\_bucket\_labels | A set of key/value label pairs to assign to the function source archive bucket. | map | `<map>` | no |
+| function\_service\_account\_email | The service account to run the function as. | string | `""` | no |
+| function\_source\_archive\_bucket\_labels | A set of key/value label pairs to assign to the function source archive bucket. | map(string) | `<map>` | no |
 | function\_source\_directory | The contents of this directory will be archived and used as the function source. | string | n/a | yes |
-| function\_timeout\_s | The amount of time in seconds allotted for the execution of the function. | string | `"60"` | no |
+| function\_timeout\_s | The amount of time in seconds allotted for the execution of the function. | number | `"60"` | no |
 | job\_description | Addition text to describet the job | string | `""` | no |
 | job\_name | The name of the scheduled job to run | string | n/a | yes |
 | job\_schedule | The job frequency, in cron syntax | string | `"*/2 * * * *"` | no |
 | message\_data | The data to send in the topic message. | string | `"dGVzdA=="` | no |
-| project\_id | The ID of the project where this VPC will be created | string | n/a | yes |
+| project\_id | The ID of the project where the resources will be created | string | n/a | yes |
 | region | The region in which resources will be applied. | string | n/a | yes |
+| time\_zone | The timezone to use in scheduler | string | `"Etc/UTC"` | no |
 | topic\_name | Name of pubsub topic connecting the scheduled job and the function | string | `"test-topic"` | no |
-| time\_zone | The timezone to be used in scheduler job | string | `"Etc/UTC"` | no |
 
 ## Outputs
 
@@ -66,7 +66,7 @@ Then perform the following commands on the root folder:
 |------|-------------|
 | name | The name of the job created |
 
-[^]: (autogen_docs_end)
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Requirements
 ### Terraform plugins

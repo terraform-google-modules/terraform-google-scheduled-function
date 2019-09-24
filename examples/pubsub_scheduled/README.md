@@ -5,8 +5,7 @@ This example module schedules a job to publish a message to a Pub/Sub topic ever
 Running this module requires an App Engine app in the specified project/region, which is not handled by this example.
 More information is in the [root readme](../../README.md#app-engine).
 
-[^]: (autogen_docs_start)
-
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -21,4 +20,4 @@ More information is in the [root readme](../../README.md#app-engine).
 | name | The name of the job created |
 | project\_id | The project ID |
 
-[^]: (autogen_docs_end)
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

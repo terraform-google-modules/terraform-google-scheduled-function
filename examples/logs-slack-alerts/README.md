@@ -12,19 +12,18 @@ A good example of exported logging in BigQuery can be found in [Stackdriver Logg
 If not using the default App Engine default service account (PROJECT_ID@appspot.gserviceaccount.com), which has the Editor role on the project, one can configure a service account for the cloud function which has the following IAM role - (roles/bigquery.dataViewer, roles/bigquery.jobUser). Additionally, the BigQuery API (https://bigquery.googleapis.com) needs to be enabled as well.
 
 
-[^]: (autogen_docs_start)
-
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+| audit\_log\_table | BigQuery Table where logs are sent | string | n/a | yes |
+| dataset\_name | BigQuery Dataset where logs are sent | string | n/a | yes |
+| error\_message\_column | BigQuery Column in audit log table representing logging error | string | n/a | yes |
+| job\_schedule | The cron schedule for triggering the cloud function | string | `"55 * * * *"` | no |
 | project\_id | The project ID to host the network in | string | n/a | yes |
 | region | The region the project is in (App Engine specific) | string | `"us-central1"` | no |
-| slack_webhook | The Slack webhook to send alerts | string | n/a | yes |
-| dataset_name | The BigQuery Dataset where exported logging is sent | string | n/a | yes |
-| audit_log_table | The BigQuery Table within the dataset where logging is sent | string | n/a | yes |
-| time_column | The column within the BQ Table representing logging time | string | n/a | yes |
-| error_message_column | The column within the BQ Table representing logging errors | string | n/a | yes |
+| slack\_webhook | Slack webhook to send alerts | string | n/a | yes |
+| time\_column | BigQuery Column in audit log table representing logging time | string | n/a | yes |
 
-
-[^]: (autogen_docs_end)
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
