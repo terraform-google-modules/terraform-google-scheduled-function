@@ -16,22 +16,23 @@ The following services must be enabled on the project housing the cleanup functi
 - Cloud Scheduler (`cloudscheduler.googleapis.com`)
 - Cloud Resource Manager (`cloudresourcemanager.googleapis.com`)
 
-[^]: (autogen_docs_start)
-
-
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| organization_id | The organization ID whose projects to clean up | string | - | yes |
-| project_id | The project ID to host the scheduled function in | string | - | yes |
-| region | The region the project is in (App Engine specific) | string | `us-central1` | no |
+| max\_project\_age\_in\_hours | The maximum number of hours that a GCP project, selected by `target_tag_name` and `target_tag_value`, can exist | number | `"6"` | no |
+| organization\_id | The organization ID whose projects to clean up | string | n/a | yes |
+| project\_id | The project ID to host the scheduled function in | string | n/a | yes |
+| region | The region the project is in (App Engine specific) | string | n/a | yes |
+| target\_tag\_name | The name of a tag to filter GCP projects on for consideration by the cleanup utility | string | `"cft-ephemeral"` | no |
+| target\_tag\_value | The value of a tag to filter GCP projects on for consideration by the cleanup utility | string | `"true"` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
 | name | The name of the job created |
-| project_id | The project ID |
+| project\_id | The project ID |
 
-[^]: (autogen_docs_end)
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
