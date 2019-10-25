@@ -38,7 +38,7 @@ resource "google_cloud_scheduler_job" "job" {
 
 module "pubsub_topic" {
   source     = "terraform-google-modules/pubsub/google"
-  version    = "~> 1.0"
+  version    = "~> 1.2"
   topic      = var.topic_name
   project_id = var.project_id
 }

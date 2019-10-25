@@ -98,6 +98,7 @@ the resources of this module:
 - Cloudscheduler Admin: `roles/cloudscheduler.admin`
 - Cloudfunctions Developer: `roles/cloudfunctions.developer`
 - IAM ServiceAccount User: `roles/iam.serviceAccountUser`
+- Role that allows `compute.regions.list`, like `roles/compute.networkUser`
 
 The [Project Factory module][project-factory-module] and the
 [IAM module][iam-module] may be used in combination to provision a
