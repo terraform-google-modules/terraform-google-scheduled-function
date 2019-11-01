@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+locals {
+  target_included_labels = var.target_tag_name != "" && var.target_tag_value != "" ? merge({ "${var.target_tag_name}" = "${var.target_tag_value}" }, var.target_included_labels) : var.target_included_labels
+}
+
 resource "google_service_account" "project_cleaner_function" {
   project      = var.project_id
   account_id   = "project-cleaner-function"
@@ -30,20 +34,21 @@ module "scheduled_project_cleaner" {
   source                         = "../../"
   project_id                     = var.project_id
   job_name                       = "project-cleaner"
-  job_schedule                   = "*/5 * * * *"
+  job_schedule                   = var.job_schedule
   function_entry_point           = "CleanUpProjects"
   function_source_directory      = "${path.module}/function_source"
   function_name                  = "old-project-cleaner"
   region                         = var.region
-  topic_name                     = "pubsub_scheduled_project_cleaner"
+  topic_name                     = var.topic_name
   function_available_memory_mb   = 128
   function_description           = "Clean up GCP projects older than ${var.max_project_age_in_hours} hours matching particular tags"
   function_runtime               = "go111"
-  function_service_account_email = "${google_service_account.project_cleaner_function.email}"
+  function_service_account_email = google_service_account.project_cleaner_function.email
 
   function_environment_variables = {
-    TARGET_TAG_NAME       = var.target_tag_name
-    TARGET_TAG_VALUE      = var.target_tag_value
-    MAX_PROJECT_AGE_HOURS = var.max_project_age_in_hours
+    TARGET_EXCLUDED_LABELS = jsonencode(var.target_excluded_labels)
+    TARGET_FOLDER_ID       = var.target_folder_id
+    TARGET_INCLUDED_LABELS = jsonencode(local.target_included_labels)
+    MAX_PROJECT_AGE_HOURS  = var.max_project_age_in_hours
   }
 }
