@@ -1,6 +1,6 @@
 # Old Project Cleanup Utility Module
 
-This module schedules a job to clean up GCP projects older than a specified length of time, that match a particular key-value pair. This job runs every 5 minutes via Google Cloud Scheduled Functions. Please see the [utility's readme](./function_source/README.md) for more information as to its operation and configuration.
+This module schedules a job to clean up GCP projects older than a specified length of time, that match a particular labels. This job runs every 5 minutes via Google Cloud Scheduled Functions. Please see the [utility's readme](./function_source/README.md) for more information as to its operation and configuration.
 
 ## Requirements
 
@@ -21,12 +21,17 @@ The following services must be enabled on the project housing the cleanup functi
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+| job\_schedule | Cleaner function run frequency, in cron syntax | string | `"*/5 * * * *"` | no |
 | max\_project\_age\_in\_hours | The maximum number of hours that a GCP project, selected by `target_tag_name` and `target_tag_value`, can exist | number | `"6"` | no |
 | organization\_id | The organization ID whose projects to clean up | string | n/a | yes |
 | project\_id | The project ID to host the scheduled function in | string | n/a | yes |
 | region | The region the project is in (App Engine specific) | string | n/a | yes |
-| target\_tag\_name | The name of a tag to filter GCP projects on for consideration by the cleanup utility | string | `"cft-ephemeral"` | no |
-| target\_tag\_value | The value of a tag to filter GCP projects on for consideration by the cleanup utility | string | `"true"` | no |
+| target\_excluded\_labels | Map of project lablels that won't be deleted. | map(string) | `<map>` | no |
+| target\_folder\_id | Folder ID to delete all projects under. | string | `""` | no |
+| target\_included\_labels | Map of project lablels that will be deleted. | map(string) | `<map>` | no |
+| target\_tag\_name | The name of a tag to filter GCP projects on for consideration by the cleanup utility (legacy, use `target_included_labels` map instead). | string | `""` | no |
+| target\_tag\_value | The value of a tag to filter GCP projects on for consideration by the cleanup utility (legacy, use `target_included_labels` map instead). | string | `""` | no |
+| topic\_name | Name of pubsub topic connecting the scheduled projects cleanup function | string | `"pubsub_scheduled_project_cleaner"` | no |
 
 ## Outputs
 
