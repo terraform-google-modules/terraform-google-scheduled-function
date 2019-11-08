@@ -24,10 +24,17 @@ resource "google_service_account" "project_cleaner_function" {
   display_name = "Project Cleaner Function"
 }
 
-resource "google_organization_iam_member" "project_owner" {
-  org_id = var.organization_id
-  role   = "roles/owner"
-  member = "serviceAccount:${google_service_account.project_cleaner_function.email}"
+module "sa-organization-roles" {
+  source        = "terraform-google-modules/iam/google//modules/organizations_iam"
+  version       = "4.0.0"
+  organizations = [var.organization_id]
+  mode          = "additive"
+
+  bindings = {
+    "roles/resourcemanager.projectDeleter" = ["serviceAccount:${google_service_account.project_cleaner_function.email}"]
+    "roles/resourcemanager.folderViewer"   = ["serviceAccount:${google_service_account.project_cleaner_function.email}"]
+    "roles/resourcemanager.lienModifier"   = ["serviceAccount:${google_service_account.project_cleaner_function.email}"]
+  }
 }
 
 module "scheduled_project_cleaner" {
