@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 ## [Unreleased]
 
+## [1.1.0] - 2019-11-11
+
+### Changed
+
+- The `project_cleanup` submodule can be scheduled to remove labelled or unlabelled projects. [#20] [#21]
+
 ### Added
 
 - The `logs-slack-alerts` example. [#13]
@@ -47,7 +53,8 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 - Initial release
 
-[Unreleased]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.4.1...v1.0.0
 [0.4.1]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.3.0...v0.4.0
@@ -55,6 +62,8 @@ and this project adheres to [Semantic Versioning][semver-site].
 [0.2.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/releases/tag/v0.1.0
 
+[#21]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/21
+[#20]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/20
 [#13]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/13
 [#11]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/11
 [#8]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/8
