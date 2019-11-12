@@ -24,21 +24,16 @@ resource "google_service_account" "project_cleaner_function" {
   display_name = "Project Cleaner Function"
 }
 
-module "sa-organization-roles" {
-  source        = "terraform-google-modules/iam/google//modules/organizations_iam"
-  version       = "4.0.0"
-  organizations = [var.organization_id]
-  mode          = "additive"
+resource "google_organization_iam_member" "main" {
+  for_each = toset(["projectDeleter", "folderViewer", "lienModifier"])
 
-  bindings = {
-    "roles/resourcemanager.projectDeleter" = ["serviceAccount:${google_service_account.project_cleaner_function.email}"]
-    "roles/resourcemanager.folderViewer"   = ["serviceAccount:${google_service_account.project_cleaner_function.email}"]
-    "roles/resourcemanager.lienModifier"   = ["serviceAccount:${google_service_account.project_cleaner_function.email}"]
-  }
+  member = "serviceAccount:${google_service_account.project_cleaner_function.email}"
+  org_id = var.organization_id
+  role   = "roles/resourcemanager.${each.value}"
 }
 
 module "scheduled_project_cleaner" {
-  source                         = "../../"
+  source                         = "../.."
   project_id                     = var.project_id
   job_name                       = "project-cleaner"
   job_schedule                   = var.job_schedule
