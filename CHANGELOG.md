@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 ## [Unreleased]
 
+## [1.1.1] - 2019-11-12
+
+### Fixed
+
+- The IAM module was replaced with IAM member resources to support dynamic members in additive mode. [#22]
+
 ## [1.1.0] - 2019-11-11
 
 ### Changed
@@ -53,7 +59,8 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 - Initial release
 
-[Unreleased]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.4.1...v1.0.0
 [0.4.1]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.4.0...v0.4.1
@@ -62,6 +69,7 @@ and this project adheres to [Semantic Versioning][semver-site].
 [0.2.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/releases/tag/v0.1.0
 
+[#22]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/22
 [#21]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/21
 [#20]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/20
 [#13]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/13
