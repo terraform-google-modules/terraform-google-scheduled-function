@@ -219,9 +219,9 @@ func invoke(ctx context.Context) {
 		requestFilter := fmt.Sprintf("parent.type:folder parent.id:%s", localFolderId)
 		req := cloudResourceManagerService.Projects.List().Filter(requestFilter)
 		if err := req.Pages(ctx, processProjectsResponsePage(removeProjectWithLiens)); err != nil {
-			logger.Printf("Fail to get projects for the forlder with id [%s], error [%s]", localFolderId, err.Error())
+			logger.Printf("Fail to get projects for the folder with id [%s], error [%s]", localFolderId, err.Error())
 		} else {
-			logger.Printf("Got and processed all projects for the forlder with id [%s]", localFolderId)
+			logger.Printf("Got and processed all projects for the folder with id [%s]", localFolderId)
 		}
 	}
 
@@ -234,7 +234,7 @@ func invoke(ctx context.Context) {
 			removeProjectsInFolder(folderId)
 			return nil
 		}); err != nil {
-			logger.Fatalf("Fail to get subfolders for the forlder with id [%s], error [%s]", folderId, err.Error())
+			logger.Fatalf("Fail to get subfolders for the folder with id [%s], error [%s]", folderId, err.Error())
 		}
 	}
 
