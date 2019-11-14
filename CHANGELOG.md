@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 ## [Unreleased]
 
+### Added
+
+- The `function_timeout_s` variable is exposed on the `project_cleanup` submodule.
+
 ## [1.1.1] - 2019-11-13
 
 ### Fixed

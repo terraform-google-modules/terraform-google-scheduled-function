@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+variable "function_timeout_s" {
+  type        = number
+  default     = 60
+  description = "The amount of time in seconds allotted for the execution of the function."
+}
+
 variable "organization_id" {
   type        = string
   description = "The organization ID whose projects to clean up"
