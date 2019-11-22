@@ -21,6 +21,7 @@ The following services must be enabled on the project housing the cleanup functi
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+| function\_timeout\_s | The amount of time in seconds allotted for the execution of the function. | number | `"60"` | no |
 | job\_schedule | Cleaner function run frequency, in cron syntax | string | `"*/5 * * * *"` | no |
 | max\_project\_age\_in\_hours | The maximum number of hours that a GCP project, selected by `target_tag_name` and `target_tag_value`, can exist | number | `"6"` | no |
 | organization\_id | The organization ID whose projects to clean up | string | n/a | yes |
