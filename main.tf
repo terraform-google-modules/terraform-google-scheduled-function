@@ -64,7 +64,7 @@ module "main" {
 
   available_memory_mb                = var.function_available_memory_mb
   bucket_force_destroy               = var.bucket_force_destroy
-  bucket_labels                      = var.source_archive_bucket_labels
+  bucket_labels                      = var.function_source_archive_bucket_labels
   bucket_name                        = var.bucket_name
   description                        = var.function_description
   environment_variables              = var.function_environment_variables
