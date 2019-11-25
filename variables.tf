@@ -106,6 +106,12 @@ variable "bucket_name" {
   description = "The name to apply to the bucket. Will default to a string of <project-id>-scheduled-function-XXXX> with XXXX being random characters."
 }
 
+variable "bucket_force_destroy" {
+  type        = "string"
+  default     = "true"
+  description = "When deleting the GCS bucket containing the cloud function, delete all objects in the bucket first."
+}
+
 variable "function_name" {
   type        = string
   description = "The name to apply to the function"
