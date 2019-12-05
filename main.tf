@@ -43,7 +43,7 @@ module "pubsub_topic" {
   version    = "~> 1.0"
   topic      = var.topic_name
   project_id = var.project_id
-  #enable     = var.scheduler_job == null ? true : false
+  enable     = var.scheduler_job == null ? true : false
 }
 
 /******************************************
