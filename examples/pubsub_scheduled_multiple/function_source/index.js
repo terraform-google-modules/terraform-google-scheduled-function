@@ -1,11 +1,11 @@
 /**
- * Copyright 2019 Google LLC
+ * Copyright 2019 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-output "name" {
-  value       = google_cloud_scheduler_job.job.*.name
-  description = "The name of the job created"
-}
 
-output "scheduler_job" {
-  value       = var.scheduler_job == null ? google_cloud_scheduler_job.job : var.scheduler_job
-  description = "The Cloud Scheduler job instance"
-}
+/**
+ * Triggered from a message on a Cloud Pub/Sub topic.
+ *
+ * @param {!Object} event Event payload and metadata.
+ * @param {!Function} callback Callback function to signal completion.
+ */
+exports.doSomething = (event) => {
+  console.log("Received event 1");
+  console.log(event);
+};

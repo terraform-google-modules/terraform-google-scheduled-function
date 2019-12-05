@@ -22,6 +22,7 @@ variable "project_id" {
 variable "job_name" {
   type        = string
   description = "The name of the scheduled job to run"
+  default     = ""
 }
 
 variable "job_description" {
@@ -138,4 +139,10 @@ variable "time_zone" {
   type        = string
   description = "The timezone to use in scheduler"
   default     = "Etc/UTC"
+}
+
+variable "scheduler_job" {
+  type        = any
+  description = "The Cloud Scheduler job instance"
+  default     = null
 }

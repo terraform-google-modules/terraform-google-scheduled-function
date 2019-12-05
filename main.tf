@@ -19,6 +19,8 @@
  *****************************************/
 
 resource "google_cloud_scheduler_job" "job" {
+  count       = var.scheduler_job == null ? 1 : 0
+
   name        = var.job_name
   project     = var.project_id
   region      = var.region
@@ -41,6 +43,7 @@ module "pubsub_topic" {
   version    = "~> 1.0"
   topic      = var.topic_name
   project_id = var.project_id
+  #enable     = var.scheduler_job == null ? true : false
 }
 
 /******************************************

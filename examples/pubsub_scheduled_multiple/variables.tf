@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-output "name" {
-  value       = google_cloud_scheduler_job.job.*.name
-  description = "The name of the job created"
+variable "project_id" {
+  type        = string
+  description = "The project ID to host the network in"
+  default     = "flask-app-254610"
 }
 
-output "scheduler_job" {
-  value       = var.scheduler_job == null ? google_cloud_scheduler_job.job : var.scheduler_job
-  description = "The Cloud Scheduler job instance"
+variable "region" {
+  type        = string
+  description = "The region the project is in (App Engine specific)"
+  default     = "us-central1"
 }
