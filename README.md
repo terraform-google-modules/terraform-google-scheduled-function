@@ -66,6 +66,7 @@ Then perform the following commands on the root folder:
 | Name | Description |
 |------|-------------|
 | name | The name of the job created |
+| scheduler\_job | The Cloud Scheduler job instance |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 

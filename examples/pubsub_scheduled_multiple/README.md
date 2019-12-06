@@ -10,7 +10,7 @@ More information is in the [root readme](../../README.md#app-engine).
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| project\_id | The project ID to host the network in | string | n/a | yes |
+| project\_id | The project ID to host the network in | string | `"flask-app-254610"` | no |
 | region | The region the project is in (App Engine specific) | string | `"us-central1"` | no |
 
 ## Outputs
@@ -19,5 +19,6 @@ More information is in the [root readme](../../README.md#app-engine).
 |------|-------------|
 | name | The name of the job created |
 | project\_id | The project ID |
+| scheduler\_job | The Cloud Scheduler job instance |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
