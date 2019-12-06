@@ -15,11 +15,17 @@
  */
 
 output "name" {
-  value       = google_cloud_scheduler_job.job.name
+  value       = module.pubsub_scheduled_1.name
   description = "The name of the job created"
 }
 
+output "project_id" {
+  value       = var.project_id
+  description = "The project ID"
+}
+
 output "scheduler_job" {
-  value       = google_cloud_scheduler_job.job
+  value       = module.pubsub_scheduled_1.scheduler_job
   description = "The Cloud Scheduler job instance"
 }
+
