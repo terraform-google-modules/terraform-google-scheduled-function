@@ -50,6 +50,7 @@ Then perform the following commands on the root folder:
 | function\_runtime | The runtime in which the function will be executed. | string | `"nodejs6"` | no |
 | function\_service\_account\_email | The service account to run the function as. | string | `""` | no |
 | function\_source\_archive\_bucket\_labels | A set of key/value label pairs to assign to the function source archive bucket. | map(string) | `<map>` | no |
+| function\_source\_dependent\_files | A list of any terraform created `local_file`s that the module will wait for before creating the archive. | object | `<list>` | no |
 | function\_source\_directory | The contents of this directory will be archived and used as the function source. | string | n/a | yes |
 | function\_timeout\_s | The amount of time in seconds allotted for the execution of the function. | number | `"60"` | no |
 | job\_description | Addition text to describet the job | string | `""` | no |

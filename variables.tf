@@ -88,6 +88,15 @@ variable "function_source_directory" {
   description = "The contents of this directory will be archived and used as the function source."
 }
 
+variable "function_source_dependent_files" {
+  type = list(object({
+    filename = string
+    id       = string
+  }))
+  description = "A list of any terraform created `local_file`s that the module will wait for before creating the archive."
+  default     = []
+}
+
 variable "function_timeout_s" {
   type        = number
   default     = 60
