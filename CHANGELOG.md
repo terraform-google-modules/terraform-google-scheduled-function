@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 ## [Unreleased]
 
+### Added
+
+- The `function_source_dependent_files` variable is passed on to the `event-function` module's `source_dependent_files` variable. [#28]
+
 ## [1.2.0] - 2019-11-20
 
 ### Added
@@ -76,6 +80,7 @@ and this project adheres to [Semantic Versioning][semver-site].
 [0.2.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/releases/tag/v0.1.0
 
+[#28]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/28
 [#22]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/22
 [#21]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/21
 [#20]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/20
