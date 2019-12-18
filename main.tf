@@ -49,7 +49,7 @@ module "pubsub_topic" {
 
 module "main" {
   source  = "terraform-google-modules/event-function/google"
-  version = "~> 1.1"
+  version = "~> 1.2"
 
   entry_point = var.function_entry_point
   event_trigger = {
@@ -61,6 +61,8 @@ module "main" {
   region           = var.region
   runtime          = var.function_runtime
   source_directory = var.function_source_directory
+
+  source_dependent_files = var.function_source_dependent_files
 
   available_memory_mb                = var.function_available_memory_mb
   bucket_force_destroy               = var.bucket_force_destroy
