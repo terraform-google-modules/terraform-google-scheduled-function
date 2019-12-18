@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 ## [Unreleased]
 
+## [1.3.0] - 2019-12-18
+
 ### Added
 
 - The `function_source_dependent_files` variable is passed on to the `event-function` module's `source_dependent_files` variable. [#28]
+
+### Changed
+
+- The function implementation is provided by the Event Function module. [#6]
 
 ## [1.2.0] - 2019-11-20
 
@@ -69,7 +75,8 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 - Initial release
 
-[Unreleased]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.0.0...v1.1.0
@@ -87,6 +94,7 @@ and this project adheres to [Semantic Versioning][semver-site].
 [#13]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/13
 [#11]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/11
 [#8]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/8
+[#6]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/6
 [#5]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/5
 
 [keepachangelog-site]: https://keepachangelog.com/en/1.0.0/
