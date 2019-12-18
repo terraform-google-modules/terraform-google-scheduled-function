@@ -25,10 +25,6 @@ provider "google-beta" {
 }
 
 module "pubsub_scheduled_1" {
-  providers = {
-    google = google-beta
-  }
-
   source                    = "../../"
   project_id                = var.project_id
   job_name                  = "pubsub-example"
@@ -41,16 +37,12 @@ module "pubsub_scheduled_1" {
 }
 
 module "pubsub_scheduled_2" {
-  providers = {
-    google = google-beta
-  }
-
   source                    = "../../"
   project_id                = var.project_id
-  function_entry_point      = "doSomething"
+  function_entry_point      = "doSomething2"
   function_source_directory = "${path.module}/function_source_2"
   function_name             = "testfunction-2"
   region                    = var.region
-  topic_name                = "pubsub-1"
+  topic_name                = module.pubsub_scheduled_1.pubsub_topic_name
   scheduler_job             = module.pubsub_scheduled_1.scheduler_job
 }

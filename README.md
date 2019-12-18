@@ -58,7 +58,7 @@ Then perform the following commands on the root folder:
 | message\_data | The data to send in the topic message. | string | `"dGVzdA=="` | no |
 | project\_id | The ID of the project where the resources will be created | string | n/a | yes |
 | region | The region in which resources will be applied. | string | n/a | yes |
-| scheduler\_job | The Cloud Scheduler job instance | any | `"null"` | no |
+| scheduler\_job | An existing Cloud Scheduler job instance | any | `"null"` | no |
 | time\_zone | The timezone to use in scheduler | string | `"Etc/UTC"` | no |
 | topic\_name | Name of pubsub topic connecting the scheduled job and the function | string | `"test-topic"` | no |
 
@@ -67,6 +67,7 @@ Then perform the following commands on the root folder:
 | Name | Description |
 |------|-------------|
 | name | The name of the job created |
+| pubsub\_topic\_name | PubSub topic name |
 | scheduler\_job | The Cloud Scheduler job instance |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

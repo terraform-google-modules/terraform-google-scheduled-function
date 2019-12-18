@@ -19,7 +19,7 @@
  *****************************************/
 
 resource "google_cloud_scheduler_job" "job" {
-  count       = var.scheduler_job == null ? 1 : 0
+  count = var.scheduler_job == null ? 1 : 0
 
   name        = var.job_name
   project     = var.project_id
@@ -39,11 +39,11 @@ resource "google_cloud_scheduler_job" "job" {
  *****************************************/
 
 module "pubsub_topic" {
-  source     = "terraform-google-modules/pubsub/google"
-  version    = "~> 1.0"
-  topic      = var.topic_name
-  project_id = var.project_id
-  enable     = var.scheduler_job == null ? true : false
+  source       = "terraform-google-modules/pubsub/google"
+  version      = "~> 1.0"
+  topic        = var.topic_name
+  project_id   = var.project_id
+  create_topic = var.scheduler_job == null ? true : false
 }
 
 /******************************************
@@ -57,7 +57,7 @@ module "main" {
   entry_point = var.function_entry_point
   event_trigger = {
     event_type = "google.pubsub.topic.publish"
-    resource   = module.pubsub_topic.topic
+    resource   = var.scheduler_job == null ? module.pubsub_topic.topic : var.topic_name
   }
   name             = var.function_name
   project_id       = var.project_id

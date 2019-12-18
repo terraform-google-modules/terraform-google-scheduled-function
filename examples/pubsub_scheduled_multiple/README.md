@@ -1,4 +1,4 @@
-# Simple Project
+# Multiple Cloud Functions sharing the same Cloud Scheduler
 
 This example module schedules a job to publish a message to a Pub/Sub topic every 5 minutes, which will trigger a CloudFunctions function.
 
@@ -19,6 +19,6 @@ More information is in the [root readme](../../README.md#app-engine).
 |------|-------------|
 | name | The name of the job created |
 | project\_id | The project ID |
-| scheduler\_job | The Cloud Scheduler job instance |
+| scheduler\_job | An existing Cloud Scheduler job instance |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

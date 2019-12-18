@@ -21,7 +21,7 @@
  * @param {!Object} event Event payload and metadata.
  * @param {!Function} callback Callback function to signal completion.
  */
-exports.doSomething = (event) => {
+exports.doSomething2 = (event) => {
   console.log("Received event 2");
   console.log(event);
 };
