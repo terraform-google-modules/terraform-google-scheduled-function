@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 ## [Unreleased]
 
+## [1.4.0] - 2019-12-19
+
+### Added
+
+- The `scheduler_job` variable, the `scheduler_job` output, and the `pubsub_topic_name` output to enable linking multiple 
+  instances of the module to the same Cloud Scheduler job. [#15]
+
 ## [1.3.0] - 2019-12-18
 
 ### Added
@@ -75,7 +82,8 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 - Initial release
 
-[Unreleased]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.1.0...v1.1.1
@@ -91,6 +99,7 @@ and this project adheres to [Semantic Versioning][semver-site].
 [#22]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/22
 [#21]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/21
 [#20]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/20
+[#15]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/15
 [#13]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/13
 [#11]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/11
 [#8]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/8
