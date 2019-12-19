@@ -52,13 +52,13 @@ Then perform the following commands on the root folder:
 | function\_source\_archive\_bucket\_labels | A set of key/value label pairs to assign to the function source archive bucket. | map(string) | `<map>` | no |
 | function\_source\_directory | The contents of this directory will be archived and used as the function source. | string | n/a | yes |
 | function\_timeout\_s | The amount of time in seconds allotted for the execution of the function. | number | `"60"` | no |
-| job\_description | Addition text to describet the job | string | `""` | no |
-| job\_name | The name of the scheduled job to run | string | `""` | no |
+| job\_description | Addition text to describe the job | string | `""` | no |
+| job\_name | The name of the scheduled job to run | string | `"null"` | no |
 | job\_schedule | The job frequency, in cron syntax | string | `"*/2 * * * *"` | no |
 | message\_data | The data to send in the topic message. | string | `"dGVzdA=="` | no |
 | project\_id | The ID of the project where the resources will be created | string | n/a | yes |
 | region | The region in which resources will be applied. | string | n/a | yes |
-| scheduler\_job | An existing Cloud Scheduler job instance | any | `"null"` | no |
+| scheduler\_job | An existing Cloud Scheduler job instance | object | `"null"` | no |
 | time\_zone | The timezone to use in scheduler | string | `"Etc/UTC"` | no |
 | topic\_name | Name of pubsub topic connecting the scheduled job and the function | string | `"test-topic"` | no |
 
