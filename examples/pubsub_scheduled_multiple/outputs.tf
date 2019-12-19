@@ -15,16 +15,17 @@
  */
 
 output "name" {
-  value       = var.scheduler_job == null ? google_cloud_scheduler_job.job.0.name : var.scheduler_job.name
+  value       = module.pubsub_scheduled_1.name
   description = "The name of the job created"
 }
 
-output "scheduler_job" {
-  value       = var.scheduler_job == null ? google_cloud_scheduler_job.job : var.scheduler_job
-  description = "The Cloud Scheduler job instance"
+output "project_id" {
+  value       = var.project_id
+  description = "The project ID"
 }
 
-output "pubsub_topic_name" {
-  value       = var.scheduler_job == null ? module.pubsub_topic.topic : var.topic_name
-  description = "PubSub topic name"
+output "scheduler_job" {
+  value       = module.pubsub_scheduled_1.scheduler_job
+  description = "An existing Cloud Scheduler job instance"
 }
+
