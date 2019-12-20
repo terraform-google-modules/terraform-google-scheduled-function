@@ -151,7 +151,7 @@ variable "time_zone" {
 }
 
 variable "scheduler_job" {
-  type        = any
+  type        = object({ name = string })
   description = "An existing Cloud Scheduler job instance"
   default     = null
 }
