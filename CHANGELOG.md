@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 ### Added
 
-- The `scheduler_job` variable, the `scheduler_job` output, and the `pubsub_topic_name` output to enable linking multiple 
+- The `scheduler_job` variable, the `scheduler_job` output, and the `pubsub_topic_name` output to enable linking multiple
   instances of the module to the same Cloud Scheduler job. [#15]
 
 ## [1.3.0] - 2019-12-18
