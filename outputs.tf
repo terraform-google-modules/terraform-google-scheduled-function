@@ -15,12 +15,12 @@
  */
 
 output "name" {
-  value       = var.scheduler_job == null ? google_cloud_scheduler_job.job.0.name : var.scheduler_job.name
+  value       = length(google_cloud_scheduler_job.job) > 0 ? google_cloud_scheduler_job.job.0.name : var.scheduler_job.name
   description = "The name of the job created"
 }
 
 output "scheduler_job" {
-  value       = var.scheduler_job == null ? google_cloud_scheduler_job.job : var.scheduler_job
+  value       = length(google_cloud_scheduler_job.job) > 0 ? google_cloud_scheduler_job.job.0 : var.scheduler_job
   description = "The Cloud Scheduler job instance"
 }
 
