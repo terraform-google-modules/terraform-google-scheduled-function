@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 ## [Unreleased]
 
+## [1.4.1] - 2020-01-13
+
+### Fixed
+
+- Fixed issue with scheduler job output value inconsistency. [#29]
+
 ## [1.4.0] - 2019-12-19
 
 ### Added
@@ -82,7 +88,8 @@ and this project adheres to [Semantic Versioning][semver-site].
 
 - Initial release
 
-[Unreleased]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.4.1...HEAD
+[1.4.1]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.1.1...v1.2.0
@@ -95,6 +102,7 @@ and this project adheres to [Semantic Versioning][semver-site].
 [0.2.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/releases/tag/v0.1.0
 
+[#29]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/29
 [#28]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/28
 [#22]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/22
 [#21]: https://github.com/terraform-google-modules/terraform-google-scheduled-function/pull/21
