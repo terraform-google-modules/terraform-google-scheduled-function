@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+### [1.4.2](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.4.1...v1.4.2) (2020-05-06)
+
+
+### Bug Fixes
+
+* Add Terraform 0.12 support to bucket_force_destroy boolean variable ([#24](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/issues/24)) ([2f11dfa](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/commit/2f11dfab523d82fa925ddbdf69fe6df8299f98d6))
+
 ## [Unreleased]
 
 ## [1.4.1] - 2020-01-13
