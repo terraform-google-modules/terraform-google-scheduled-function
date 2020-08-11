@@ -15,7 +15,7 @@
  */
 
 provider "google-beta" {
-  version = "~> 2.1"
+  version = "~> 3.33"
   project = var.project_id
   region  = var.region
 }

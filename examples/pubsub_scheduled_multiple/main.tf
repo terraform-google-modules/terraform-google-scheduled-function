@@ -19,7 +19,7 @@ terraform {
 }
 
 provider "google-beta" {
-  version = "~> 2.5"
+  version = "~> 3.33"
   project = var.project_id
   region  = var.region
 }
