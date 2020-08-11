@@ -20,6 +20,12 @@ provider "google-beta" {
   region  = var.region
 }
 
+provider "google" {
+  version = "~> 3.33"
+  project = var.project_id
+  region  = var.region
+}
+
 module "log_slack_alerts_example" {
   providers = {
     google = google-beta

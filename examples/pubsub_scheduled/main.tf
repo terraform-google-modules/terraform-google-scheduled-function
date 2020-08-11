@@ -24,6 +24,12 @@ provider "google-beta" {
   region  = var.region
 }
 
+provider "google" {
+  version = "~> 3.33"
+  project = var.project_id
+  region  = var.region
+}
+
 resource "random_pet" "main" {
   length    = 2
   separator = "-"
