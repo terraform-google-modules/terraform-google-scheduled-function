@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package main
+package project_cleanup
 
 import (
 	"encoding/json"
@@ -231,7 +231,7 @@ func invoke(ctx context.Context) {
 		}
 
 		// wait for services to complete deletion
-		time.Sleep(30 * time.Second)
+		time.Sleep(10 * time.Second)
 	}
 
 	cleanupProjectById := func(projectId string) {
@@ -296,8 +296,4 @@ func invoke(ctx context.Context) {
 func CleanUpProjects(ctx context.Context, m PubSubMessage) error {
 	invoke(ctx)
 	return nil
-}
-
-func main() {
-	invoke(context.Background())
 }
