@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [1.5.0](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.4.2...v1.5.0) (2020-08-11)
+
+
+### Features
+
+* Update project cleaner function to clean up Cloud Endpoints ([#38](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/issues/38)) ([4403dbe](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/commit/4403dbe45e27c86f34928550ad44beff1e92a92b))
+
 ### [1.4.2](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.4.1...v1.4.2) (2020-05-06)
 
 
