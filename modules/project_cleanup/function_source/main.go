@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package project_cleaner
+package main
 
 import (
 	"encoding/json"
@@ -26,10 +26,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/cloudresourcemanager/v1"
 	cloudresourcemanager2 "google.golang.org/api/cloudresourcemanager/v2"
+	"google.golang.org/api/servicemanagement/v1"
 )
 
 const (
@@ -123,6 +125,12 @@ func getLabelsMapFromEnv(envVariableName string) map[string]string {
 	targetExcludedLabels := os.Getenv(envVariableName)
 	logger.Println("Try to get labels map")
 	labels := make(map[string]string)
+
+	if targetExcludedLabels == "" {
+		logger.Printf("No labels provided.")
+		return nil
+	}
+
 	err := json.Unmarshal([]byte(targetExcludedLabels), &labels)
 	if err != nil {
 		logger.Printf("Fail to get labels map from [%s] env variable, error [%s]", envVariableName, err.Error())
@@ -139,6 +147,16 @@ func getCorrectFolderIdOrTerminateExecution() string {
 		logger.Fatalf("Invalid folder id [%s]. Specify correct value, Please.", targetFolderIdString)
 	}
 	return targetFolderIdString
+}
+
+func getServiceManagementServiceOrTerminateExecution(client *http.Client) *servicemanagement.APIService {
+	logger.Println("Try to get Service Management")
+	service, err := servicemanagement.New(client)
+	if err != nil {
+		logger.Fatalf("Fail to get API client with error [%s], terminate execution", err.Error())
+	}
+	logger.Println("Got Cloud Resource Manager")
+	return service
 }
 
 func getResourceManagerServiceOrTerminateExecution(client *http.Client) *cloudresourcemanager.Service {
@@ -175,6 +193,7 @@ func invoke(ctx context.Context) {
 	client := initializeGoogleClient(ctx)
 	cloudResourceManagerService := getResourceManagerServiceOrTerminateExecution(client)
 	folderService := getFolderServiceOrTerminateExecution(client)
+	endpointService := getServiceManagementServiceOrTerminateExecution(client)
 
 	removeLien := func(name string) {
 		logger.Printf("Try to remove lien [%s]", name)
@@ -184,12 +203,44 @@ func invoke(ctx context.Context) {
 		} else {
 			logger.Printf("Removed lien [%s]", name)
 		}
-
 	}
 
-	removeProjectById := func(projectId string) {
-		logger.Printf("Try to remove project [%s]", projectId)
+	removeProjectById := func(projectId string) error {
 		_, err := cloudResourceManagerService.Projects.Delete(projectId).Context(ctx).Do()
+		return err
+	}
+
+	removeProjectEndpoints := func(projectId string) {
+		logger.Printf("Try to remove endpoints for [%s]", projectId)
+		listResponse, err := endpointService.Services.List().ProducerProjectId(projectId).Do()
+		if err != nil {
+			logger.Printf("Fail to list services for [%s], error [%s]", projectId, err.Error())
+			return
+		}
+
+		if len(listResponse.Services) <= 1 {
+			return
+		}
+
+		for _, service := range listResponse.Services {
+			logger.Printf("Try to remove service: %s", service.ServiceName)
+			_, err = endpointService.Services.Delete(service.ServiceName).Do()
+			if err != nil {
+				logger.Printf("Fail to delete service [%s] for [%s], error [%s]", service.ServiceName, projectId, err.Error())
+			}
+		}
+
+		// wait for services to complete deletion
+		time.Sleep(30 * time.Second)
+	}
+
+	cleanupProjectById := func(projectId string) {
+		logger.Printf("Try to remove project [%s]", projectId)
+		err := removeProjectById(projectId)
+		if err != nil {
+			removeProjectEndpoints(projectId)
+			err = removeProjectById(projectId)
+		}
 		if err != nil {
 			logger.Printf("Fail to remove project [%s], error [%s]", projectId, err.Error())
 		} else {
@@ -206,7 +257,7 @@ func invoke(ctx context.Context) {
 			for _, lien := range page.Liens {
 				removeLien(lien.Name)
 			}
-			removeProjectById(projectId)
+			cleanupProjectById(projectId)
 			return nil
 		}); err != nil {
 			logger.Printf("Fail to get all liens for the project [%s], error [%s]", projectId, err.Error())
@@ -245,4 +296,8 @@ func invoke(ctx context.Context) {
 func CleanUpProjects(ctx context.Context, m PubSubMessage) error {
 	invoke(ctx)
 	return nil
+}
+
+func main() {
+	invoke(context.Background())
 }

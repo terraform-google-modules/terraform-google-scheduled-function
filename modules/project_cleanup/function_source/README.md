@@ -16,9 +16,9 @@ The following environment variables may be specified to configure the cleanup ut
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 | `TARGET_EXCLUDED_LABELS` | Labels to match on for identifying projects to avoid deletion | string | n/a | no |
-| `TARGET_FOLDER_ID` | Folder ID to delete prjojects under | string | n/a | yes |
+| `TARGET_FOLDER_ID` | Folder ID to delete projects under | string | n/a | yes |
 | `TARGET_INCLUDED_LABELS` | Labels to match on for identifying projects to delete | string | n/a | no |
-| `MAX_PROJECT_AGE_HOURS` | The project age, in hours, at which point deletion should be considered | integer | n/a | no |
+| `MAX_PROJECT_AGE_HOURS` | The project age, in hours, at which point deletion should be considered | integer | n/a | yes |
 
 ## Required Permissions
 
