@@ -25,11 +25,16 @@ resource "google_service_account" "project_cleaner_function" {
 }
 
 resource "google_organization_iam_member" "main" {
-  for_each = toset(["projectDeleter", "folderViewer", "lienModifier"])
+  for_each = toset([
+    "roles/resourcemanager.projectDeleter",
+    "roles/resourcemanager.folderViewer",
+    "roles/resourcemanager.lienModifier",
+    "roles/owner"
+  ])
 
   member = "serviceAccount:${google_service_account.project_cleaner_function.email}"
   org_id = var.organization_id
-  role   = "roles/resourcemanager.${each.value}"
+  role   = each.value
 }
 
 module "scheduled_project_cleaner" {
@@ -44,7 +49,7 @@ module "scheduled_project_cleaner" {
   topic_name                     = var.topic_name
   function_available_memory_mb   = 128
   function_description           = "Clean up GCP projects older than ${var.max_project_age_in_hours} hours matching particular tags"
-  function_runtime               = "go111"
+  function_runtime               = "go113"
   function_service_account_email = google_service_account.project_cleaner_function.email
   function_timeout_s             = var.function_timeout_s
 

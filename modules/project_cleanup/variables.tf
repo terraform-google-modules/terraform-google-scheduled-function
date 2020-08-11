@@ -16,7 +16,7 @@
 
 variable "function_timeout_s" {
   type        = number
-  default     = 60
+  default     = 500
   description = "The amount of time in seconds allotted for the execution of the function."
 }
 
