@@ -150,12 +150,10 @@ func getCorrectFolderIdOrTerminateExecution() string {
 }
 
 func getServiceManagementServiceOrTerminateExecution(client *http.Client) *servicemanagement.APIService {
-	logger.Println("Try to get Service Management")
 	service, err := servicemanagement.New(client)
 	if err != nil {
-		logger.Fatalf("Fail to get API client with error [%s], terminate execution", err.Error())
+		logger.Fatalf("Failed to get service management API client with error [%s], terminate execution", err.Error())
 	}
-	logger.Println("Got Cloud Resource Manager")
 	return service
 }
 
