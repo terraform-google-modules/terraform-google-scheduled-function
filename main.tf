@@ -50,6 +50,11 @@ module "pubsub_topic" {
 	Cloud Function Resource Definitions
  *****************************************/
 
+resource "random_id" "suffix" {
+
+  byte_length = 4
+}
+
 module "main" {
   source  = "terraform-google-modules/event-function/google"
   version = "~> 1.2"
@@ -70,7 +75,7 @@ module "main" {
   available_memory_mb                = var.function_available_memory_mb
   bucket_force_destroy               = var.bucket_force_destroy
   bucket_labels                      = var.function_source_archive_bucket_labels
-  bucket_name                        = var.bucket_name
+  bucket_name                        = var.bucket_name == "" ? "${var.project_id}-scheduled-function-${random_id.suffix.hex}" : var.bucket_name
   description                        = var.function_description
   environment_variables              = var.function_environment_variables
   event_trigger_failure_policy_retry = var.function_event_trigger_failure_policy_retry
