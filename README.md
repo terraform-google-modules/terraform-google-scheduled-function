@@ -47,7 +47,7 @@ Then perform the following commands on the root folder:
 | function\_event\_trigger\_failure\_policy\_retry | A toggle to determine if the function should be retried on failure. | bool | `"false"` | no |
 | function\_labels | A set of key/value label pairs to assign to the function. | map(string) | `<map>` | no |
 | function\_name | The name to apply to the function | string | n/a | yes |
-| function\_runtime | The runtime in which the function will be executed. | string | `"nodejs6"` | no |
+| function\_runtime | The runtime in which the function will be executed. | string | `"nodejs10"` | no |
 | function\_service\_account\_email | The service account to run the function as. | string | `""` | no |
 | function\_source\_archive\_bucket\_labels | A set of key/value label pairs to assign to the function source archive bucket. | map(string) | `<map>` | no |
 | function\_source\_dependent\_files | A list of any terraform created `local_file`s that the module will wait for before creating the archive. | object | `<list>` | no |
