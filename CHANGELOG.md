@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+### [1.5.1](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.5.0...v1.5.1) (2020-09-02)
+
+
+### Bug Fixes
+
+* default bucket name behavior ([#42](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/issues/42)) ([5adad84](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/commit/5adad84a4af7f58f6934779500f9bf3fa38464a1))
+
 ## [1.5.0](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.4.2...v1.5.0) (2020-08-11)
 
 
