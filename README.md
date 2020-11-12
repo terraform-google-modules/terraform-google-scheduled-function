@@ -18,7 +18,7 @@ module "scheduled-function" {
   version = "0.1.0"
   project_id   = "<PROJECT ID>"
   job_name="<NAME_OF_JOB>"
-  schedule="<CRON_SYNTAX_SCHEDULE"
+  job_schedule="<CRON_SYNTAX_SCHEDULE>"
   function_entry_point="<NAME_OF_FUNCTION>"
   function_source_directory="<DIRECTORY_OF_FUNCTION_SOURCE>"
   function_name="<RESOURCE_NAMES>"
