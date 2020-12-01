@@ -55,7 +55,7 @@ type PubSubMessage struct {
 	Data []byte `json:"data"`
 }
 
-type FolderRecursion func(string, FolderRecursion)
+type FolderRecursion func(*cloudresourcemanager2.Folder, FolderRecursion)
 
 func activeProjectFilter(project *cloudresourcemanager.Project) bool {
 	return project.LifecycleState == LifecycleStateActiveRequested
@@ -274,13 +274,28 @@ func invoke(ctx context.Context) {
 		}
 	}
 
-	getSubFoldersAndRemoveProjectsRecursively := func(folderId string, recursion FolderRecursion) {
+	removeFolder := func(folder *cloudresourcemanager2.Folder) {
+		folderId := folder.Name
+		logger.Printf("Try to delete folder with id [%s]", folderId)
+		_, err := folderService.Delete(folderId).Do()
+		if err != nil {
+			logger.Printf("Failed to delete folder [%s], error [%s]", folderId, err.Error())
+		} else {
+			logger.Printf("Deleted folder [%s]", folderId)
+		}
+	}
+
+	getSubFoldersAndRemoveProjectsFoldersRecursively := func(folder *cloudresourcemanager2.Folder, recursion FolderRecursion) {
+		folderId := folder.Name
 		listFoldersRequest := folderService.List().Parent(folderId).ShowDeleted(false)
 		if err := listFoldersRequest.Pages(ctx, func(foldersResponse *cloudresourcemanager2.ListFoldersResponse) error {
 			for _, folder := range foldersResponse.Folders {
-				recursion(folder.Name, recursion)
+				recursion(folder, recursion)
 			}
 			removeProjectsInFolder(folderId)
+			if folder.Parent != fmt.Sprintf("folders/%s", rootFolderId) {
+				removeFolder(folder)
+			}
 			return nil
 		}); err != nil {
 			logger.Fatalf("Fail to get subfolders for the folder with id [%s], error [%s]", folderId, err.Error())
@@ -288,7 +303,12 @@ func invoke(ctx context.Context) {
 	}
 
 	rootFolderId := fmt.Sprintf("folders/%s", rootFolderId)
-	getSubFoldersAndRemoveProjectsRecursively(rootFolderId, getSubFoldersAndRemoveProjectsRecursively)
+	rootFolder, err := folderService.Get(rootFolderId).Do()
+	if err != nil {
+		logger.Printf("Fail to get parent folder [%s], error [%s]", rootFolderId, err.Error())
+	} else {
+		getSubFoldersAndRemoveProjectsFoldersRecursively(rootFolder, getSubFoldersAndRemoveProjectsFoldersRecursively)
+	}
 }
 
 func CleanUpProjects(ctx context.Context, m PubSubMessage) error {
