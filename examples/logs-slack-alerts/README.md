@@ -16,14 +16,18 @@ If not using the default App Engine default service account (PROJECT_ID@appspot.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| audit\_log\_table | BigQuery Table where logs are sent | string | n/a | yes |
-| dataset\_name | BigQuery Dataset where logs are sent | string | n/a | yes |
-| error\_message\_column | BigQuery Column in audit log table representing logging error | string | n/a | yes |
-| job\_schedule | The cron schedule for triggering the cloud function | string | `"55 * * * *"` | no |
-| project\_id | The project ID to host the network in | string | n/a | yes |
-| region | The region the project is in (App Engine specific) | string | `"us-central1"` | no |
-| slack\_webhook | Slack webhook to send alerts | string | n/a | yes |
-| time\_column | BigQuery Column in audit log table representing logging time | string | n/a | yes |
+|------|-------------|------|---------|:--------:|
+| audit\_log\_table | BigQuery Table where logs are sent | `string` | n/a | yes |
+| dataset\_name | BigQuery Dataset where logs are sent | `string` | n/a | yes |
+| error\_message\_column | BigQuery Column in audit log table representing logging error | `string` | n/a | yes |
+| job\_schedule | The cron schedule for triggering the cloud function | `string` | `"55 * * * *"` | no |
+| project\_id | The project ID to host the network in | `string` | n/a | yes |
+| region | The region the project is in (App Engine specific) | `string` | `"us-central1"` | no |
+| slack\_webhook | Slack webhook to send alerts | `string` | n/a | yes |
+| time\_column | BigQuery Column in audit log table representing logging time | `string` | n/a | yes |
+
+## Outputs
+
+No output.
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
