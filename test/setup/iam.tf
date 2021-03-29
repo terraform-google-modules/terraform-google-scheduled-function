@@ -17,7 +17,8 @@
 locals {
   int_required_roles = [
     "roles/storage.admin",
-    "roles/pubsub.editor",
+    "roles/pubsub.admin",
+    "roles/resourcemanager.projectIamAdmin",
     "roles/cloudscheduler.admin",
     "roles/cloudfunctions.developer",
     "roles/iam.serviceAccountUser",
