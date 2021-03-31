@@ -155,3 +155,9 @@ variable "scheduler_job" {
   description = "An existing Cloud Scheduler job instance"
   default     = null
 }
+
+variable "grant_token_creator" {
+  type        = bool
+  description = "Specify true if you want to add token creator role to the default Pub/Sub SA"
+  default     = false
+}
