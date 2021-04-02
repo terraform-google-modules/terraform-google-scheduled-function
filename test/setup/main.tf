@@ -16,7 +16,7 @@
 
 module "project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 10.0"
+  version = "~> 10.2"
 
   name              = "ci-scheduled-function"
   random_project_id = "true"
@@ -39,7 +39,7 @@ module "project" {
 
 module "app-engine" {
   source  = "terraform-google-modules/project-factory/google//modules/app_engine"
-  version = "~> 10.0"
+  version = "~> 10.2"
 
   location_id = "us-central"
 
