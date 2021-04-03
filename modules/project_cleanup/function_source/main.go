@@ -31,6 +31,7 @@ import (
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/cloudresourcemanager/v1"
 	cloudresourcemanager2 "google.golang.org/api/cloudresourcemanager/v2"
+	"google.golang.org/api/googleapi"
 	"google.golang.org/api/servicemanagement/v1"
 )
 
@@ -63,6 +64,37 @@ func activeProjectFilter(project *cloudresourcemanager.Project) bool {
 
 func getOldTime(i int64) time.Time {
 	return time.Unix(time.Now().Unix()-i, 0)
+}
+
+// isRetryableError checks if an error can be retried based on err code
+func isRetryableError(e error) bool {
+	gerr, ok := e.(*googleapi.Error)
+	if !ok {
+		return false
+	}
+	if gerr.Code == 429 || gerr.Code == 500 || gerr.Code == 502 || gerr.Code == 503 {
+		logger.Printf("Got retryable err %d: %s", gerr.Code, gerr.Message)
+		return true
+	}
+	logger.Printf("Got non retryable err %d: %s", gerr.Code, gerr.Message)
+	return false
+}
+
+func retry(retryFunc func() error, tries int, duration time.Duration) error {
+	err := retryFunc()
+	if err == nil {
+		return nil
+	}
+	if tries < 1 {
+		return fmt.Errorf("Exhausted retries: %v", err)
+	}
+	if isRetryableError(err) {
+		time.Sleep(duration)
+		tries--
+		// retry with exponential backoff
+		return retry(retryFunc, tries, 2*duration)
+	}
+	return err
 }
 
 func processProjectsResponsePage(removeProjectById func(projectId string)) func(page *cloudresourcemanager.ListProjectsResponse) error {
@@ -266,8 +298,12 @@ func invoke(ctx context.Context) {
 		localFolderId := strings.Replace(folderId, "folders/", "", 1)
 		logger.Printf("Try to get projects from folder with id [%s] and process them", localFolderId)
 		requestFilter := fmt.Sprintf("parent.type:folder parent.id:%s", localFolderId)
-		req := cloudResourceManagerService.Projects.List().Filter(requestFilter)
-		if err := req.Pages(ctx, processProjectsResponsePage(removeProjectWithLiens)); err != nil {
+		err := retry(func() (err error) {
+			req := cloudResourceManagerService.Projects.List().Filter(requestFilter)
+			err = req.Pages(ctx, processProjectsResponsePage(removeProjectWithLiens))
+			return
+		}, 5, time.Minute)
+		if err != nil {
 			logger.Printf("Fail to get projects for the folder with id [%s], error [%s]", localFolderId, err.Error())
 		} else {
 			logger.Printf("Got and processed all projects for the folder with id [%s]", localFolderId)
@@ -293,7 +329,7 @@ func invoke(ctx context.Context) {
 				recursion(folder, recursion)
 			}
 			removeProjectsInFolder(folderId)
-			if folder.Parent != fmt.Sprintf("folders/%s", rootFolderId) {
+			if folder.Parent != fmt.Sprintf("folders/%s", rootFolderId) && folder.Name != fmt.Sprintf("folders/%s", rootFolderId) {
 				removeFolder(folder)
 			}
 			return nil
