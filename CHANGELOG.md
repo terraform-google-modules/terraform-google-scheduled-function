@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [1.6.0](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.5.1...v1.6.0) (2021-04-05)
+
+
+### Features
+
+* add folder clean up ([#47](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/issues/47)) ([6d001bb](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/commit/6d001bb24197e6475500cdcfc8c291aabe41699c))
+* add retry logic for quota errors ([#53](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/issues/53)) ([293ed2c](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/commit/293ed2c7f77ba14e0fd6d1d2cb01b08d9aa58968))
+
+
+### Bug Fixes
+
+* add grant_token_creator flag for pubsub  ([#52](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/issues/52)) ([7fee659](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/commit/7fee659322dd014b818a26cc0c132b2b71ca91d2))
+
 ### [1.5.1](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.5.0...v1.5.1) (2020-09-02)
 
 
