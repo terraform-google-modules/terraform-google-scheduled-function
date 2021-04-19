@@ -83,4 +83,5 @@ module "main" {
   labels                             = var.function_labels
   service_account_email              = var.function_service_account_email
   timeout_s                          = var.function_timeout_s
+  ingress_settings                   = var.ingress_settings
 }
