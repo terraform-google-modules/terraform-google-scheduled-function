@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+### [1.6.1](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.6.0...v1.6.1) (2021-04-29)
+
+
+### Bug Fixes
+
+* Add folder editor permissions to delete folders for cleanup submodule ([#55](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/issues/55)) ([f9e3841](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/commit/f9e3841556f35a621d8d50530f9591d88f090dd8))
+
 ## [1.6.0](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.5.1...v1.6.0) (2021-04-05)
 
 
