@@ -27,7 +27,7 @@ resource "google_service_account" "project_cleaner_function" {
 resource "google_organization_iam_member" "main" {
   for_each = toset([
     "roles/resourcemanager.projectDeleter",
-    "roles/resourcemanager.folderViewer",
+    "roles/resourcemanager.folderEditor",
     "roles/resourcemanager.lienModifier",
     "roles/owner"
   ])
