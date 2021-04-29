@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [2.0.0](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.6.0...v2.0.0) (2021-04-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* add Terraform 0.13 constraint and module attribution (#50)
+
+### Features
+
+* add Terraform 0.13 constraint and module attribution ([#50](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/issues/50)) ([3bb8cba](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/commit/3bb8cba3170252d4b390525dfcbfab20cc9b4531))
+
+
+### Bug Fixes
+
+* Add folder editor permissions to delete folders for cleanup submodule ([#55](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/issues/55)) ([f9e3841](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/commit/f9e3841556f35a621d8d50530f9591d88f090dd8))
+
 ## [1.6.0](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.5.1...v1.6.0) (2021-04-05)
 
 
