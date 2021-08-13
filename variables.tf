@@ -110,7 +110,7 @@ variable "function_service_account_email" {
   description = "The service account to run the function as."
 }
 
-variable "function_vpc_connector" {
+variable "vpc_connector" {
   type        = string
   default     = null
   description = "The VPC Network Connector that this cloud function can connect to. It should be set up as fully-qualified URI. The format of this field is projects//locations//connectors/*."
