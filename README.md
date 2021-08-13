@@ -52,8 +52,6 @@ Then perform the following commands on the root folder:
 | function\_source\_dependent\_files | A list of any terraform created `local_file`s that the module will wait for before creating the archive. | <pre>list(object({<br>    filename = string<br>    id       = string<br>  }))</pre> | `[]` | no |
 | function\_source\_directory | The contents of this directory will be archived and used as the function source. | `string` | n/a | yes |
 | function\_timeout\_s | The amount of time in seconds allotted for the execution of the function. | `number` | `60` | no |
-| function\_vpc\_connector | The VPC Network Connector that this cloud function can connect to. It should be set up as fully-qualified URI. The format of this field is projects//locations//connectors/\*. | `string` | `null` | no |
-| function\_vpc\_connector\_egress\_settings | The egress settings for the connector, controlling what traffic is diverted through it. Allowed values are ALL\_TRAFFIC and PRIVATE\_RANGES\_ONLY. If unset, this field preserves the previously set value. | `string` | `null` | no |
 | grant\_token\_creator | Specify true if you want to add token creator role to the default Pub/Sub SA | `bool` | `false` | no |
 | job\_description | Addition text to describe the job | `string` | `""` | no |
 | job\_name | The name of the scheduled job to run | `string` | `null` | no |
@@ -64,6 +62,8 @@ Then perform the following commands on the root folder:
 | scheduler\_job | An existing Cloud Scheduler job instance | `object({ name = string })` | `null` | no |
 | time\_zone | The timezone to use in scheduler | `string` | `"Etc/UTC"` | no |
 | topic\_name | Name of pubsub topic connecting the scheduled job and the function | `string` | `"test-topic"` | no |
+| vpc\_connector | The VPC Network Connector that this cloud function can connect to. It should be set up as fully-qualified URI. The format of this field is projects//locations//connectors/\*. | `string` | `null` | no |
+| vpc\_connector\_egress\_settings | The egress settings for the connector, controlling what traffic is diverted through it. Allowed values are ALL\_TRAFFIC and PRIVATE\_RANGES\_ONLY. If unset, this field preserves the previously set value. | `string` | `null` | no |
 
 ## Outputs
 
