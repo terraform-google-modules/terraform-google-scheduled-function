@@ -116,7 +116,7 @@ variable "vpc_connector" {
   description = "The VPC Network Connector that this cloud function can connect to. It should be set up as fully-qualified URI. The format of this field is projects//locations//connectors/*."
 }
 
-variable "function_vpc_connector_egress_settings" {
+variable "vpc_connector_egress_settings" {
   type        = string
   default     = null
   description = "The egress settings for the connector, controlling what traffic is diverted through it. Allowed values are ALL_TRAFFIC and PRIVATE_RANGES_ONLY. If unset, this field preserves the previously set value."
