@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [2.1.0](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v2.0.0...v2.1.0) (2021-08-13)
+
+
+### Features
+
+* Add option for VPC connector ([#59](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/issues/59)) ([9a82b83](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/commit/9a82b83f42602123dcf88a8e518c7aaa6deac707))
+
 ## [2.0.0](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v1.6.0...v2.0.0) (2021-04-29)
 
 
