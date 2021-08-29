@@ -11,3 +11,6 @@ examples/**/*.zip
 examples/**/terraform.tfvars
 modules/**/terraform.tfvars
 submodules/**/terraform.tfvars
+
+# tf lock file
+.terraform.lock.hcl
