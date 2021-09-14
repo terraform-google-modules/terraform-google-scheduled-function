@@ -125,7 +125,7 @@ variable "vpc_connector_egress_settings" {
 variable "bucket_name" {
   type        = string
   default     = ""
-  description = "The name to apply to the bucket. Will default to a string of <project-id>-scheduled-function-XXXX> with XXXX being random characters."
+  description = "The name to apply to the bucket. Will default to a string of `<project-id>-scheduled-function-<XXXX>` with `XXXX` being random characters."
 }
 
 variable "bucket_force_destroy" {
