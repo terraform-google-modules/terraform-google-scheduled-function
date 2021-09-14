@@ -38,7 +38,7 @@ Then perform the following commands on the root folder:
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | bucket\_force\_destroy | When deleting the GCS bucket containing the cloud function, delete all objects in the bucket first. | `bool` | `true` | no |
-| bucket\_name | The name to apply to the bucket. Will default to a string of <project-id>-scheduled-function-XXXX> with XXXX being random characters. | `string` | `""` | no |
+| bucket\_name | The name to apply to the bucket. Will default to a string of `<project-id>-scheduled-function-<XXXX>` with `XXXX` being random characters. | `string` | `""` | no |
 | function\_available\_memory\_mb | The amount of memory in megabytes allotted for the function to use. | `number` | `256` | no |
 | function\_description | The description of the function. | `string` | `"Processes log export events provided through a Pub/Sub topic subscription."` | no |
 | function\_entry\_point | The name of a method in the function source which will be invoked when the function is executed. | `string` | n/a | yes |
