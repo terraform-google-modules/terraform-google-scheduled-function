@@ -33,7 +33,7 @@ variable "job_description" {
 
 variable "job_schedule" {
   type        = string
-  description = "The job frequency, in cron syntax"
+  description = "The job frequency, in 5-field, unix-cron syntax (excluding seconds)"
   default     = "*/2 * * * *"
 }
 
