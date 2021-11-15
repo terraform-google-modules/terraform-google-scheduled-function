@@ -3,7 +3,8 @@
 This modules makes it easy to set up a scheduled job to trigger events/run functions.
 
 ## Compatibility
-This module is meant for use with Terraform 0.13. If you haven't
+This module is meant for use with Terraform 0.13+ and tested using Terraform 1.0+. If you find incompatibilities using Terraform >=0.13, please open an issue.
+ If you haven't
 [upgraded](https://www.terraform.io/upgrade-guides/0-13.html) and need a Terraform
 0.12.x-compatible version of this module, the last released version
 intended for Terraform 0.12.x is [v1.6.0](https://registry.terraform.io/modules/terraform-google-modules/scheduled-function/google/1.6.0).
