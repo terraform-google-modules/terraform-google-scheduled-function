@@ -36,10 +36,6 @@ resource "random_pet" "main" {
 }
 
 module "pubsub_scheduled_example" {
-  providers = {
-    google = google-beta
-  }
-
   source                    = "../../"
   project_id                = var.project_id
   job_name                  = "pubsub-example-${random_pet.main.id}"

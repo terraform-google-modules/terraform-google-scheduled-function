@@ -27,10 +27,6 @@ provider "google" {
 }
 
 module "log_slack_alerts_example" {
-  providers = {
-    google = google-beta
-  }
-
   source                    = "../../"
   project_id                = var.project_id
   job_name                  = "logs_query"
