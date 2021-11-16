@@ -14,18 +14,6 @@
  * limitations under the License.
  */
 
-provider "google-beta" {
-  version = "~> 3.33"
-  project = var.project_id
-  region  = var.region
-}
-
-provider "google" {
-  version = "~> 3.33"
-  project = var.project_id
-  region  = var.region
-}
-
 module "log_slack_alerts_example" {
   source                    = "../../"
   project_id                = var.project_id
