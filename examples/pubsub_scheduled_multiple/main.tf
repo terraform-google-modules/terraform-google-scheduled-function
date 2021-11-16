@@ -14,22 +14,6 @@
  * limitations under the License.
  */
 
-terraform {
-  required_version = ">= 0.12"
-}
-
-provider "google-beta" {
-  version = "~> 3.33"
-  project = var.project_id
-  region  = var.region
-}
-
-provider "google" {
-  version = "~> 3.33"
-  project = var.project_id
-  region  = var.region
-}
-
 module "pubsub_scheduled_1" {
   source                    = "../../"
   project_id                = var.project_id
