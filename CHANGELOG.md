@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [2.2.0](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v2.1.0...v2.2.0) (2021-11-16)
+
+
+### Features
+
+* update TPG version constraints to allow 4.0 ([#63](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/issues/63)) ([248b914](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/commit/248b914e7d7c4a384224c862d98b0846b0cdda7c))
+
 ## [2.1.0](https://www.github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v2.0.0...v2.1.0) (2021-08-13)
 
 
