@@ -110,6 +110,12 @@ variable "function_service_account_email" {
   description = "The service account to run the function as."
 }
 
+variable "function_max_instances" {
+  type        = number
+  default     = 0
+  description = "The maximum number of parallel executions of the function."
+}
+
 variable "vpc_connector" {
   type        = string
   default     = null
