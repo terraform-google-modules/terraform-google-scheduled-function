@@ -86,4 +86,5 @@ module "main" {
   max_instances                      = var.function_max_instances
   vpc_connector                      = var.vpc_connector
   vpc_connector_egress_settings      = var.vpc_connector_egress_settings
+  build_environment_variables        = var.build_environment_variables
 }

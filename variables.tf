@@ -179,3 +179,9 @@ variable "grant_token_creator" {
   description = "Specify true if you want to add token creator role to the default Pub/Sub SA"
   default     = false
 }
+
+variable "build_environment_variables" {
+  type        = map(string)
+  default     = {}
+  description = "A set of key/value environment variable pairs available during build time."
+}
