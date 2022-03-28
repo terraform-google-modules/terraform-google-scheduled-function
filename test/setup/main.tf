@@ -37,11 +37,3 @@ module "project" {
   ]
 }
 
-module "app-engine" {
-  source  = "terraform-google-modules/project-factory/google//modules/app_engine"
-  version = "~> 10.2"
-
-  location_id = "us-central"
-
-  project_id = module.project.project_id
-}
