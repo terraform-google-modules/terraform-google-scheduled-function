@@ -27,6 +27,6 @@ module "pubsub_scheduled_example" {
   function_entry_point      = "doSomething"
   function_source_directory = "${path.module}/function_source"
   function_name             = "testfunction-${random_pet.main.id}"
-  region                    = var.region
+  region                    = "us-central1"
   topic_name                = "pubsub_example_topic_${random_pet.main.id}"
 }

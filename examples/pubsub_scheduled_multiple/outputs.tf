@@ -23,9 +23,3 @@ output "project_id" {
   value       = var.project_id
   description = "The project ID"
 }
-
-output "scheduler_job" {
-  value       = module.pubsub_scheduled_1.scheduler_job
-  description = "An existing Cloud Scheduler job instance"
-}
-

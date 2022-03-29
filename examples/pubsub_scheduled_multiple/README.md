@@ -19,6 +19,5 @@ More information is in the [root readme](../../README.md#app-engine).
 |------|-------------|
 | name | The name of the job created |
 | project\_id | The project ID |
-| scheduler\_job | An existing Cloud Scheduler job instance |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

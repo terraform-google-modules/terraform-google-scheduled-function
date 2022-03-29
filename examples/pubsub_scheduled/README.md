@@ -11,7 +11,6 @@ More information is in the [root readme](../../README.md#app-engine).
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | project\_id | The project ID to host the network in | `string` | n/a | yes |
-| region | The region the project is in (App Engine specific) | `string` | `"us-central1"` | no |
 
 ## Outputs
 
