@@ -49,6 +49,7 @@ Then perform the following commands on the root folder:
 | function\_max\_instances | The maximum number of parallel executions of the function. | `number` | `0` | no |
 | function\_name | The name to apply to the function | `string` | n/a | yes |
 | function\_runtime | The runtime in which the function will be executed. | `string` | `"nodejs10"` | no |
+| function\_secret\_environment\_variables | A list of maps which contains key, project\_id, secret\_name (not the full secret id) and version to assign to the function as a set of secret environment variables. | `list(map(string))` | `[]` | no |
 | function\_service\_account\_email | The service account to run the function as. | `string` | `""` | no |
 | function\_source\_archive\_bucket\_labels | A set of key/value label pairs to assign to the function source archive bucket. | `map(string)` | `{}` | no |
 | function\_source\_dependent\_files | A list of any terraform created `local_file`s that the module will wait for before creating the archive. | <pre>list(object({<br>    filename = string<br>    id       = string<br>  }))</pre> | `[]` | no |

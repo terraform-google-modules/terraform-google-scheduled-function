@@ -57,8 +57,7 @@ resource "random_id" "suffix" {
 }
 
 module "main" {
-  source  = "terraform-google-modules/event-function/google"
-  version = "~> 1.6"
+  source  = "git::https://github.com/terraform-google-modules/terraform-google-scheduled-function?ref=59b6163400662ac91fc656c93567613cb1039b68"
 
   entry_point = var.function_entry_point
   event_trigger = {
@@ -79,6 +78,7 @@ module "main" {
   bucket_name                        = var.bucket_name == "" ? "${var.project_id}-scheduled-function-${random_id.suffix.hex}" : var.bucket_name
   description                        = var.function_description
   environment_variables              = var.function_environment_variables
+  secret_environment_variables       = var.function_secret_environment_variables
   event_trigger_failure_policy_retry = var.function_event_trigger_failure_policy_retry
   labels                             = var.function_labels
   service_account_email              = var.function_service_account_email
