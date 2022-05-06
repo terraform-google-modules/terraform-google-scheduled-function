@@ -45,6 +45,7 @@ module "pubsub_topic" {
   project_id          = var.project_id
   create_topic        = var.scheduler_job == null ? true : false
   grant_token_creator = var.grant_token_creator
+  topic_labels        = var.topic_labels
 }
 
 /******************************************
