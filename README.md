@@ -63,8 +63,8 @@ Then perform the following commands on the root folder:
 | region | The region in which resources will be applied. | `string` | n/a | yes |
 | scheduler\_job | An existing Cloud Scheduler job instance | `object({ name = string })` | `null` | no |
 | time\_zone | The timezone to use in scheduler | `string` | `"Etc/UTC"` | no |
+| topic\_labels | A set of key/value label pairs to assign to the pubsub topic. | `map(string)` | `{}` | no |
 | topic\_name | Name of pubsub topic connecting the scheduled job and the function | `string` | `"test-topic"` | no |
-| topic\_labels | A set of key/value label pairs to assign to the pubsub topic | `map(string)` | `{}` | no |
 | vpc\_connector | The VPC Network Connector that this cloud function can connect to. It should be set up as fully-qualified URI. The format of this field is projects//locations//connectors/\*. | `string` | `null` | no |
 | vpc\_connector\_egress\_settings | The egress settings for the connector, controlling what traffic is diverted through it. Allowed values are ALL\_TRAFFIC and PRIVATE\_RANGES\_ONLY. If unset, this field preserves the previously set value. | `string` | `null` | no |
 
