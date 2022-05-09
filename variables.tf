@@ -156,6 +156,12 @@ variable "topic_name" {
   default     = "test-topic"
 }
 
+variable "topic_labels" {
+  type        = map(string)
+  description = "A set of key/value label pairs to assign to the pubsub topic."
+  default     = {}
+}
+
 variable "message_data" {
   type        = string
   description = "The data to send in the topic message."
