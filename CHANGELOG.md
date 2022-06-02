@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [2.4.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v2.3.0...v2.4.0) (2022-05-09)
+
+
+### Features
+
+* add topic_labels ([#73](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/73)) ([e00736a](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/e00736a2ac2aa8a5794d86ce032142db037a7a2e))
+
 ## [2.3.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v2.2.0...v2.3.0) (2022-02-15)
 
 
