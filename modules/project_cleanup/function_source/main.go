@@ -31,6 +31,7 @@ import (
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/cloudresourcemanager/v1"
 	cloudresourcemanager2 "google.golang.org/api/cloudresourcemanager/v2"
+	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/googleapi"
 	"google.golang.org/api/servicemanagement/v1"
 )
@@ -203,10 +204,20 @@ func getFolderServiceOrTerminateExecution(client *http.Client) *cloudresourceman
 	logger.Println("Try to get Folders Service")
 	cloudResourceManagerService, err := cloudresourcemanager2.New(client)
 	if err != nil {
-		logger.Fatalf("Fail to get Folders Servicewith error [%s], terminate execution", err.Error())
+		logger.Fatalf("Fail to get Folders Service with error [%s], terminate execution", err.Error())
 	}
 	logger.Println("Got Folders Service")
 	return cloudResourceManagerService.Folders
+}
+
+func getFirewallPoliciesServiceOrTerminateExecution(client *http.Client) *compute.FirewallPoliciesService {
+	logger.Println("Try to get Firewall Policies Service")
+	computeService, err := compute.New(client)
+	if err != nil {
+		logger.Fatalf("Fail to get Firewall Policies Service with error [%s], terminate execution", err.Error())
+	}
+	logger.Println("Got Firewall Policies Service")
+	return computeService.FirewallPolicies
 }
 
 func initializeGoogleClient(ctx context.Context) *http.Client {
@@ -223,6 +234,7 @@ func invoke(ctx context.Context) {
 	client := initializeGoogleClient(ctx)
 	cloudResourceManagerService := getResourceManagerServiceOrTerminateExecution(client)
 	folderService := getFolderServiceOrTerminateExecution(client)
+	firewallPoliciesService := getFirewallPoliciesServiceOrTerminateExecution(client)
 	endpointService := getServiceManagementServiceOrTerminateExecution(client)
 
 	removeLien := func(name string) {
@@ -232,6 +244,29 @@ func invoke(ctx context.Context) {
 			logger.Printf("Fail to remove lien [%s], error [%s]", name, err.Error())
 		} else {
 			logger.Printf("Removed lien [%s]", name)
+		}
+	}
+
+	removeFirewallPolicies := func(folder string) {
+		logger.Printf("Try to remove Firewall Policies from folder [%s]", folder)
+		firewallPolicyList, err := firewallPoliciesService.List().ParentId(folder).Context(ctx).Do()
+		if err != nil {
+			logger.Printf("Fail to list Firewall Policies from folder [%s], error [%s]", folder, err.Error())
+			return
+		}
+		for _, policy := range firewallPolicyList.Items {
+			for _, association := range policy.Associations {
+				_, err := firewallPoliciesService.RemoveAssociation(policy.Name).Name(association.Name).Context(ctx).Do()
+				if err != nil {
+					logger.Printf("Fail to Remove Association for Firewall Policies from folder [%s], error [%s]", folder, err.Error())
+					return
+				}
+			}
+			_, err := firewallPoliciesService.Delete(policy.Name).Context(ctx).Do()
+			if err != nil {
+				logger.Printf("Fail to delete Firewall Policy [%s] from folder [%s], error [%s]", policy.Name, folder, err.Error())
+				return
+			}
 		}
 	}
 
@@ -312,6 +347,7 @@ func invoke(ctx context.Context) {
 
 	removeFolder := func(folder *cloudresourcemanager2.Folder) {
 		folderId := folder.Name
+		removeFirewallPolicies(folderId)
 		logger.Printf("Try to delete folder with id [%s]", folderId)
 		_, err := folderService.Delete(folderId).Do()
 		if err != nil {
