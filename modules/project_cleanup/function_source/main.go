@@ -259,13 +259,11 @@ func invoke(ctx context.Context) {
 				_, err := firewallPoliciesService.RemoveAssociation(policy.Name).Name(association.Name).Context(ctx).Do()
 				if err != nil {
 					logger.Printf("Fail to Remove Association for Firewall Policies from folder [%s], error [%s]", folder, err.Error())
-					return
 				}
 			}
 			_, err := firewallPoliciesService.Delete(policy.Name).Context(ctx).Do()
 			if err != nil {
 				logger.Printf("Fail to delete Firewall Policy [%s] from folder [%s], error [%s]", policy.Name, folder, err.Error())
-				return
 			}
 		}
 	}
