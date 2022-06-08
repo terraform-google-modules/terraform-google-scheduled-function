@@ -15,6 +15,7 @@ The following services must be enabled on the project housing the cleanup functi
 - Cloud Functions (`cloudfunctions.googleapis.com`)
 - Cloud Scheduler (`cloudscheduler.googleapis.com`)
 - Cloud Resource Manager (`cloudresourcemanager.googleapis.com`)
+- Compute Engine API (`compute.googleapis.com`)
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs

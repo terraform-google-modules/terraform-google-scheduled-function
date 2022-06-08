@@ -29,7 +29,10 @@ resource "google_organization_iam_member" "main" {
     "roles/resourcemanager.projectDeleter",
     "roles/resourcemanager.folderEditor",
     "roles/resourcemanager.lienModifier",
-    "roles/owner"
+    "roles/serviceusage.serviceUsageAdmin",
+    "roles/compute.orgSecurityResourceAdmin",
+    "roles/compute.orgSecurityPolicyAdmin",
+    "roles/viewer"
   ])
 
   member = "serviceAccount:${google_service_account.project_cleaner_function.email}"
