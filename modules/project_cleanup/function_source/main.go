@@ -343,6 +343,15 @@ func invoke(ctx context.Context) {
 		}
 	}
 
+	folderAgeFilter := func(folder *cloudresourcemanager2.Folder) bool {
+		folderCreatedAt, err := time.Parse(time.RFC3339, folder.CreateTime)
+		if err != nil {
+			logger.Printf("Fail to parse CreateTime for folder [%s], skip it. Error [%s]", folder.Name, err.Error())
+			return false
+		}
+		return folderCreatedAt.Before(resourceCreationCutoff)
+	}
+
 	removeFolder := func(folder *cloudresourcemanager2.Folder) {
 		folderId := folder.Name
 		removeFirewallPolicies(folderId)
@@ -363,7 +372,7 @@ func invoke(ctx context.Context) {
 				recursion(folder, recursion)
 			}
 			removeProjectsInFolder(folderId)
-			if folder.Parent != fmt.Sprintf("folders/%s", rootFolderId) && folder.Name != fmt.Sprintf("folders/%s", rootFolderId) {
+			if folder.Parent != fmt.Sprintf("folders/%s", rootFolderId) && folder.Name != fmt.Sprintf("folders/%s", rootFolderId) && folderAgeFilter(folder) {
 				removeFolder(folder)
 			}
 			return nil
