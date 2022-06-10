@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [2.5.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v2.4.0...v2.5.0) (2022-06-09)
+
+
+### Features
+
+* removal of folder should use the same time constraint used for projects ([#79](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/79)) ([f4ab92b](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/f4ab92b878ef75b961ab971e5ef31f82d76ee768))
+* support deletion of firewall policies attached to folders in clean up module ([#76](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/76)) ([87037dd](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/87037ddbb93534ed173a9cc902eb674f7056333e))
+
 ## [2.4.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v2.3.0...v2.4.0) (2022-05-09)
 
 
