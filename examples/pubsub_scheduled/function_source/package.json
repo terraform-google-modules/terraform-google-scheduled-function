@@ -2,6 +2,6 @@
   "name": "label-resource",
   "version": "0.0.1",
   "dependencies": {
-    "googleapis": "^59.0"
+    "googleapis": "^109.0.0"
   }
 }
