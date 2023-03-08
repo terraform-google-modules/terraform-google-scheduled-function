@@ -112,7 +112,7 @@ variable "function_service_account_email" {
 
 variable "function_max_instances" {
   type        = number
-  default     = 0
+  default     = null
   description = "The maximum number of parallel executions of the function."
 }
 

@@ -16,7 +16,7 @@
 
 module "project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 10.2"
+  version = "~> 14"
 
   name                    = "ci-scheduled-function"
   random_project_id       = "true"
