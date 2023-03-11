@@ -15,7 +15,7 @@
  */
 
 locals {
-  target_included_labels = var.target_tag_name != "" && var.target_tag_value != "" ? merge({ "${var.target_tag_name}" = "${var.target_tag_value}" }, var.target_included_labels) : var.target_included_labels
+  target_included_labels = var.target_tag_name != "" && var.target_tag_value != "" ? merge({ var.target_tag_name = var.target_tag_value }, var.target_included_labels) : var.target_included_labels
 }
 
 resource "google_service_account" "project_cleaner_function" {
