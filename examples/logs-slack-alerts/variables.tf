@@ -19,13 +19,6 @@ variable "project_id" {
   type        = string
 }
 
-variable "job_schedule" {
-  description = "The cron schedule for triggering the cloud function"
-  type        = string
-  default     = "55 * * * *"
-
-}
-
 variable "slack_webhook" {
   description = "Slack webhook to send alerts"
   type        = string
