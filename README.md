@@ -47,6 +47,7 @@ Then perform the following commands on the root folder:
 | function\_event\_trigger\_failure\_policy\_retry | A toggle to determine if the function should be retried on failure. | `bool` | `false` | no |
 | function\_labels | A set of key/value label pairs to assign to the function. | `map(string)` | `{}` | no |
 | function\_max\_instances | The maximum number of parallel executions of the function. | `number` | `null` | no |
+| function\_min\_instances | The minimum number of parallel executions of the function. | `number` | `null` | no |
 | function\_name | The name to apply to the function | `string` | n/a | yes |
 | function\_runtime | The runtime in which the function will be executed. | `string` | `"nodejs10"` | no |
 | function\_service\_account\_email | The service account to run the function as. | `string` | `""` | no |
