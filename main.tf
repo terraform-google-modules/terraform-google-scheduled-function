@@ -85,6 +85,7 @@ module "main" {
   service_account_email              = var.function_service_account_email
   timeout_s                          = var.function_timeout_s
   max_instances                      = var.function_max_instances
+  min_instances                      = var.function_min_instances
   vpc_connector                      = var.vpc_connector
   vpc_connector_egress_settings      = var.vpc_connector_egress_settings
 }

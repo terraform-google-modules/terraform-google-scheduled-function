@@ -116,6 +116,12 @@ variable "function_max_instances" {
   description = "The maximum number of parallel executions of the function."
 }
 
+variable "function_min_instances" {
+  type        = number
+  default     = null
+  description = "The minimum number of parallel executions of the function."
+}
+
 variable "vpc_connector" {
   type        = string
   default     = null
