@@ -59,7 +59,7 @@ resource "random_id" "suffix" {
 
 module "main" {
   source  = "terraform-google-modules/event-function/google"
-  version = "~> 2.5"
+  version = "~> 3.0"
 
   entry_point = var.function_entry_point
   event_trigger = {
@@ -89,4 +89,7 @@ module "main" {
   ingress_settings                   = var.ingress_settings
   vpc_connector                      = var.vpc_connector
   vpc_connector_egress_settings      = var.vpc_connector_egress_settings
+  docker_registry                    = var.docker_registry
+  docker_repository                  = var.docker_repository
+  kms_key_name                       = var.kms_key_name
 }
