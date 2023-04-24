@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [2.5.1](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v2.5.0...v2.5.1) (2023-04-06)
+
+
+### Bug Fixes
+
+* **deps:** update module golang.org/x/net to v0.7.0 [security] ([#98](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/98)) ([8fd376d](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/8fd376d477444e36951d407c62d60c2d98f1c337))
+* fixes for tflint ([#110](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/110)) ([098214d](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/098214d3e3b5a6220f46589f9467e607c8a04b67))
+* update function_max_instances to null default ([#106](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/106)) ([8f32217](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/8f32217ba0570ef2b1476b1e1f6ae1728c2cae12))
+
 ## [2.5.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v2.4.0...v2.5.0) (2022-06-09)
 
 
