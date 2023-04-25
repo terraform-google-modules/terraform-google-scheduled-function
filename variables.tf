@@ -116,6 +116,25 @@ variable "function_max_instances" {
   description = "The maximum number of parallel executions of the function."
 }
 
+variable "function_docker_registry" {
+  type        = string
+  default     = "CONTAINER_REGISTRY"
+  description = "Docker Registry to use for storing the function's Docker images. Allowed values are CONTAINER_REGISTRY (default) and ARTIFACT_REGISTRY."
+}
+
+variable "function_docker_repository" {
+  type        = string
+  default     = ""
+  description = "User managed repository created in Artifact Registry optionally with a customer managed encryption key. If specified, deployments will use Artifact Registry."
+}
+
+
+variable "function_kms_key_name" {
+  type        = string
+  default     = ""
+  description = "Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function resources."
+}
+
 variable "vpc_connector" {
   type        = string
   default     = null
@@ -184,23 +203,4 @@ variable "grant_token_creator" {
   type        = bool
   description = "Specify true if you want to add token creator role to the default Pub/Sub SA"
   default     = false
-}
-
-variable "docker_registry" {
-  type        = string
-  default     = "CONTAINER_REGISTRY"
-  description = "Docker Registry to use for storing the function's Docker images. Allowed values are CONTAINER_REGISTRY (default) and ARTIFACT_REGISTRY."
-}
-
-variable "docker_repository" {
-  type        = string
-  default     = ""
-  description = "User managed repository created in Artifact Registry optionally with a customer managed encryption key. If specified, deployments will use Artifact Registry."
-}
-
-
-variable "kms_key_name" {
-  type        = string
-  default     = ""
-  description = "Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function resources."
 }
