@@ -87,9 +87,9 @@ module "main" {
   timeout_s                          = var.function_timeout_s
   max_instances                      = var.function_max_instances
   ingress_settings                   = var.ingress_settings
+  docker_registry                    = var.function_docker_registry
+  docker_repository                  = var.function_docker_repository
+  kms_key_name                       = var.function_kms_key_name
   vpc_connector                      = var.vpc_connector
   vpc_connector_egress_settings      = var.vpc_connector_egress_settings
-  docker_registry                    = var.docker_registry
-  docker_repository                  = var.docker_repository
-  kms_key_name                       = var.kms_key_name
 }
