@@ -130,19 +130,19 @@ variable "ingress_settings" {
 
 variable "function_docker_registry" {
   type        = string
-  default     = "CONTAINER_REGISTRY"
+  default     = null
   description = "Docker Registry to use for storing the function's Docker images. Allowed values are CONTAINER_REGISTRY (default) and ARTIFACT_REGISTRY."
 }
 
 variable "function_docker_repository" {
   type        = string
-  default     = ""
+  default     = null
   description = "User managed repository created in Artifact Registry optionally with a customer managed encryption key. If specified, deployments will use Artifact Registry."
 }
 
 variable "function_kms_key_name" {
   type        = string
-  default     = ""
+  default     = null
   description = "Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function resources."
 }
 
