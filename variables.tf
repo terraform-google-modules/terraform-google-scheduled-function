@@ -60,6 +60,12 @@ variable "function_environment_variables" {
   description = "A set of key/value environment variable pairs to assign to the function."
 }
 
+variable "function_secret_environment_variables" {
+  type        = list(map(string))
+  default     = []
+  description = "A list of maps which contains key, project_id, secret_name (not the full secret id) and version to assign to the function as a set of secret environment variables."
+}
+
 variable "function_event_trigger_failure_policy_retry" {
   type        = bool
   default     = false
