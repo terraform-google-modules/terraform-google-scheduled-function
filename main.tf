@@ -80,6 +80,7 @@ module "main" {
   bucket_name                        = var.bucket_name == "" ? "${var.project_id}-scheduled-function-${random_id.suffix.hex}" : var.bucket_name
   description                        = var.function_description
   environment_variables              = var.function_environment_variables
+  secret_environment_variables       = var.function_secret_environment_variables
   event_trigger_failure_policy_retry = var.function_event_trigger_failure_policy_retry
   labels                             = var.function_labels
   service_account_email              = var.function_service_account_email
