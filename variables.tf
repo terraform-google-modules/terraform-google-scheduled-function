@@ -122,6 +122,12 @@ variable "function_max_instances" {
   description = "The maximum number of parallel executions of the function."
 }
 
+variable "ingress_settings" {
+  type        = string
+  default     = null
+  description = "The ingress settings for the function. Allowed values are ALLOW_ALL, ALLOW_INTERNAL_AND_GCLB and ALLOW_INTERNAL_ONLY. Changes to this field will recreate the cloud function."
+}
+
 variable "vpc_connector" {
   type        = string
   default     = null

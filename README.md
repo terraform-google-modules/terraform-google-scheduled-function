@@ -56,6 +56,7 @@ Then perform the following commands on the root folder:
 | function\_source\_directory | The contents of this directory will be archived and used as the function source. | `string` | n/a | yes |
 | function\_timeout\_s | The amount of time in seconds allotted for the execution of the function. | `number` | `60` | no |
 | grant\_token\_creator | Specify true if you want to add token creator role to the default Pub/Sub SA | `bool` | `false` | no |
+| ingress\_settings | The ingress settings for the function. Allowed values are ALLOW\_ALL, ALLOW\_INTERNAL\_AND\_GCLB and ALLOW\_INTERNAL\_ONLY. Changes to this field will recreate the cloud function. | `string` | `null` | no |
 | job\_description | Addition text to describe the job | `string` | `""` | no |
 | job\_name | The name of the scheduled job to run | `string` | `null` | no |
 | job\_schedule | The job frequency, in cron syntax | `string` | `"*/2 * * * *"` | no |
