@@ -89,6 +89,7 @@ module "main" {
   docker_registry                    = var.function_docker_registry
   docker_repository                  = var.function_docker_repository
   kms_key_name                       = var.function_kms_key_name
+  ingress_settings                   = var.ingress_settings
   vpc_connector                      = var.vpc_connector
   vpc_connector_egress_settings      = var.vpc_connector_egress_settings
 }

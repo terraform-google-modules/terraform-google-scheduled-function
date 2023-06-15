@@ -134,11 +134,15 @@ variable "function_docker_repository" {
   description = "User managed repository created in Artifact Registry optionally with a customer managed encryption key. If specified, deployments will use Artifact Registry."
 }
 
-
 variable "function_kms_key_name" {
   type        = string
   default     = null
   description = "Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function resources."
+
+variable "ingress_settings" {
+  type        = string
+  default     = null
+  description = "The ingress settings for the function. Allowed values are ALLOW_ALL, ALLOW_INTERNAL_AND_GCLB and ALLOW_INTERNAL_ONLY. Changes to this field will recreate the cloud function."
 }
 
 variable "vpc_connector" {
