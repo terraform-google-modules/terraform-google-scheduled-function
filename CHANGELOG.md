@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [2.6.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v2.5.1...v2.6.0) (2023-06-15)
+
+
+### Features
+
+* include Ingress Settings variable ([#129](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/129)) ([a68339d](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/a68339d325ff5dd16ca7f97fcdeee100610a8191))
+* support adding secrets from secret manager ([#123](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/123)) ([5b8f226](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/5b8f2267016b613234b20a7174ce54242fe5e23f))
+
+
+### Bug Fixes
+
+* **deps:** update go modules ([#121](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/121)) ([1acd373](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/1acd37393c860889945ded66deb25d3a387986b0))
+
 ## [2.5.1](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v2.5.0...v2.5.1) (2023-04-06)
 
 
