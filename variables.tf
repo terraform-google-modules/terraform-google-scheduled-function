@@ -174,6 +174,12 @@ variable "topic_labels" {
   default     = {}
 }
 
+variable "topic_kms_key_name" {
+  type        = string
+  description = "The resource name of the Cloud KMS CryptoKey to be used to protect access to messages published on this topic."
+  default     = null
+}
+
 variable "message_data" {
   type        = string
   description = "The data to send in the topic message."
