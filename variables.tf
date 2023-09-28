@@ -152,6 +152,12 @@ variable "bucket_force_destroy" {
   description = "When deleting the GCS bucket containing the cloud function, delete all objects in the bucket first."
 }
 
+variable "create_bucket" {
+  type        = bool
+  default     = true
+  description = "Create bucket instead of using existing one"
+}
+
 variable "function_name" {
   type        = string
   description = "The name to apply to the function"
