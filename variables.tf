@@ -155,7 +155,7 @@ variable "bucket_force_destroy" {
 variable "create_bucket" {
   type        = bool
   default     = true
-  description = "Create bucket instead of using existing one"
+  description = "Create bucket (default). Set to `false` to use existing one"
 }
 
 variable "function_name" {
