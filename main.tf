@@ -40,7 +40,7 @@ resource "google_cloud_scheduler_job" "job" {
 
 module "pubsub_topic" {
   source              = "terraform-google-modules/pubsub/google"
-  version             = "~> 1.0"
+  version             = "~> 5.0"
   topic               = var.topic_name
   project_id          = var.project_id
   create_topic        = var.scheduler_job == null ? true : false
@@ -60,7 +60,7 @@ resource "random_id" "suffix" {
 
 module "main" {
   source  = "terraform-google-modules/event-function/google"
-  version = "~> 2.5"
+  version = "~> 3.0"
 
   entry_point = var.function_entry_point
   event_trigger = {
