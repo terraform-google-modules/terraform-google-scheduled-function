@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [3.0.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v2.6.0...v3.0.0) (2023-11-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* updates pubsub module to v6 ([#159](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/159))
+* **deps:** Update GO modules ([#126](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/126))
+* **deps:** update go to 1.20 ([#132](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/132))
+* **deps:** Update TF modules (major) ([#142](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/142))
+
+### Features
+
+* add topic kms key name variable ([#145](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/145)) ([667c4b8](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/667c4b8e45f34b85a42fb3b3f79683f782117183))
+
+
+### Bug Fixes
+
+* Add required api to README ([#139](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/139)) ([d046d2b](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/d046d2bcc224aa0ed26fd14b954eeb10c23ddcc8))
+* **deps:** Update GO modules ([#126](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/126)) ([c544227](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/c544227ad14a7f2004b7689d310e8fb24ee25092))
+* **deps:** update go to 1.20 ([#132](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/132)) ([1f95f6b](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/1f95f6bcb19ad99c92f43134923b488ef36dd878))
+* **deps:** Update TF modules (major) ([#142](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/142)) ([f1cf69e](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/f1cf69eeb1cf21fd576b96beb9a5c05a3e736834))
+* updates pubsub module to v6 ([#159](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/159)) ([0b3ea07](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/0b3ea075014b43dd4c3470439559fc5575599db2))
+
 ## [2.6.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v2.5.1...v2.6.0) (2023-06-15)
 
 
