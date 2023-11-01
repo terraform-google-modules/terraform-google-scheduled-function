@@ -46,6 +46,7 @@ module "pubsub_topic" {
   create_topic        = var.scheduler_job == null ? true : false
   grant_token_creator = var.grant_token_creator
   topic_labels        = var.topic_labels
+  topic_kms_key_name  = var.topic_kms_key_name
 }
 
 /******************************************
