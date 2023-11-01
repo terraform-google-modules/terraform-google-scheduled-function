@@ -123,6 +123,7 @@ resources of this module:
 - Cloud Scheduler API: `cloudscheduler.googleapis.com`
 - Cloud PubSub API: `pubsub.googleapis.com`
 - Cloud Functions API: `cloudfunctions.googleapis.com`
+- Cloud Build API: `cloudbuild.googleapis.com`
 - App Engine Admin API: `appengine.googleapis.com`
 
 The [Project Factory module][project-factory-module] can be used to
