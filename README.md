@@ -68,7 +68,7 @@ Then perform the following commands on the root folder:
 | topic\_kms\_key\_name | The resource name of the Cloud KMS CryptoKey to be used to protect access to messages published on this topic. | `string` | `null` | no |
 | topic\_labels | A set of key/value label pairs to assign to the pubsub topic. | `map(string)` | `{}` | no |
 | topic\_name | Name of pubsub topic connecting the scheduled job and the function | `string` | `"test-topic"` | no |
-| vpc\_connector | The VPC Network Connector that this cloud function can connect to. It should be set up as fully-qualified URI. The format of this field is projects//locations//connectors/\*. | `string` | `null` | no |
+| vpc\_connector | The VPC Network Connector that this cloud function can connect to. It should be set up as fully-qualified URI. The format of this field is projects//locations//connectors/*. | `string` | `null` | no |
 | vpc\_connector\_egress\_settings | The egress settings for the connector, controlling what traffic is diverted through it. Allowed values are ALL\_TRAFFIC and PRIVATE\_RANGES\_ONLY. If unset, this field preserves the previously set value. | `string` | `null` | no |
 
 ## Outputs
