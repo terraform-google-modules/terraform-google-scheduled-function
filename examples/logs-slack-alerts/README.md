@@ -27,6 +27,6 @@ If not using the default App Engine default service account (PROJECT_ID@appspot.
 
 ## Outputs
 
-No output.
+No outputs.
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
