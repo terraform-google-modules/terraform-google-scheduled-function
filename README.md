@@ -65,6 +65,7 @@ Then perform the following commands on the root folder:
 | region | The region in which resources will be applied. | `string` | n/a | yes |
 | scheduler\_job | An existing Cloud Scheduler job instance | `object({ name = string })` | `null` | no |
 | time\_zone | The timezone to use in scheduler | `string` | `"Etc/UTC"` | no |
+| topic\_kms\_key\_name | The resource name of the Cloud KMS CryptoKey to be used to protect access to messages published on this topic. | `string` | `null` | no |
 | topic\_labels | A set of key/value label pairs to assign to the pubsub topic. | `map(string)` | `{}` | no |
 | topic\_name | Name of pubsub topic connecting the scheduled job and the function | `string` | `"test-topic"` | no |
 | vpc\_connector | The VPC Network Connector that this cloud function can connect to. It should be set up as fully-qualified URI. The format of this field is projects//locations//connectors/*. | `string` | `null` | no |
