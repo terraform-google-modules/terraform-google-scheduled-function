@@ -40,12 +40,13 @@ resource "google_cloud_scheduler_job" "job" {
 
 module "pubsub_topic" {
   source              = "terraform-google-modules/pubsub/google"
-  version             = "~> 1.0"
+  version             = "~> 6.0"
   topic               = var.topic_name
   project_id          = var.project_id
   create_topic        = var.scheduler_job == null ? true : false
   grant_token_creator = var.grant_token_creator
   topic_labels        = var.topic_labels
+  topic_kms_key_name  = var.topic_kms_key_name
 }
 
 /******************************************
