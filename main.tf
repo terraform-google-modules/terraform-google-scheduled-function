@@ -79,6 +79,7 @@ module "main" {
   bucket_force_destroy               = var.bucket_force_destroy
   bucket_labels                      = var.function_source_archive_bucket_labels
   bucket_name                        = var.bucket_name == "" ? "${var.project_id}-scheduled-function-${random_id.suffix.hex}" : var.bucket_name
+  create_bucket                      = var.create_bucket
   description                        = var.function_description
   environment_variables              = var.function_environment_variables
   secret_environment_variables       = var.function_secret_environment_variables
