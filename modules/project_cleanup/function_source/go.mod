@@ -1,6 +1,6 @@
 module github.com/terraform-google-modules/terraform-google-scheduled-function/modules/project_cleanup
 
-go 1.20
+go 1.20.11
 
 require (
 	golang.org/x/net v0.17.0
