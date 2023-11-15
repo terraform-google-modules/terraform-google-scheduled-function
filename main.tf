@@ -40,12 +40,13 @@ resource "google_cloud_scheduler_job" "job" {
 
 module "pubsub_topic" {
   source              = "terraform-google-modules/pubsub/google"
-  version             = "~> 1.0"
+  version             = "~> 6.0"
   topic               = var.topic_name
   project_id          = var.project_id
   create_topic        = var.scheduler_job == null ? true : false
   grant_token_creator = var.grant_token_creator
   topic_labels        = var.topic_labels
+  topic_kms_key_name  = var.topic_kms_key_name
 }
 
 /******************************************
@@ -59,7 +60,7 @@ resource "random_id" "suffix" {
 
 module "main" {
   source  = "terraform-google-modules/event-function/google"
-  version = "~> 2.5"
+  version = "~> 3.0"
 
   entry_point = var.function_entry_point
   event_trigger = {
@@ -88,6 +89,9 @@ module "main" {
   timeout_s                          = var.function_timeout_s
   max_instances                      = var.function_max_instances
   ingress_settings                   = var.ingress_settings
+  docker_registry                    = var.function_docker_registry
+  docker_repository                  = var.function_docker_repository
+  kms_key_name                       = var.function_kms_key_name
   vpc_connector                      = var.vpc_connector
   vpc_connector_egress_settings      = var.vpc_connector_egress_settings
 }

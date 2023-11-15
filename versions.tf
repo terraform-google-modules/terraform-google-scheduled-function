@@ -19,7 +19,7 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = ">= 3.53, < 6"
+      version = ">= 4.23, < 6"
     }
     random = {
       source  = "hashicorp/random"
@@ -28,7 +28,7 @@ terraform {
   }
 
   provider_meta "google" {
-    module_name = "blueprints/terraform/terraform-google-scheduled-function/v2.6.0"
+    module_name = "blueprints/terraform/terraform-google-scheduled-function/v3.0.0"
   }
 
 }

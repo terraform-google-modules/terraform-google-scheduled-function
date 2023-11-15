@@ -43,9 +43,12 @@ Then perform the following commands on the root folder:
 | create\_bucket | Create bucket (default). Set to `false` to use existing one | `bool` | `true` | no |
 | function\_available\_memory\_mb | The amount of memory in megabytes allotted for the function to use. | `number` | `256` | no |
 | function\_description | The description of the function. | `string` | `"Processes log export events provided through a Pub/Sub topic subscription."` | no |
+| function\_docker\_registry | Docker Registry to use for storing the function's Docker images. Allowed values are CONTAINER\_REGISTRY (default) and ARTIFACT\_REGISTRY. | `string` | `null` | no |
+| function\_docker\_repository | User managed repository created in Artifact Registry optionally with a customer managed encryption key. If specified, deployments will use Artifact Registry. | `string` | `null` | no |
 | function\_entry\_point | The name of a method in the function source which will be invoked when the function is executed. | `string` | n/a | yes |
 | function\_environment\_variables | A set of key/value environment variable pairs to assign to the function. | `map(string)` | `{}` | no |
 | function\_event\_trigger\_failure\_policy\_retry | A toggle to determine if the function should be retried on failure. | `bool` | `false` | no |
+| function\_kms\_key\_name | Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function resources. | `string` | `null` | no |
 | function\_labels | A set of key/value label pairs to assign to the function. | `map(string)` | `{}` | no |
 | function\_max\_instances | The maximum number of parallel executions of the function. | `number` | `null` | no |
 | function\_name | The name to apply to the function | `string` | n/a | yes |
@@ -66,6 +69,7 @@ Then perform the following commands on the root folder:
 | region | The region in which resources will be applied. | `string` | n/a | yes |
 | scheduler\_job | An existing Cloud Scheduler job instance | `object({ name = string })` | `null` | no |
 | time\_zone | The timezone to use in scheduler | `string` | `"Etc/UTC"` | no |
+| topic\_kms\_key\_name | The resource name of the Cloud KMS CryptoKey to be used to protect access to messages published on this topic. | `string` | `null` | no |
 | topic\_labels | A set of key/value label pairs to assign to the pubsub topic. | `map(string)` | `{}` | no |
 | topic\_name | Name of pubsub topic connecting the scheduled job and the function | `string` | `"test-topic"` | no |
 | vpc\_connector | The VPC Network Connector that this cloud function can connect to. It should be set up as fully-qualified URI. The format of this field is projects//locations//connectors/*. | `string` | `null` | no |
@@ -124,6 +128,7 @@ resources of this module:
 - Cloud Scheduler API: `cloudscheduler.googleapis.com`
 - Cloud PubSub API: `pubsub.googleapis.com`
 - Cloud Functions API: `cloudfunctions.googleapis.com`
+- Cloud Build API: `cloudbuild.googleapis.com`
 - App Engine Admin API: `appengine.googleapis.com`
 
 The [Project Factory module][project-factory-module] can be used to
