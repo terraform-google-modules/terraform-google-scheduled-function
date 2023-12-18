@@ -15,7 +15,9 @@
  */
 
 module "log_slack_alerts_example" {
-  source                    = "../../"
+  source  = "terraform-google-modules/scheduled-function/google"
+  version = "~> 3.0"
+
   project_id                = var.project_id
   job_name                  = "logs_query"
   job_description           = "Scheduled time to run audit query to check for errors"
