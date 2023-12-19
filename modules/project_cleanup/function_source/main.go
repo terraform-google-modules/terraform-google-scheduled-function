@@ -265,6 +265,16 @@ func getTagKeysServiceOrTerminateExecution(client *http.Client) *cloudresourcema
 	return cloudResourceManagerService.TagKeys
 }
 
+func getTagValuesServiceOrTerminateExecution(client *http.Client) *cloudresourcemanager3.TagValuesService {
+	logger.Println("Try to get TagValues Service")
+	cloudResourceManagerService, err := cloudresourcemanager3.New(client)
+	if err != nil {
+		logger.Fatalf("Fail to get TagValues Service with error [%s], terminate execution", err.Error())
+	}
+	logger.Println("Got TagValues Service")
+	return cloudResourceManagerService.TagValues
+}
+
 func getFirewallPoliciesServiceOrTerminateExecution(client *http.Client) *compute.FirewallPoliciesService {
 	logger.Println("Try to get Firewall Policies Service")
 	computeService, err := compute.New(client)
@@ -290,6 +300,7 @@ func invoke(ctx context.Context) {
 	cloudResourceManagerService := getResourceManagerServiceOrTerminateExecution(client)
 	folderService := getFolderServiceOrTerminateExecution(client)
 	tagKeyService := getTagKeysServiceOrTerminateExecution(client)
+	tagValuesService := getTagValuesServiceOrTerminateExecution(client)
 	firewallPoliciesService := getFirewallPoliciesServiceOrTerminateExecution(client)
 	endpointService := getServiceManagementServiceOrTerminateExecution(client)
 
@@ -312,16 +323,32 @@ func invoke(ctx context.Context) {
 		return tagKeyCreatedAt.Before(resourceCreationCutoff)
 	}
 
+	removeTagValues := func(tagKey string) {
+		logger.Printf("Try to remove Tag Values from TagKey [%s]", tagKey)
+		tagValuesList, err := tagValuesService.List().Parent(tagKey).Context(ctx).Do()
+		if err != nil {
+			logger.Printf("Fail to list Tag values from TagKey [%s], error [%s]", tagKey, err.Error())
+			return
+		}
+		for _, tagValue := range tagValuesList.TagValues {
+			_, err := tagValuesService.Delete(tagValue.Name).Context(ctx).Do()
+			if err != nil {
+				logger.Printf("Fail to delete tagValue from TagKey [%s], error [%s]", tagKey, err.Error())
+			}
+		}
+	}
+
 	removeTagKeys := func(organization string) {
 		logger.Printf("Try to remove Tag Keys from organization [%s]", organization)
 		parent := fmt.Sprintf("organizations/%s", organization)
 		tagKeysList, err := tagKeyService.List().Parent(parent).Context(ctx).Do()
 		if err != nil {
-			logger.Printf("Fail to list FTag Keys from organization [%s], error [%s]", organization, err.Error())
+			logger.Printf("Fail to list Tag Keys from organization [%s], error [%s]", organization, err.Error())
 			return
 		}
 		for _, tagKey := range tagKeysList.TagKeys {
 			if !checkIfTagKeyShortNameExcluded(tagKey.ShortName, excludedTagKeysList) && tagKeyAgeFilter(tagKey) {
+				removeTagValues(tagKey.Name)
 				_, err := tagKeyService.Delete(tagKey.Name).Context(ctx).Do()
 				if err != nil {
 					logger.Printf("Fail to delete tagKey from organization [%s], error [%s]", organization, err.Error())
