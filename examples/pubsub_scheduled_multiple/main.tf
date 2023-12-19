@@ -15,7 +15,9 @@
  */
 
 module "pubsub_scheduled_1" {
-  source                    = "../../"
+  source  = "terraform-google-modules/scheduled-function/google"
+  version = "~> 3.0"
+
   project_id                = var.project_id
   job_name                  = "pubsub-example"
   job_schedule              = "*/5 * * * *"
@@ -27,7 +29,9 @@ module "pubsub_scheduled_1" {
 }
 
 module "pubsub_scheduled_2" {
-  source                    = "../../"
+  source  = "terraform-google-modules/scheduled-function/google"
+  version = "~> 3.0"
+
   project_id                = var.project_id
   function_entry_point      = "doSomething2"
   function_source_directory = "${path.module}/function_source_2"
