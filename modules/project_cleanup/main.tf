@@ -32,6 +32,7 @@ resource "google_organization_iam_member" "main" {
     "roles/serviceusage.serviceUsageAdmin",
     "roles/compute.orgSecurityResourceAdmin",
     "roles/compute.orgSecurityPolicyAdmin",
+    "roles/resourcemanager.tagAdmin",
     "roles/viewer"
   ])
 
