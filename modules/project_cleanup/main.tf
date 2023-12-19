@@ -53,7 +53,7 @@ module "scheduled_project_cleaner" {
   topic_name                     = var.topic_name
   function_available_memory_mb   = 128
   function_description           = "Clean up GCP projects older than ${var.max_project_age_in_hours} hours matching particular tags"
-  function_runtime               = "go113"
+  function_runtime               = "go121"
   function_service_account_email = google_service_account.project_cleaner_function.email
   function_timeout_s             = var.function_timeout_s
 
