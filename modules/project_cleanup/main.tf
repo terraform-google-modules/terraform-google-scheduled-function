@@ -57,9 +57,11 @@ module "scheduled_project_cleaner" {
   function_timeout_s             = var.function_timeout_s
 
   function_environment_variables = {
-    TARGET_EXCLUDED_LABELS = jsonencode(var.target_excluded_labels)
-    TARGET_FOLDER_ID       = var.target_folder_id
-    TARGET_INCLUDED_LABELS = jsonencode(local.target_included_labels)
-    MAX_PROJECT_AGE_HOURS  = var.max_project_age_in_hours
+    TARGET_ORGANIZATION_ID  = var.organization_id
+    TARGET_FOLDER_ID        = var.target_folder_id
+    TARGET_EXCLUDED_LABELS  = jsonencode(var.target_excluded_labels)
+    TARGET_INCLUDED_LABELS  = jsonencode(local.target_included_labels)
+    TARGET_EXCLUDED_TAGKEYS = jsonencode(var.target_excluded_tagkeys)
+    MAX_PROJECT_AGE_HOURS   = var.max_project_age_in_hours
   }
 }

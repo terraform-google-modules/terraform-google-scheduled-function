@@ -29,6 +29,7 @@ The following services must be enabled on the project housing the cleanup functi
 | project\_id | The project ID to host the scheduled function in | `string` | n/a | yes |
 | region | The region the project is in (App Engine specific) | `string` | n/a | yes |
 | target\_excluded\_labels | Map of project lablels that won't be deleted. | `map(string)` | `{}` | no |
+| target\_excluded\_tagkeys | List of organization Tag Keys short names that won't be deleted. | `list(string)` | `[]` | no |
 | target\_folder\_id | Folder ID to delete all projects under. | `string` | `""` | no |
 | target\_included\_labels | Map of project lablels that will be deleted. | `map(string)` | `{}` | no |
 | target\_tag\_name | The name of a tag to filter GCP projects on for consideration by the cleanup utility (legacy, use `target_included_labels` map instead). | `string` | `""` | no |

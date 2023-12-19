@@ -31,6 +31,7 @@ import (
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/cloudresourcemanager/v1"
 	cloudresourcemanager2 "google.golang.org/api/cloudresourcemanager/v2"
+	cloudresourcemanager3 "google.golang.org/api/cloudresourcemanager/v3"
 	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/googleapi"
 	"google.golang.org/api/servicemanagement/v1"
@@ -40,17 +41,22 @@ const (
 	LifecycleStateActiveRequested = "ACTIVE"
 	TargetExcludedLabels          = "TARGET_EXCLUDED_LABELS"
 	TargetIncludedLabels          = "TARGET_INCLUDED_LABELS"
+	TargetExcludedTagKeys         = "TARGET_EXCLUDED_TAGKEYS"
 	TargetFolderId                = "TARGET_FOLDER_ID"
+	TargetOrganizationId          = "TARGET_ORGANIZATION_ID"
 	MaxProjectAgeHours            = "MAX_PROJECT_AGE_HOURS"
 	targetFolderRegexp            = `^[0-9]+$`
+	targetOrganizationRegexp      = `^[0-9]+$`
 )
 
 var (
 	logger                 = log.New(os.Stdout, "", 0)
 	excludedLabelsMap      = getLabelsMapFromEnv(TargetExcludedLabels)
 	includedLabelsMap      = getLabelsMapFromEnv(TargetIncludedLabels)
+	excludedTagKeysList    = getTagKeysListFromEnv(TargetExcludedTagKeys)
 	resourceCreationCutoff = getOldTime(int64(getCorrectMaxAgeInHoursOrTerminateExecution()) * 60 * 60)
 	rootFolderId           = getCorrectFolderIdOrTerminateExecution()
+	organizationId         = getCorrectOrganizationIdOrTerminateExecution()
 )
 
 type PubSubMessage struct {
@@ -154,6 +160,18 @@ func checkIfAtLeastOneLabelPresentIfAny(project *cloudresourcemanager.Project, l
 	return result
 }
 
+func checkIfTagKeyShortNameExcluded(shortName string, excludedTagKeys []string) bool {
+	if len(excludedTagKeys) == 0 {
+		return false
+	}
+	for _, name := range excludedTagKeys {
+		if shortName == name {
+			return true
+		}
+	}
+	return false
+}
+
 func getLabelsMapFromEnv(envVariableName string) map[string]string {
 	targetExcludedLabels := os.Getenv(envVariableName)
 	logger.Println("Try to get labels map")
@@ -173,6 +191,24 @@ func getLabelsMapFromEnv(envVariableName string) map[string]string {
 	return labels
 }
 
+func getTagKeysListFromEnv(envVariableName string) []string {
+	targetExcludedTagKeys := os.Getenv(envVariableName)
+	logger.Println("Try to get Tag Keys list")
+	if targetExcludedTagKeys == "" {
+		logger.Printf("No Tag Keys provided.")
+		return nil
+	}
+
+	var tagKeys []string
+	err := json.Unmarshal([]byte(targetExcludedTagKeys), &tagKeys)
+	if err != nil {
+		logger.Printf("Fail to get Tag Keys list from [%s] env variable, error [%s]", envVariableName, err.Error())
+	} else {
+		logger.Printf("Got Tag Keys list [%s] from [%s] env variable", tagKeys, envVariableName)
+	}
+	return tagKeys
+}
+
 func getCorrectFolderIdOrTerminateExecution() string {
 	targetFolderIdString := os.Getenv(TargetFolderId)
 	matched, err := regexp.MatchString(targetFolderRegexp, targetFolderIdString)
@@ -180,6 +216,15 @@ func getCorrectFolderIdOrTerminateExecution() string {
 		logger.Fatalf("Invalid folder id [%s]. Specify correct value, Please.", targetFolderIdString)
 	}
 	return targetFolderIdString
+}
+
+func getCorrectOrganizationIdOrTerminateExecution() string {
+	targetOrganizationIdString := os.Getenv(TargetOrganizationId)
+	matched, err := regexp.MatchString(targetOrganizationRegexp, targetOrganizationIdString)
+	if err != nil || !matched {
+		logger.Fatalf("Invalid organization id [%s]. Specify correct value, Please.", targetOrganizationIdString)
+	}
+	return targetOrganizationIdString
 }
 
 func getServiceManagementServiceOrTerminateExecution(client *http.Client) *servicemanagement.APIService {
@@ -210,6 +255,16 @@ func getFolderServiceOrTerminateExecution(client *http.Client) *cloudresourceman
 	return cloudResourceManagerService.Folders
 }
 
+func getTagKeysServiceOrTerminateExecution(client *http.Client) *cloudresourcemanager3.TagKeysService {
+	logger.Println("Try to get TagKeys Service")
+	cloudResourceManagerService, err := cloudresourcemanager3.New(client)
+	if err != nil {
+		logger.Fatalf("Fail to get TagKeys Service with error [%s], terminate execution", err.Error())
+	}
+	logger.Println("Got TagKeys Service")
+	return cloudResourceManagerService.TagKeys
+}
+
 func getFirewallPoliciesServiceOrTerminateExecution(client *http.Client) *compute.FirewallPoliciesService {
 	logger.Println("Try to get Firewall Policies Service")
 	computeService, err := compute.New(client)
@@ -234,6 +289,7 @@ func invoke(ctx context.Context) {
 	client := initializeGoogleClient(ctx)
 	cloudResourceManagerService := getResourceManagerServiceOrTerminateExecution(client)
 	folderService := getFolderServiceOrTerminateExecution(client)
+	tagKeyService := getTagKeysServiceOrTerminateExecution(client)
 	firewallPoliciesService := getFirewallPoliciesServiceOrTerminateExecution(client)
 	endpointService := getServiceManagementServiceOrTerminateExecution(client)
 
@@ -244,6 +300,33 @@ func invoke(ctx context.Context) {
 			logger.Printf("Fail to remove lien [%s], error [%s]", name, err.Error())
 		} else {
 			logger.Printf("Removed lien [%s]", name)
+		}
+	}
+
+	tagKeyAgeFilter := func(tagKey *cloudresourcemanager3.TagKey) bool {
+		tagKeyCreatedAt, err := time.Parse(time.RFC3339, tagKey.CreateTime)
+		if err != nil {
+			logger.Printf("Fail to parse CreateTime for tagKey [%s], skip it. Error [%s]", tagKey.Name, err.Error())
+			return false
+		}
+		return tagKeyCreatedAt.Before(resourceCreationCutoff)
+	}
+
+	removeTagKeys := func(organization string) {
+		logger.Printf("Try to remove Tag Keys from organization [%s]", organization)
+		parent := fmt.Sprintf("organizations/%s", organization)
+		tagKeysList, err := tagKeyService.List().Parent(parent).Context(ctx).Do()
+		if err != nil {
+			logger.Printf("Fail to list FTag Keys from organization [%s], error [%s]", organization, err.Error())
+			return
+		}
+		for _, tagKey := range tagKeysList.TagKeys {
+			if !checkIfTagKeyShortNameExcluded(tagKey.ShortName, excludedTagKeysList) && tagKeyAgeFilter(tagKey) {
+				_, err := tagKeyService.Delete(tagKey.Name).Context(ctx).Do()
+				if err != nil {
+					logger.Printf("Fail to delete tagKey from organization [%s], error [%s]", organization, err.Error())
+				}
+			}
 		}
 	}
 
@@ -388,6 +471,7 @@ func invoke(ctx context.Context) {
 	} else {
 		getSubFoldersAndRemoveProjectsFoldersRecursively(rootFolder, getSubFoldersAndRemoveProjectsFoldersRecursively)
 	}
+	removeTagKeys(organizationId)
 }
 
 func CleanUpProjects(ctx context.Context, m PubSubMessage) error {
