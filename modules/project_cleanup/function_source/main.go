@@ -498,6 +498,7 @@ func invoke(ctx context.Context) {
 	} else {
 		getSubFoldersAndRemoveProjectsFoldersRecursively(rootFolder, getSubFoldersAndRemoveProjectsFoldersRecursively)
 	}
+	// Only Tag Keys whose values are not in use can be deleted.
 	removeTagKeys(organizationId)
 }
 
