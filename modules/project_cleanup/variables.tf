@@ -71,16 +71,22 @@ variable "target_excluded_labels" {
   default     = {}
 }
 
-variable "target_excluded_tagkeys" {
-  type        = list(string)
-  description = "List of organization Tag Keys short names that won't be deleted."
-  default     = []
-}
-
 variable "target_included_labels" {
   type        = map(string)
   description = "Map of project lablels that will be deleted."
   default     = {}
+}
+
+variable "clean_up_org_level_tag_keys" {
+  type        = bool
+  description = "Clean up organization level Tag Keys."
+  default     = false
+}
+
+variable "target_excluded_tagkeys" {
+  type        = list(string)
+  description = "List of organization Tag Keys short names that won't be deleted."
+  default     = []
 }
 
 variable "target_folder_id" {

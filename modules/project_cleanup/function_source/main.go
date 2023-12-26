@@ -41,6 +41,7 @@ const (
 	LifecycleStateActiveRequested = "ACTIVE"
 	TargetExcludedLabels          = "TARGET_EXCLUDED_LABELS"
 	TargetIncludedLabels          = "TARGET_INCLUDED_LABELS"
+	CleanUpTagKeys                = "CLEAN_UP_TAG_KEYS"
 	TargetExcludedTagKeys         = "TARGET_EXCLUDED_TAGKEYS"
 	TargetFolderId                = "TARGET_FOLDER_ID"
 	TargetOrganizationId          = "TARGET_ORGANIZATION_ID"
@@ -53,6 +54,7 @@ var (
 	logger                 = log.New(os.Stdout, "", 0)
 	excludedLabelsMap      = getLabelsMapFromEnv(TargetExcludedLabels)
 	includedLabelsMap      = getLabelsMapFromEnv(TargetIncludedLabels)
+	cleanUpTagKeys         = getCleanUpTagKeysOrTerminateExecution()
 	excludedTagKeysList    = getTagKeysListFromEnv(TargetExcludedTagKeys)
 	resourceCreationCutoff = getOldTime(int64(getCorrectMaxAgeInHoursOrTerminateExecution()) * 60 * 60)
 	rootFolderId           = getCorrectFolderIdOrTerminateExecution()
@@ -207,6 +209,18 @@ func getTagKeysListFromEnv(envVariableName string) []string {
 		logger.Printf("Got Tag Keys list [%s] from [%s] env variable", tagKeys, envVariableName)
 	}
 	return tagKeys
+}
+
+func getCleanUpTagKeysOrTerminateExecution() bool {
+	cleanUpTagKeys, exists := os.LookupEnv(CleanUpTagKeys)
+	if !exists {
+		logger.Fatalf("Clean up Tag Keys flag not set [%s]. Specify correct value, Please.", CleanUpTagKeys)
+	}
+	result, err := strconv.ParseBool(cleanUpTagKeys)
+	if err != nil {
+		logger.Fatalf("Invalid Clean up Tag Keys flag [%s] value [%s]. Specify correct value, Please.", CleanUpTagKeys, cleanUpTagKeys)
+	}
+	return result
 }
 
 func getCorrectFolderIdOrTerminateExecution() string {
@@ -499,7 +513,9 @@ func invoke(ctx context.Context) {
 		getSubFoldersAndRemoveProjectsFoldersRecursively(rootFolder, getSubFoldersAndRemoveProjectsFoldersRecursively)
 	}
 	// Only Tag Keys whose values are not in use can be deleted.
-	removeTagKeys(organizationId)
+	if cleanUpTagKeys {
+		removeTagKeys(organizationId)
+	}
 }
 
 func CleanUpProjects(ctx context.Context, m PubSubMessage) error {
