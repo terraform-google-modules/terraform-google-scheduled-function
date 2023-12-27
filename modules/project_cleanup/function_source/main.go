@@ -214,11 +214,11 @@ func getTagKeysListFromEnv(envVariableName string) []string {
 func getCleanUpTagKeysOrTerminateExecution() bool {
 	cleanUpTagKeys, exists := os.LookupEnv(CleanUpTagKeys)
 	if !exists {
-		logger.Fatalf("Clean up Tag Keys flag not set [%s]. Specify correct value, Please.", CleanUpTagKeys)
+		logger.Fatalf("Clean up Tag Keys env variable not set [%s]. Specify correct value, Please.", CleanUpTagKeys)
 	}
 	result, err := strconv.ParseBool(cleanUpTagKeys)
 	if err != nil {
-		logger.Fatalf("Invalid Clean up Tag Keys flag [%s] value [%s]. Specify correct value, Please.", CleanUpTagKeys, cleanUpTagKeys)
+		logger.Fatalf("Invalid Clean up Tag Keys env variable [%s] value [%s]. Specify correct value, Please.", CleanUpTagKeys, cleanUpTagKeys)
 	}
 	return result
 }
@@ -331,7 +331,7 @@ func invoke(ctx context.Context) {
 	tagKeyAgeFilter := func(tagKey *cloudresourcemanager3.TagKey) bool {
 		tagKeyCreatedAt, err := time.Parse(time.RFC3339, tagKey.CreateTime)
 		if err != nil {
-			logger.Printf("Fail to parse CreateTime for tagKey [%s], skip it. Error [%s]", tagKey.Name, err.Error())
+			logger.Printf("Fail to parse CreateTime for tagKey [%s], skip it, error [%s]", tagKey.Name, err.Error())
 			return false
 		}
 		return tagKeyCreatedAt.Before(resourceCreationCutoff)
