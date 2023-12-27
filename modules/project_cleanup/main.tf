@@ -32,6 +32,7 @@ resource "google_organization_iam_member" "main" {
     "roles/serviceusage.serviceUsageAdmin",
     "roles/compute.orgSecurityResourceAdmin",
     "roles/compute.orgSecurityPolicyAdmin",
+    "roles/resourcemanager.tagAdmin",
     "roles/viewer"
   ])
 
@@ -52,14 +53,17 @@ module "scheduled_project_cleaner" {
   topic_name                     = var.topic_name
   function_available_memory_mb   = 128
   function_description           = "Clean up GCP projects older than ${var.max_project_age_in_hours} hours matching particular tags"
-  function_runtime               = "go113"
+  function_runtime               = "go121"
   function_service_account_email = google_service_account.project_cleaner_function.email
   function_timeout_s             = var.function_timeout_s
 
   function_environment_variables = {
-    TARGET_EXCLUDED_LABELS = jsonencode(var.target_excluded_labels)
-    TARGET_FOLDER_ID       = var.target_folder_id
-    TARGET_INCLUDED_LABELS = jsonencode(local.target_included_labels)
-    MAX_PROJECT_AGE_HOURS  = var.max_project_age_in_hours
+    TARGET_ORGANIZATION_ID  = var.organization_id
+    TARGET_FOLDER_ID        = var.target_folder_id
+    TARGET_EXCLUDED_LABELS  = jsonencode(var.target_excluded_labels)
+    TARGET_INCLUDED_LABELS  = jsonencode(local.target_included_labels)
+    MAX_PROJECT_AGE_HOURS   = var.max_project_age_in_hours
+    CLEAN_UP_TAG_KEYS       = var.clean_up_org_level_tag_keys
+    TARGET_EXCLUDED_TAGKEYS = jsonencode(var.target_excluded_tagkeys)
   }
 }

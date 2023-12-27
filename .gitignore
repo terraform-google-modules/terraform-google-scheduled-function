@@ -4,6 +4,7 @@ terraform.tfstate
 credentials.json
 *.iml
 .idea
+.vscode/
 *.pyc
 .kitchen
 

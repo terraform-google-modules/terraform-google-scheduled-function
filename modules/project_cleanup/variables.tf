@@ -77,6 +77,18 @@ variable "target_included_labels" {
   default     = {}
 }
 
+variable "clean_up_org_level_tag_keys" {
+  type        = bool
+  description = "Clean up organization level Tag Keys."
+  default     = false
+}
+
+variable "target_excluded_tagkeys" {
+  type        = list(string)
+  description = "List of organization Tag Key short names that won't be deleted."
+  default     = []
+}
+
 variable "target_folder_id" {
   type        = string
   description = "Folder ID to delete all projects under."

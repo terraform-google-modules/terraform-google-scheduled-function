@@ -31,6 +31,7 @@ import (
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/cloudresourcemanager/v1"
 	cloudresourcemanager2 "google.golang.org/api/cloudresourcemanager/v2"
+	cloudresourcemanager3 "google.golang.org/api/cloudresourcemanager/v3"
 	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/googleapi"
 	"google.golang.org/api/servicemanagement/v1"
@@ -40,17 +41,24 @@ const (
 	LifecycleStateActiveRequested = "ACTIVE"
 	TargetExcludedLabels          = "TARGET_EXCLUDED_LABELS"
 	TargetIncludedLabels          = "TARGET_INCLUDED_LABELS"
+	CleanUpTagKeys                = "CLEAN_UP_TAG_KEYS"
+	TargetExcludedTagKeys         = "TARGET_EXCLUDED_TAGKEYS"
 	TargetFolderId                = "TARGET_FOLDER_ID"
+	TargetOrganizationId          = "TARGET_ORGANIZATION_ID"
 	MaxProjectAgeHours            = "MAX_PROJECT_AGE_HOURS"
 	targetFolderRegexp            = `^[0-9]+$`
+	targetOrganizationRegexp      = `^[0-9]+$`
 )
 
 var (
 	logger                 = log.New(os.Stdout, "", 0)
 	excludedLabelsMap      = getLabelsMapFromEnv(TargetExcludedLabels)
 	includedLabelsMap      = getLabelsMapFromEnv(TargetIncludedLabels)
+	cleanUpTagKeys         = getCleanUpTagKeysOrTerminateExecution()
+	excludedTagKeysList    = getTagKeysListFromEnv(TargetExcludedTagKeys)
 	resourceCreationCutoff = getOldTime(int64(getCorrectMaxAgeInHoursOrTerminateExecution()) * 60 * 60)
 	rootFolderId           = getCorrectFolderIdOrTerminateExecution()
+	organizationId         = getCorrectOrganizationIdOrTerminateExecution()
 )
 
 type PubSubMessage struct {
@@ -110,7 +118,7 @@ func processProjectsResponsePage(removeProjectById func(projectId string)) func(
 	ageFilter := func(project *cloudresourcemanager.Project) bool {
 		projectCreatedAt, err := time.Parse(time.RFC3339, project.CreateTime)
 		if err != nil {
-			logger.Printf("Fail to parse CreateTime for [%s], skip it. Error [%s]", project.Name, err.Error())
+			logger.Printf("Failed to parse CreateTime for [%s], skipping it, error [%s]", project.Name, err.Error())
 			return false
 		}
 		return projectCreatedAt.Before(resourceCreationCutoff)
@@ -135,7 +143,7 @@ func getCorrectMaxAgeInHoursOrTerminateExecution() int64 {
 	maxAgeInHoursStr := os.Getenv(MaxProjectAgeHours)
 	maxAgeInHours, err := strconv.ParseInt(os.Getenv(MaxProjectAgeHours), 10, 0)
 	if err != nil {
-		logger.Fatalf("Could not convert [%s] to integer. Specify correct value, Please.", maxAgeInHoursStr)
+		logger.Fatalf("Could not convert [%s] to integer. Specify correct value for environment variable [%s] and try again.", maxAgeInHoursStr, MaxProjectAgeHours)
 	}
 	return maxAgeInHours
 }
@@ -154,6 +162,18 @@ func checkIfAtLeastOneLabelPresentIfAny(project *cloudresourcemanager.Project, l
 	return result
 }
 
+func checkIfTagKeyShortNameExcluded(shortName string, excludedTagKeys []string) bool {
+	if len(excludedTagKeys) == 0 {
+		return false
+	}
+	for _, name := range excludedTagKeys {
+		if shortName == name {
+			return true
+		}
+	}
+	return false
+}
+
 func getLabelsMapFromEnv(envVariableName string) map[string]string {
 	targetExcludedLabels := os.Getenv(envVariableName)
 	logger.Println("Try to get labels map")
@@ -166,20 +186,59 @@ func getLabelsMapFromEnv(envVariableName string) map[string]string {
 
 	err := json.Unmarshal([]byte(targetExcludedLabels), &labels)
 	if err != nil {
-		logger.Printf("Fail to get labels map from [%s] env variable, error [%s]", envVariableName, err.Error())
+		logger.Printf("Failed to get labels map from [%s] env variable, error [%s]", envVariableName, err.Error())
 	} else {
 		logger.Printf("Got labels map [%s] from [%s] env variable", labels, envVariableName)
 	}
 	return labels
 }
 
+func getTagKeysListFromEnv(envVariableName string) []string {
+	targetExcludedTagKeys := os.Getenv(envVariableName)
+	logger.Println("Try to get Tag Keys list")
+	if targetExcludedTagKeys == "" {
+		logger.Printf("No Tag Keys provided.")
+		return nil
+	}
+
+	var tagKeys []string
+	err := json.Unmarshal([]byte(targetExcludedTagKeys), &tagKeys)
+	if err != nil {
+		logger.Printf("Failed to get Tag Keys list from [%s] env variable, error [%s]", envVariableName, err.Error())
+	} else {
+		logger.Printf("Got Tag Keys list [%s] from [%s] env variable", tagKeys, envVariableName)
+	}
+	return tagKeys
+}
+
+func getCleanUpTagKeysOrTerminateExecution() bool {
+	cleanUpTagKeys, exists := os.LookupEnv(CleanUpTagKeys)
+	if !exists {
+		logger.Fatalf("Clean up Tag Keys environment variable [%s] not set, set the environment variable and try again.", CleanUpTagKeys)
+	}
+	result, err := strconv.ParseBool(cleanUpTagKeys)
+	if err != nil {
+		logger.Fatalf("Invalid Clean up Tag Keys value [%s], specify correct value for environment variable [%s] and try again.", cleanUpTagKeys, CleanUpTagKeys)
+	}
+	return result
+}
+
 func getCorrectFolderIdOrTerminateExecution() string {
 	targetFolderIdString := os.Getenv(TargetFolderId)
 	matched, err := regexp.MatchString(targetFolderRegexp, targetFolderIdString)
 	if err != nil || !matched {
-		logger.Fatalf("Invalid folder id [%s]. Specify correct value, Please.", targetFolderIdString)
+		logger.Fatalf("Invalid folder id [%s], specify correct value and try again.", targetFolderIdString)
 	}
 	return targetFolderIdString
+}
+
+func getCorrectOrganizationIdOrTerminateExecution() string {
+	targetOrganizationIdString := os.Getenv(TargetOrganizationId)
+	matched, err := regexp.MatchString(targetOrganizationRegexp, targetOrganizationIdString)
+	if err != nil || !matched {
+		logger.Fatalf("Invalid organization id [%s], specify correct value and try again.", targetOrganizationIdString)
+	}
+	return targetOrganizationIdString
 }
 
 func getServiceManagementServiceOrTerminateExecution(client *http.Client) *servicemanagement.APIService {
@@ -194,7 +253,7 @@ func getResourceManagerServiceOrTerminateExecution(client *http.Client) *cloudre
 	logger.Println("Try to get Cloud Resource Manager")
 	cloudResourceManagerService, err := cloudresourcemanager.New(client)
 	if err != nil {
-		logger.Fatalf("Fail to get Cloud Resource Manager with error [%s], terminate execution", err.Error())
+		logger.Fatalf("Failed to get Cloud Resource Manager with error [%s], terminate execution", err.Error())
 	}
 	logger.Println("Got Cloud Resource Manager")
 	return cloudResourceManagerService
@@ -204,17 +263,37 @@ func getFolderServiceOrTerminateExecution(client *http.Client) *cloudresourceman
 	logger.Println("Try to get Folders Service")
 	cloudResourceManagerService, err := cloudresourcemanager2.New(client)
 	if err != nil {
-		logger.Fatalf("Fail to get Folders Service with error [%s], terminate execution", err.Error())
+		logger.Fatalf("Failed to get Folders Service with error [%s], terminate execution", err.Error())
 	}
 	logger.Println("Got Folders Service")
 	return cloudResourceManagerService.Folders
+}
+
+func getTagKeysServiceOrTerminateExecution(client *http.Client) *cloudresourcemanager3.TagKeysService {
+	logger.Println("Try to get TagKeys Service")
+	cloudResourceManagerService, err := cloudresourcemanager3.New(client)
+	if err != nil {
+		logger.Fatalf("Failed to get TagKeys Service with error [%s], terminate execution", err.Error())
+	}
+	logger.Println("Got TagKeys Service")
+	return cloudResourceManagerService.TagKeys
+}
+
+func getTagValuesServiceOrTerminateExecution(client *http.Client) *cloudresourcemanager3.TagValuesService {
+	logger.Println("Try to get TagValues Service")
+	cloudResourceManagerService, err := cloudresourcemanager3.New(client)
+	if err != nil {
+		logger.Fatalf("Failed to get TagValues Service with error [%s], terminate execution", err.Error())
+	}
+	logger.Println("Got TagValues Service")
+	return cloudResourceManagerService.TagValues
 }
 
 func getFirewallPoliciesServiceOrTerminateExecution(client *http.Client) *compute.FirewallPoliciesService {
 	logger.Println("Try to get Firewall Policies Service")
 	computeService, err := compute.New(client)
 	if err != nil {
-		logger.Fatalf("Fail to get Firewall Policies Service with error [%s], terminate execution", err.Error())
+		logger.Fatalf("Failed to get Firewall Policies Service with error [%s], terminate execution", err.Error())
 	}
 	logger.Println("Got Firewall Policies Service")
 	return computeService.FirewallPolicies
@@ -224,7 +303,7 @@ func initializeGoogleClient(ctx context.Context) *http.Client {
 	logger.Println("Try to initialize Google client")
 	client, err := google.DefaultClient(ctx, cloudresourcemanager.CloudPlatformScope)
 	if err != nil {
-		logger.Fatalf("Fail to initialize Google client with error [%s], terminate execution", err.Error())
+		logger.Fatalf("Failed to initialize Google client with error [%s], terminate execution", err.Error())
 	}
 	logger.Println("Initialized Google client")
 	return client
@@ -234,6 +313,8 @@ func invoke(ctx context.Context) {
 	client := initializeGoogleClient(ctx)
 	cloudResourceManagerService := getResourceManagerServiceOrTerminateExecution(client)
 	folderService := getFolderServiceOrTerminateExecution(client)
+	tagKeyService := getTagKeysServiceOrTerminateExecution(client)
+	tagValuesService := getTagValuesServiceOrTerminateExecution(client)
 	firewallPoliciesService := getFirewallPoliciesServiceOrTerminateExecution(client)
 	endpointService := getServiceManagementServiceOrTerminateExecution(client)
 
@@ -241,9 +322,52 @@ func invoke(ctx context.Context) {
 		logger.Printf("Try to remove lien [%s]", name)
 		_, err := cloudResourceManagerService.Liens.Delete(name).Context(ctx).Do()
 		if err != nil {
-			logger.Printf("Fail to remove lien [%s], error [%s]", name, err.Error())
+			logger.Printf("Failed to remove lien [%s], error [%s]", name, err.Error())
 		} else {
 			logger.Printf("Removed lien [%s]", name)
+		}
+	}
+
+	tagKeyAgeFilter := func(tagKey *cloudresourcemanager3.TagKey) bool {
+		tagKeyCreatedAt, err := time.Parse(time.RFC3339, tagKey.CreateTime)
+		if err != nil {
+			logger.Printf("Failed to parse CreateTime for tagKey [%s], skipping it, error [%s]", tagKey.Name, err.Error())
+			return false
+		}
+		return tagKeyCreatedAt.Before(resourceCreationCutoff)
+	}
+
+	removeTagValues := func(tagKey string) {
+		logger.Printf("Try to remove Tag Values from TagKey [%s]", tagKey)
+		tagValuesList, err := tagValuesService.List().Parent(tagKey).Context(ctx).Do()
+		if err != nil {
+			logger.Printf("Failed to list Tag values from TagKey [%s], error [%s]", tagKey, err.Error())
+			return
+		}
+		for _, tagValue := range tagValuesList.TagValues {
+			_, err := tagValuesService.Delete(tagValue.Name).Context(ctx).Do()
+			if err != nil {
+				logger.Printf("Failed to delete tagValue from TagKey [%s], error [%s]", tagKey, err.Error())
+			}
+		}
+	}
+
+	removeTagKeys := func(organization string) {
+		logger.Printf("Try to remove Tag Keys from organization [%s]", organization)
+		parent := fmt.Sprintf("organizations/%s", organization)
+		tagKeysList, err := tagKeyService.List().Parent(parent).Context(ctx).Do()
+		if err != nil {
+			logger.Printf("Failed to list Tag Keys from organization [%s], error [%s]", organization, err.Error())
+			return
+		}
+		for _, tagKey := range tagKeysList.TagKeys {
+			if !checkIfTagKeyShortNameExcluded(tagKey.ShortName, excludedTagKeysList) && tagKeyAgeFilter(tagKey) {
+				removeTagValues(tagKey.Name)
+				_, err := tagKeyService.Delete(tagKey.Name).Context(ctx).Do()
+				if err != nil {
+					logger.Printf("Failed to delete tagKey from organization [%s], error [%s]", organization, err.Error())
+				}
+			}
 		}
 	}
 
@@ -251,19 +375,19 @@ func invoke(ctx context.Context) {
 		logger.Printf("Try to remove Firewall Policies from folder [%s]", folder)
 		firewallPolicyList, err := firewallPoliciesService.List().ParentId(folder).Context(ctx).Do()
 		if err != nil {
-			logger.Printf("Fail to list Firewall Policies from folder [%s], error [%s]", folder, err.Error())
+			logger.Printf("Failed to list Firewall Policies from folder [%s], error [%s]", folder, err.Error())
 			return
 		}
 		for _, policy := range firewallPolicyList.Items {
 			for _, association := range policy.Associations {
 				_, err := firewallPoliciesService.RemoveAssociation(policy.Name).Name(association.Name).Context(ctx).Do()
 				if err != nil {
-					logger.Printf("Fail to Remove Association for Firewall Policies from folder [%s], error [%s]", folder, err.Error())
+					logger.Printf("Failed to Remove Association for Firewall Policies from folder [%s], error [%s]", folder, err.Error())
 				}
 			}
 			_, err := firewallPoliciesService.Delete(policy.Name).Context(ctx).Do()
 			if err != nil {
-				logger.Printf("Fail to delete Firewall Policy [%s] from folder [%s], error [%s]", policy.Name, folder, err.Error())
+				logger.Printf("Failed to delete Firewall Policy [%s] from folder [%s], error [%s]", policy.Name, folder, err.Error())
 			}
 		}
 	}
@@ -277,7 +401,7 @@ func invoke(ctx context.Context) {
 		logger.Printf("Try to remove endpoints for [%s]", projectId)
 		listResponse, err := endpointService.Services.List().ProducerProjectId(projectId).Do()
 		if err != nil {
-			logger.Printf("Fail to list services for [%s], error [%s]", projectId, err.Error())
+			logger.Printf("Failed to list services for [%s], error [%s]", projectId, err.Error())
 			return
 		}
 
@@ -289,7 +413,7 @@ func invoke(ctx context.Context) {
 			logger.Printf("Try to remove service: %s", service.ServiceName)
 			_, err = endpointService.Services.Delete(service.ServiceName).Do()
 			if err != nil {
-				logger.Printf("Fail to delete service [%s] for [%s], error [%s]", service.ServiceName, projectId, err.Error())
+				logger.Printf("Failed to delete service [%s] for [%s], error [%s]", service.ServiceName, projectId, err.Error())
 			}
 		}
 
@@ -305,7 +429,7 @@ func invoke(ctx context.Context) {
 			err = removeProjectById(projectId)
 		}
 		if err != nil {
-			logger.Printf("Fail to remove project [%s], error [%s]", projectId, err.Error())
+			logger.Printf("Failed to remove project [%s], error [%s]", projectId, err.Error())
 		} else {
 			logger.Printf("Removed project [%s]", projectId)
 		}
@@ -323,7 +447,7 @@ func invoke(ctx context.Context) {
 			cleanupProjectById(projectId)
 			return nil
 		}); err != nil {
-			logger.Printf("Fail to get all liens for the project [%s], error [%s]", projectId, err.Error())
+			logger.Printf("Failed to get all liens for the project [%s], error [%s]", projectId, err.Error())
 		}
 	}
 
@@ -337,7 +461,7 @@ func invoke(ctx context.Context) {
 			return
 		}, 5, time.Minute)
 		if err != nil {
-			logger.Printf("Fail to get projects for the folder with id [%s], error [%s]", localFolderId, err.Error())
+			logger.Printf("Failed to get projects for the folder with id [%s], error [%s]", localFolderId, err.Error())
 		} else {
 			logger.Printf("Got and processed all projects for the folder with id [%s]", localFolderId)
 		}
@@ -346,7 +470,7 @@ func invoke(ctx context.Context) {
 	folderAgeFilter := func(folder *cloudresourcemanager2.Folder) bool {
 		folderCreatedAt, err := time.Parse(time.RFC3339, folder.CreateTime)
 		if err != nil {
-			logger.Printf("Fail to parse CreateTime for folder [%s], skip it. Error [%s]", folder.Name, err.Error())
+			logger.Printf("Failed to parse CreateTime for folder [%s], skipping it, error [%s]", folder.Name, err.Error())
 			return false
 		}
 		return folderCreatedAt.Before(resourceCreationCutoff)
@@ -377,16 +501,20 @@ func invoke(ctx context.Context) {
 			}
 			return nil
 		}); err != nil {
-			logger.Fatalf("Fail to get subfolders for the folder with id [%s], error [%s]", folderId, err.Error())
+			logger.Fatalf("Failed to get subfolders for the folder with id [%s], error [%s]", folderId, err.Error())
 		}
 	}
 
 	rootFolderId := fmt.Sprintf("folders/%s", rootFolderId)
 	rootFolder, err := folderService.Get(rootFolderId).Do()
 	if err != nil {
-		logger.Printf("Fail to get parent folder [%s], error [%s]", rootFolderId, err.Error())
+		logger.Printf("Failed to get parent folder [%s], error [%s]", rootFolderId, err.Error())
 	} else {
 		getSubFoldersAndRemoveProjectsFoldersRecursively(rootFolder, getSubFoldersAndRemoveProjectsFoldersRecursively)
+	}
+	// Only Tag Keys whose values are not in use can be deleted.
+	if cleanUpTagKeys {
+		removeTagKeys(organizationId)
 	}
 }
 

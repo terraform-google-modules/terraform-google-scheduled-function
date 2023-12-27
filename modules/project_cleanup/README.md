@@ -22,6 +22,7 @@ The following services must be enabled on the project housing the cleanup functi
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| clean\_up\_org\_level\_tag\_keys | Clean up organization level Tag Keys. | `bool` | `false` | no |
 | function\_timeout\_s | The amount of time in seconds allotted for the execution of the function. | `number` | `500` | no |
 | job\_schedule | Cleaner function run frequency, in cron syntax | `string` | `"*/5 * * * *"` | no |
 | max\_project\_age\_in\_hours | The maximum number of hours that a GCP project, selected by `target_tag_name` and `target_tag_value`, can exist | `number` | `6` | no |
@@ -29,6 +30,7 @@ The following services must be enabled on the project housing the cleanup functi
 | project\_id | The project ID to host the scheduled function in | `string` | n/a | yes |
 | region | The region the project is in (App Engine specific) | `string` | n/a | yes |
 | target\_excluded\_labels | Map of project lablels that won't be deleted. | `map(string)` | `{}` | no |
+| target\_excluded\_tagkeys | List of organization Tag Key short names that won't be deleted. | `list(string)` | `[]` | no |
 | target\_folder\_id | Folder ID to delete all projects under. | `string` | `""` | no |
 | target\_included\_labels | Map of project lablels that will be deleted. | `map(string)` | `{}` | no |
 | target\_tag\_name | The name of a tag to filter GCP projects on for consideration by the cleanup utility (legacy, use `target_included_labels` map instead). | `string` | `""` | no |
