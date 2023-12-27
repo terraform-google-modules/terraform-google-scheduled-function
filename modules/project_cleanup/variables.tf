@@ -85,7 +85,7 @@ variable "clean_up_org_level_tag_keys" {
 
 variable "target_excluded_tagkeys" {
   type        = list(string)
-  description = "List of organization Tag Keys short names that won't be deleted."
+  description = "List of organization Tag Key short names that won't be deleted."
   default     = []
 }
 
