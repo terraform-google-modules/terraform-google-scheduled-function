@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [4.0.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v3.0.0...v4.0.0) (2024-01-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* **GO1.21:** support deletion of Tag Keys not in use in organizations in the clean up module ([#175](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/175))
+* **TPG >=4.23:** Add function_docker_registry variables and use them in terraform-google-event-function module ([#150](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/150))
+
+### Features
+
+* add create_bucket flag ([#147](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/147)) ([d2b68fc](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/d2b68fc86c433a0e42a524bf7f5ae8defc2d6522))
+* **GO1.21:** support deletion of Tag Keys not in use in organizations in the clean up module ([#175](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/175)) ([6cc42cd](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/6cc42cd3ef23ebd1b17c6cc4ec259ea78ed30d82))
+* **TPG >=4.23:** Add function_docker_registry variables and use them in terraform-google-event-function module ([#150](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/150)) ([5c9ddcd](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/5c9ddcdc707543d2ad144d00dbbb1f0a33bf25d6))
+
+
+### Bug Fixes
+
+* **deps:** Bump golang.org/x/crypto from 0.16.0 to 0.17.0 in /modules/project_cleanup/function_source ([#173](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/173)) ([1d12e4f](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/1d12e4f91f06dd0c352c3fd8e97f5880ca07ec0c))
+* **deps:** Update GO modules ([#165](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/165)) ([ccb1961](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/ccb1961b978a9ca51858bdbc901faa15ae4b0b62))
+* **deps:** Update GO modules ([#166](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/166)) ([4796116](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/4796116962c2a14336e0da6968f45f3f7abc2cab))
+* **deps:** update go modules ([#176](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/176)) ([77c764a](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/77c764ae580117ec561f784945b5d1eaa0a041a4))
+* **deps:** Update module google.golang.org/api to v0.149.0 ([#163](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/163)) ([5ba8c74](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/5ba8c744975069d06e20722f2d1a0d6804a967a5))
+
 ## [3.0.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v2.6.0...v3.0.0) (2023-11-01)
 
 
