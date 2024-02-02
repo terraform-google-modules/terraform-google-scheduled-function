@@ -1,0 +1,6 @@
+go 1.21
+
+use (
+	./modules/project_cleanup/function_source
+	./test/integration
+)
