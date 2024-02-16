@@ -34,6 +34,7 @@ import (
 	cloudresourcemanager3 "google.golang.org/api/cloudresourcemanager/v3"
 	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/googleapi"
+	"google.golang.org/api/option"
 	"google.golang.org/api/servicemanagement/v1"
 )
 
@@ -241,17 +242,17 @@ func getCorrectOrganizationIdOrTerminateExecution() string {
 	return targetOrganizationIdString
 }
 
-func getServiceManagementServiceOrTerminateExecution(client *http.Client) *servicemanagement.APIService {
-	service, err := servicemanagement.New(client)
+func getServiceManagementServiceOrTerminateExecution(ctx context.Context, client *http.Client) *servicemanagement.APIService {
+	service, err := servicemanagement.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		logger.Fatalf("Failed to get service management API client with error [%s], terminate execution", err.Error())
 	}
 	return service
 }
 
-func getResourceManagerServiceOrTerminateExecution(client *http.Client) *cloudresourcemanager.Service {
+func getResourceManagerServiceOrTerminateExecution(ctx context.Context, client *http.Client) *cloudresourcemanager.Service {
 	logger.Println("Try to get Cloud Resource Manager")
-	cloudResourceManagerService, err := cloudresourcemanager.New(client)
+	cloudResourceManagerService, err := cloudresourcemanager.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		logger.Fatalf("Failed to get Cloud Resource Manager with error [%s], terminate execution", err.Error())
 	}
@@ -259,9 +260,9 @@ func getResourceManagerServiceOrTerminateExecution(client *http.Client) *cloudre
 	return cloudResourceManagerService
 }
 
-func getFolderServiceOrTerminateExecution(client *http.Client) *cloudresourcemanager2.FoldersService {
+func getFolderServiceOrTerminateExecution(ctx context.Context, client *http.Client) *cloudresourcemanager2.FoldersService {
 	logger.Println("Try to get Folders Service")
-	cloudResourceManagerService, err := cloudresourcemanager2.New(client)
+	cloudResourceManagerService, err := cloudresourcemanager2.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		logger.Fatalf("Failed to get Folders Service with error [%s], terminate execution", err.Error())
 	}
@@ -269,9 +270,9 @@ func getFolderServiceOrTerminateExecution(client *http.Client) *cloudresourceman
 	return cloudResourceManagerService.Folders
 }
 
-func getTagKeysServiceOrTerminateExecution(client *http.Client) *cloudresourcemanager3.TagKeysService {
+func getTagKeysServiceOrTerminateExecution(ctx context.Context, client *http.Client) *cloudresourcemanager3.TagKeysService {
 	logger.Println("Try to get TagKeys Service")
-	cloudResourceManagerService, err := cloudresourcemanager3.New(client)
+	cloudResourceManagerService, err := cloudresourcemanager3.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		logger.Fatalf("Failed to get TagKeys Service with error [%s], terminate execution", err.Error())
 	}
@@ -279,9 +280,9 @@ func getTagKeysServiceOrTerminateExecution(client *http.Client) *cloudresourcema
 	return cloudResourceManagerService.TagKeys
 }
 
-func getTagValuesServiceOrTerminateExecution(client *http.Client) *cloudresourcemanager3.TagValuesService {
+func getTagValuesServiceOrTerminateExecution(ctx context.Context, client *http.Client) *cloudresourcemanager3.TagValuesService {
 	logger.Println("Try to get TagValues Service")
-	cloudResourceManagerService, err := cloudresourcemanager3.New(client)
+	cloudResourceManagerService, err := cloudresourcemanager3.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		logger.Fatalf("Failed to get TagValues Service with error [%s], terminate execution", err.Error())
 	}
@@ -289,9 +290,9 @@ func getTagValuesServiceOrTerminateExecution(client *http.Client) *cloudresource
 	return cloudResourceManagerService.TagValues
 }
 
-func getFirewallPoliciesServiceOrTerminateExecution(client *http.Client) *compute.FirewallPoliciesService {
+func getFirewallPoliciesServiceOrTerminateExecution(ctx context.Context, client *http.Client) *compute.FirewallPoliciesService {
 	logger.Println("Try to get Firewall Policies Service")
-	computeService, err := compute.New(client)
+	computeService, err := compute.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		logger.Fatalf("Failed to get Firewall Policies Service with error [%s], terminate execution", err.Error())
 	}
@@ -311,12 +312,12 @@ func initializeGoogleClient(ctx context.Context) *http.Client {
 
 func invoke(ctx context.Context) {
 	client := initializeGoogleClient(ctx)
-	cloudResourceManagerService := getResourceManagerServiceOrTerminateExecution(client)
-	folderService := getFolderServiceOrTerminateExecution(client)
-	tagKeyService := getTagKeysServiceOrTerminateExecution(client)
-	tagValuesService := getTagValuesServiceOrTerminateExecution(client)
-	firewallPoliciesService := getFirewallPoliciesServiceOrTerminateExecution(client)
-	endpointService := getServiceManagementServiceOrTerminateExecution(client)
+	cloudResourceManagerService := getResourceManagerServiceOrTerminateExecution(ctx, client)
+	folderService := getFolderServiceOrTerminateExecution(ctx, client)
+	tagKeyService := getTagKeysServiceOrTerminateExecution(ctx, client)
+	tagValuesService := getTagValuesServiceOrTerminateExecution(ctx, client)
+	firewallPoliciesService := getFirewallPoliciesServiceOrTerminateExecution(ctx, client)
+	endpointService := getServiceManagementServiceOrTerminateExecution(ctx, client)
 
 	removeLien := func(name string) {
 		logger.Printf("Try to remove lien [%s]", name)
