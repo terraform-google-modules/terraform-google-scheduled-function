@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [4.0.1](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v4.0.0...v4.0.1) (2024-03-20)
+
+
+### Bug Fixes
+
+* **deps:** Update go modules ([#185](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/185)) ([7da1975](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/7da1975b53c4b004a02db2f128e71d656036d570))
+* updates for go modules ([#184](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/184)) ([ff0be2f](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/ff0be2f2d2b8af2de01ea2601c5aa91edd1c0b2e))
+
 ## [4.0.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v3.0.0...v4.0.0) (2024-01-30)
 
 
