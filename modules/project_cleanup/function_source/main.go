@@ -27,6 +27,7 @@ import (
 	"strings"
 	"time"
 
+	asset "cloud.google.com/go/asset/apiv1"
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/cloudresourcemanager/v1"
@@ -34,8 +35,12 @@ import (
 	cloudresourcemanager3 "google.golang.org/api/cloudresourcemanager/v3"
 	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/googleapi"
+	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
 	"google.golang.org/api/servicemanagement/v1"
+	assetpb "google.golang.org/genproto/googleapis/cloud/asset/v1"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 const (
@@ -49,6 +54,8 @@ const (
 	MaxProjectAgeHours            = "MAX_PROJECT_AGE_HOURS"
 	targetFolderRegexp            = `^[0-9]+$`
 	targetOrganizationRegexp      = `^[0-9]+$`
+	CleanUpCaiFeeds               = "CLEAN_UP_CAI_FEEDS"    ///r
+	TargetIncludedFeeds           = "TARGET_INCLUDED_FEEDS" ///r
 )
 
 var (
@@ -60,6 +67,9 @@ var (
 	resourceCreationCutoff = getOldTime(int64(getCorrectMaxAgeInHoursOrTerminateExecution()) * 60 * 60)
 	rootFolderId           = getCorrectFolderIdOrTerminateExecution()
 	organizationId         = getCorrectOrganizationIdOrTerminateExecution()
+	cleanUpCaiFeeds        = getCleanUpFeedsOrTerminateExecution()    ///r
+	includedFeedsList      = getFeedsListFromEnv(TargetIncludedFeeds) ///r
+
 )
 
 type PubSubMessage struct {
@@ -175,6 +185,21 @@ func checkIfTagKeyShortNameExcluded(shortName string, excludedTagKeys []string) 
 	return false
 }
 
+///r
+func checkIfCaiFeedsShortNameIncluded(shortName string, IncludedFeeds []string) bool {
+	if len(IncludedFeeds) > 0 {
+		return true
+	}
+	for _, name := range IncludedFeeds {
+		if shortName == name {
+			return true
+		}
+	}
+	return false
+}
+
+///r
+
 func getLabelsMapFromEnv(envVariableName string) map[string]string {
 	targetExcludedLabels := os.Getenv(envVariableName)
 	logger.Println("Try to get labels map")
@@ -223,6 +248,39 @@ func getCleanUpTagKeysOrTerminateExecution() bool {
 	}
 	return result
 }
+
+///r
+func getFeedsListFromEnv(envVariableName string) []string {
+	TargetIncludedFeeds := os.Getenv(envVariableName)
+	logger.Println("Try to get Cai Feeds list")
+	if TargetIncludedFeeds == "" {
+		logger.Printf("No Cai Feeds provided.")
+		return nil
+	}
+
+	var caiFeeds []string
+	err := json.Unmarshal([]byte(TargetIncludedFeeds), &caiFeeds)
+	if err != nil {
+		logger.Printf("Failed to get Cai Feeds list from [%s] env variable, error [%s]", envVariableName, err.Error())
+	} else {
+		logger.Printf("Got Cai Feeds list [%s] from [%s] env variable", caiFeeds, envVariableName)
+	}
+	return caiFeeds
+}
+
+func getCleanUpFeedsOrTerminateExecution() bool {
+	cleanUpCaiFeeds, exists := os.LookupEnv(CleanUpCaiFeeds)
+	if !exists {
+		logger.Fatalf("Clean up CaiFeeds environment variable [%s] not set, set the environment variable and try again.", CleanUpCaiFeeds)
+	}
+	result, err := strconv.ParseBool(cleanUpCaiFeeds)
+	if err != nil {
+		logger.Fatalf("Invalid Clean up CaiFeeds value [%s], specify correct value for environment variable [%s] and try again.", cleanUpCaiFeeds, CleanUpCaiFeeds)
+	}
+	return result
+}
+
+///r
 
 func getCorrectFolderIdOrTerminateExecution() string {
 	targetFolderIdString := os.Getenv(TargetFolderId)
@@ -290,6 +348,39 @@ func getTagValuesServiceOrTerminateExecution(ctx context.Context, client *http.C
 	return cloudResourceManagerService.TagValues
 }
 
+///r
+//https://pkg.go.dev/cloud.google.com/go/asset/apiv1#Client.ListAssets
+func getListFeedsRequestOrTerminateExecution(ctx context.Context, client *http.Client, organizationId string) *assetpb.ListFeedsRequest {
+	///func getListFeedsRequestOrTerminateExecution(ctx context.Context, client *http.Client, organizationId string) (*assetpb.ListFeedsRequest, error) {
+
+	logger.Println("Creating ListFeedsRequest")
+
+	assetClient, err := asset.NewClient(ctx, option.WithHTTPClient(client))
+	if err != nil {
+		logger.Fatalf("Failed to create Asset client with error [%s], terminate execution", err.Error())
+	}
+
+	resp, err := assetClient.ListFeeds(ctx, &assetpb.ListFeedsRequest{
+		Parent: fmt.Sprintf("organizations/%s", organizationId),
+	})
+	if err != nil {
+		logger.Fatalf("Failed to list feeds with error [%s], terminate execution", err.Error())
+	}
+
+	for _, feed := range resp.Feeds {
+		fmt.Println(feed)
+	}
+
+	req := &assetpb.ListFeedsRequest{
+		Parent: fmt.Sprintf("organizations/%s", organizationId),
+	}
+
+	return req
+	///return req, nil
+}
+
+///r
+
 func getFirewallPoliciesServiceOrTerminateExecution(ctx context.Context, client *http.Client) *compute.FirewallPoliciesService {
 	logger.Println("Try to get Firewall Policies Service")
 	computeService, err := compute.NewService(ctx, option.WithHTTPClient(client))
@@ -316,6 +407,11 @@ func invoke(ctx context.Context) {
 	folderService := getFolderServiceOrTerminateExecution(ctx, client)
 	tagKeyService := getTagKeysServiceOrTerminateExecution(ctx, client)
 	tagValuesService := getTagValuesServiceOrTerminateExecution(ctx, client)
+	listFeedsRequest := getListFeedsRequestOrTerminateExecution(ctx, client, organizationId)
+	//listFeedsRequest, err := getListFeedsRequestOrTerminateExecution(ctx, client, organizationId)
+	// if err != nil {
+	// 	logger.Fatalf("Failed to get ListFeedsRequest with error [%s], terminate execution", err.Error())
+	// }
 	firewallPoliciesService := getFirewallPoliciesServiceOrTerminateExecution(ctx, client)
 	endpointService := getServiceManagementServiceOrTerminateExecution(ctx, client)
 
@@ -516,6 +612,10 @@ func invoke(ctx context.Context) {
 	// Only Tag Keys whose values are not in use can be deleted.
 	if cleanUpTagKeys {
 		removeTagKeys(organizationId)
+	}
+	// Only Feeds whose values are not in use can be deleted.
+	if cleanUpCaiFeeds {
+		removeFeedKeys(organizationId)
 	}
 }
 

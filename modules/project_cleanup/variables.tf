@@ -25,6 +25,20 @@ variable "organization_id" {
   description = "The organization ID whose projects to clean up"
 }
 
+###r
+variable "clean_up_org_level_cai_feeds" {
+  type        = bool
+  description = "Clean up organization level CAI Feeds."
+  default     = false
+}
+
+variable "target_included_feeds" {
+  type        = list(string)
+  description = "List of organization feeds that should be deleted."
+  default     = []
+}
+###
+
 variable "project_id" {
   type        = string
   description = "The project ID to host the scheduled function in"
