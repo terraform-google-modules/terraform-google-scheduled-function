@@ -77,6 +77,18 @@ variable "target_included_labels" {
   default     = {}
 }
 
+variable "clean_up_org_level_scc_notifications" {
+  type        = bool
+  description = "Clean up organization level Security Command Center notifications."
+  default     = false
+}
+
+variable "target_included_scc_notifications" {
+  type        = list(string)
+  description = "List of organization  Security Command Center notifications names regex that will be deleted."
+  default     = []
+}
+
 variable "clean_up_org_level_tag_keys" {
   type        = bool
   description = "Clean up organization level Tag Keys."

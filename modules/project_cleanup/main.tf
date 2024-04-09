@@ -58,12 +58,14 @@ module "scheduled_project_cleaner" {
   function_timeout_s             = var.function_timeout_s
 
   function_environment_variables = {
-    TARGET_ORGANIZATION_ID  = var.organization_id
-    TARGET_FOLDER_ID        = var.target_folder_id
-    TARGET_EXCLUDED_LABELS  = jsonencode(var.target_excluded_labels)
-    TARGET_INCLUDED_LABELS  = jsonencode(local.target_included_labels)
-    MAX_PROJECT_AGE_HOURS   = var.max_project_age_in_hours
-    CLEAN_UP_TAG_KEYS       = var.clean_up_org_level_tag_keys
-    TARGET_EXCLUDED_TAGKEYS = jsonencode(var.target_excluded_tagkeys)
+    TARGET_ORGANIZATION_ID            = var.organization_id
+    TARGET_FOLDER_ID                  = var.target_folder_id
+    TARGET_EXCLUDED_LABELS            = jsonencode(var.target_excluded_labels)
+    TARGET_INCLUDED_LABELS            = jsonencode(local.target_included_labels)
+    MAX_PROJECT_AGE_HOURS             = var.max_project_age_in_hours
+    CLEAN_UP_TAG_KEYS                 = var.clean_up_org_level_tag_keys
+    TARGET_EXCLUDED_TAGKEYS           = jsonencode(var.target_excluded_tagkeys)
+    CLEAN_UP_SCC_NOTIFICATIONS        = var.clean_up_org_level_scc_notifications
+    TARGET_INCLUDED_SCC_NOTIFICATIONS = jsonencode(var.target_included_scc_notifications)
   }
 }
