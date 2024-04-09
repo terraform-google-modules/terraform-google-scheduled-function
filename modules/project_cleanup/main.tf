@@ -33,7 +33,8 @@ resource "google_organization_iam_member" "main" {
     "roles/compute.orgSecurityResourceAdmin",
     "roles/compute.orgSecurityPolicyAdmin",
     "roles/resourcemanager.tagAdmin",
-    "roles/viewer"
+    "roles/viewer",
+    "roles/securitycenter.notificationConfigEditor"
   ])
 
   member = "serviceAccount:${google_service_account.project_cleaner_function.email}"
