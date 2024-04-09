@@ -85,7 +85,7 @@ variable "clean_up_org_level_scc_notifications" {
 
 variable "target_included_scc_notifications" {
   type        = list(string)
-  description = "List of organization  Security Command Center notifications names regex that will be deleted."
+  description = "List of organization  Security Command Center notifications names regex that will be deleted. Regex example: `.*/notificationConfigs/scc-notify-.*` "
   default     = []
 }
 

@@ -346,7 +346,7 @@ func getTagValuesServiceOrTerminateExecution(ctx context.Context, client *http.C
 
 func getSCCNotificationServiceOrTerminateExecution(ctx context.Context, client *http.Client) *securitycenter.Client {
 	logger.Println("Try to get SCC Notification Service")
-	securitycenterClient, err := securitycenter.NewClient(ctx, option.WithHTTPClient(client))
+	securitycenterClient, err := securitycenter.NewClient(ctx)
 	if err != nil {
 		logger.Fatalf("Failed to get SCC Notification Service with error [%s], terminate execution", err.Error())
 	}
@@ -410,13 +410,13 @@ func invoke(ctx context.Context) {
 			return false
 		}
 		if p.LifecycleState == "DELETE_REQUESTED" {
-			logger.Printf("Project [%s] schedule for deletion", projectID)
 			return true
 		}
 		return false
 	}
 
 	removeSCCNotifications := func(organization string) {
+		logger.Printf("Try to remove SCC Notifications from organization [%s]", organization)
 		req := &securitycenterpb.ListNotificationConfigsRequest{
 			Parent: fmt.Sprintf("organizations/%s", organization),
 		}
@@ -438,6 +438,8 @@ func invoke(ctx context.Context) {
 				err = sccService.DeleteNotificationConfig(ctx, delReq)
 				if err != nil {
 					logger.Printf("failed to delete SCC notification [%s], error [%s]", resp.Name, err.Error())
+				} else {
+					logger.Printf("SCC notification [%s] deleted", resp.Name)
 				}
 			}
 		}

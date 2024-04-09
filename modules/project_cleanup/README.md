@@ -16,6 +16,7 @@ The following services must be enabled on the project housing the cleanup functi
 - Cloud Scheduler (`cloudscheduler.googleapis.com`)
 - Cloud Resource Manager (`cloudresourcemanager.googleapis.com`)
 - Compute Engine API (`compute.googleapis.com`)
+- Security Command Center API (`securitycenter.googleapis.com`)
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
@@ -34,7 +35,7 @@ The following services must be enabled on the project housing the cleanup functi
 | target\_excluded\_tagkeys | List of organization Tag Key short names that won't be deleted. | `list(string)` | `[]` | no |
 | target\_folder\_id | Folder ID to delete all projects under. | `string` | `""` | no |
 | target\_included\_labels | Map of project lablels that will be deleted. | `map(string)` | `{}` | no |
-| target\_included\_scc\_notifications | List of organization  Security Command Center notifications names regex that will be deleted. | `list(string)` | `[]` | no |
+| target\_included\_scc\_notifications | List of organization  Security Command Center notifications names regex that will be deleted. Regex example: `.*/notificationConfigs/scc-notify-.*` | `list(string)` | `[]` | no |
 | target\_tag\_name | The name of a tag to filter GCP projects on for consideration by the cleanup utility (legacy, use `target_included_labels` map instead). | `string` | `""` | no |
 | target\_tag\_value | The value of a tag to filter GCP projects on for consideration by the cleanup utility (legacy, use `target_included_labels` map instead). | `string` | `""` | no |
 | topic\_name | Name of pubsub topic connecting the scheduled projects cleanup function | `string` | `"pubsub_scheduled_project_cleaner"` | no |
