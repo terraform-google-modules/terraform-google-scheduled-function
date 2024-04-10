@@ -173,12 +173,12 @@ func checkIfAtLeastOneLabelPresentIfAny(project *cloudresourcemanager.Project, l
 	return result
 }
 
-func checkIfTagKeyShortNameExcluded(shortName string, excludedTagKeys []*regexp.Regexp) bool {
+func checkIfTagKeyShortNameExcluded(shortName string, excludedTagKeys []string) bool {
 	if len(excludedTagKeys) == 0 {
 		return false
 	}
-	for _, regex := range excludedTagKeys {
-		if regex.MatchString(shortName) {
+	for _, name := range excludedTagKeys {
+		if shortName == name {
 			return true
 		}
 	}
@@ -383,7 +383,8 @@ func initializeGoogleClient(ctx context.Context) *http.Client {
 	return client
 }
 
-func invoke(ctx context.Context) {
+//func invoke(ctx context.Context) {
+func invoke(ctx context.Context, IncludedFeeds []*regexp.Regexp) {
 	client := initializeGoogleClient(ctx)
 	cloudResourceManagerService := getResourceManagerServiceOrTerminateExecution(ctx, client)
 	folderService := getFolderServiceOrTerminateExecution(ctx, client)
@@ -458,31 +459,30 @@ func invoke(ctx context.Context) {
 		}
 	}
 
-	removeFeedsByName := func(organization string) {
+	removeFeedsByName := func(organization string, IncludedFeeds []*regexp.Regexp) {
 		logger.Printf("Try to remove feeds from organization [%s]", organization)
+
 		req := &assetpb.ListFeedsRequest{
 			Parent: fmt.Sprintf("organizations/%s", organization),
 		}
-		it := feedsService.ListFeeds(ctx, req)
-		for {
-			resp, err := it.Next()
-			if err == iterator.Done {
-				break
-			}
-			if err != nil {
-				logger.Printf("Failed to list Feeds, error [%s]", err.Error())
-				break
-			}
-			projectID := strings.Split(resp.feeds, "/")[1]
-			if checkIfCaiFeedsShortNameIncluded(resp.Name, IncludedFeeds) && projectDeleteRequestedFilter(projectID) {
+
+		resp, err := feedsService.ListFeeds(ctx, req)
+		if err != nil {
+			logger.Printf("Failed to list Feeds, error [%s]", err.Error())
+			return
+		}
+
+		for _, feed := range resp.Feeds {
+			projectID := strings.Split(feed.Name, "/")[1]
+			if checkIfCaiFeedsShortNameIncluded(feed.Name, IncludedFeeds) && projectDeleteRequestedFilter(projectID) {
 				delReq := &assetpb.DeleteFeedRequest{
-					Name: resp.Name,
+					Name: feed.Name,
 				}
-				err = feedsService.DeleteFeed(ctx, delReq)
+				err := feedsService.DeleteFeed(ctx, delReq)
 				if err != nil {
-					logger.Printf("Failed to remove the feed [%s], error [%s]", resp.Name, err.Error())
+					logger.Printf("Failed to remove the feed [%s], error [%s]", feed.Name, err.Error())
 				} else {
-					logger.Printf("Feed [%s] successfully removed.", resp.Name)
+					logger.Printf("Feed [%s] successfully removed.", feed.Name)
 				}
 			}
 		}
@@ -636,11 +636,12 @@ func invoke(ctx context.Context) {
 
 	//Only delete Feeds from deleted projects
 	if cleanUpCaiFeeds {
-		removeFeedsByName(organizationId)
+		removeFeedsByName(organizationId, IncludedFeeds)
 	}
 }
 
 func CleanUpProjects(ctx context.Context, m PubSubMessage) error {
-	invoke(ctx)
+	IncludedFeeds := getFeedsListFromEnv(TargetIncludedFeeds)
+	invoke(ctx, IncludedFeeds)
 	return nil
 }
