@@ -65,7 +65,7 @@ module "scheduled_project_cleaner" {
     MAX_PROJECT_AGE_HOURS   = var.max_project_age_in_hours
     CLEAN_UP_TAG_KEYS       = var.clean_up_org_level_tag_keys
     TARGET_EXCLUDED_TAGKEYS = jsonencode(var.target_excluded_tagkeys)
-    CLEAN_UP_CAI_FEEDS      = var.clean_up_org_level_cai_feeds ###r
-    TARGET_INCLUDED_FEEDS = var.target_included_feeds ###r
+    CLEAN_UP_CAI_FEEDS      = var.clean_up_org_level_cai_feeds
+    TARGET_INCLUDED_FEEDS = var.target_included_feeds
   }
 }

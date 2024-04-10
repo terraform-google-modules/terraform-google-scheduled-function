@@ -55,8 +55,8 @@ const (
 	MaxProjectAgeHours            = "MAX_PROJECT_AGE_HOURS"
 	targetFolderRegexp            = `^[0-9]+$`
 	targetOrganizationRegexp      = `^[0-9]+$`
-	CleanUpCaiFeeds               = "CLEAN_UP_CAI_FEEDS"    ///r
-	TargetIncludedFeeds           = "TARGET_INCLUDED_FEEDS" ///r
+	CleanUpCaiFeeds               = "CLEAN_UP_CAI_FEEDS"
+	TargetIncludedFeeds           = "TARGET_INCLUDED_FEEDS"
 )
 
 var (
@@ -68,9 +68,8 @@ var (
 	resourceCreationCutoff = getOldTime(int64(getCorrectMaxAgeInHoursOrTerminateExecution()) * 60 * 60)
 	rootFolderId           = getCorrectFolderIdOrTerminateExecution()
 	organizationId         = getCorrectOrganizationIdOrTerminateExecution()
-	cleanUpCaiFeeds        = getCleanUpFeedsOrTerminateExecution()    ///r
-	includedFeedsList      = getFeedsListFromEnv(TargetIncludedFeeds) ///r
-
+	cleanUpCaiFeeds        = getCleanUpFeedsOrTerminateExecution()
+	includedFeedsList      = getFeedsListFromEnv(TargetIncludedFeeds)
 )
 
 type PubSubMessage struct {
@@ -174,32 +173,30 @@ func checkIfAtLeastOneLabelPresentIfAny(project *cloudresourcemanager.Project, l
 	return result
 }
 
-func checkIfTagKeyShortNameExcluded(shortName string, excludedTagKeys []string) bool {
+func checkIfTagKeyShortNameExcluded(shortName string, excludedTagKeys []*regexp.Regexp) bool {
 	if len(excludedTagKeys) == 0 {
 		return false
 	}
-	for _, name := range excludedTagKeys {
-		if shortName == name {
+	for _, regex := range excludedTagKeys {
+		if regex.MatchString(shortName) {
 			return true
 		}
 	}
 	return false
 }
 
-///r
-func checkIfCaiFeedsShortNameIncluded(shortName string, IncludedFeeds []string) bool {
-	if len(IncludedFeeds) > 0 {
+func checkIfCaiFeedsShortNameIncluded(shortName string, IncludedFeeds []*regexp.Regexp) bool {
+	if len(IncludedFeeds) == 0 {
 		return true
 	}
-	for _, name := range IncludedFeeds {
-		if shortName == name {
+
+	for _, regex := range IncludedFeeds {
+		if regex.MatchString(shortName) {
 			return true
 		}
 	}
 	return false
 }
-
-///r
 
 func getLabelsMapFromEnv(envVariableName string) map[string]string {
 	targetExcludedLabels := os.Getenv(envVariableName)
@@ -250,23 +247,32 @@ func getCleanUpTagKeysOrTerminateExecution() bool {
 	return result
 }
 
-///r
-func getFeedsListFromEnv(envVariableName string) []string {
-	TargetIncludedFeeds := os.Getenv(envVariableName)
+func getFeedsListFromEnv(envVariableName string) []*regexp.Regexp {
+	targetIncludedFeeds := os.Getenv(envVariableName)
 	logger.Println("Try to get Cai Feeds list")
-	if TargetIncludedFeeds == "" {
+	if targetIncludedFeeds == "" {
 		logger.Printf("No Cai Feeds provided.")
 		return nil
 	}
 
 	var caiFeeds []string
-	err := json.Unmarshal([]byte(TargetIncludedFeeds), &caiFeeds)
+	err := json.Unmarshal([]byte(targetIncludedFeeds), &caiFeeds)
 	if err != nil {
 		logger.Printf("Failed to get Cai Feeds list from [%s] env variable, error [%s]", envVariableName, err.Error())
-	} else {
-		logger.Printf("Got Cai Feeds list [%s] from [%s] env variable", caiFeeds, envVariableName)
+		return nil
 	}
-	return caiFeeds
+
+	regexFeeds := make([]*regexp.Regexp, len(caiFeeds))
+	for i, feed := range caiFeeds {
+		regexFeeds[i], err = regexp.Compile(feed)
+		if err != nil {
+			logger.Printf("Failed to compile regex for Cai Feed [%s], error [%s]", feed, err.Error())
+			regexFeeds[i] = regexp.MustCompile(".*")
+		}
+	}
+
+	logger.Printf("Got Cai Feeds list [%v] from [%s] env variable", regexFeeds, envVariableName)
+	return regexFeeds
 }
 
 func getCleanUpFeedsOrTerminateExecution() bool {
@@ -280,8 +286,6 @@ func getCleanUpFeedsOrTerminateExecution() bool {
 	}
 	return result
 }
-
-///r
 
 func getCorrectFolderIdOrTerminateExecution() string {
 	targetFolderIdString := os.Getenv(TargetFolderId)
@@ -349,34 +353,15 @@ func getTagValuesServiceOrTerminateExecution(ctx context.Context, client *http.C
 	return cloudResourceManagerService.TagValues
 }
 
-///r
-//https://pkg.go.dev/cloud.google.com/go/asset/apiv1#Client.ListFeeds
-func getListFeedsRequestOrTerminateExecution(ctx context.Context, client *http.Client, organizationId string) (*assetpb.ListFeedsRequest, error) {
-	logger.Println("Creating ListFeedsRequest")
-
-	_, err := asset.NewClient(ctx, option.WithHTTPClient(client))
+func getAssetServiceOrTerminateExecution(ctx context.Context, client *http.Client) *asset.Client {
+	logger.Println("Try to get Asset Service")
+	assetService, err := asset.NewClient(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create Asset client: %v", err)
+		logger.Fatalf("Failed to get Asset Service with error [%s], terminate execution", err.Error())
 	}
-
-	randomIDPattern := `^organizations/` + organizationId + `/feeds/fd-cai-monitoring-[0-9a-f]{2}$`
-	regex, err := regexp.Compile(randomIDPattern)
-	if err != nil {
-		return nil, fmt.Errorf("failed to compile the regular expression: %v", err)
-	}
-
-	req := &assetpb.ListFeedsRequest{
-		Parent: fmt.Sprintf("organizations/%s", organizationId),
-	}
-
-	if !regex.MatchString(req.Parent) {
-		return nil, fmt.Errorf("invalid feed name pattern")
-	}
-
-	return req, nil
+	logger.Println("Got Asset Service")
+	return assetService
 }
-
-///r
 
 func getFirewallPoliciesServiceOrTerminateExecution(ctx context.Context, client *http.Client) *compute.FirewallPoliciesService {
 	logger.Println("Try to get Firewall Policies Service")
@@ -404,6 +389,7 @@ func invoke(ctx context.Context) {
 	folderService := getFolderServiceOrTerminateExecution(ctx, client)
 	tagKeyService := getTagKeysServiceOrTerminateExecution(ctx, client)
 	tagValuesService := getTagValuesServiceOrTerminateExecution(ctx, client)
+	feedsService := getAssetServiceOrTerminateExecution(ctx, client)
 	firewallPoliciesService := getFirewallPoliciesServiceOrTerminateExecution(ctx, client)
 	endpointService := getServiceManagementServiceOrTerminateExecution(ctx, client)
 
@@ -424,6 +410,18 @@ func invoke(ctx context.Context) {
 			return false
 		}
 		return tagKeyCreatedAt.Before(resourceCreationCutoff)
+	}
+
+	projectDeleteRequestedFilter := func(projectID string) bool {
+		p, err := cloudResourceManagerService.Projects.Get(projectID).Context(ctx).Do()
+		if err != nil {
+			logger.Printf("Failed to get project [%s], error [%s]", projectID, err.Error())
+			return false
+		}
+		if p.LifecycleState == "DELETE_REQUESTED" {
+			return true
+		}
+		return false
 	}
 
 	removeTagValues := func(tagKey string) {
@@ -460,39 +458,34 @@ func invoke(ctx context.Context) {
 		}
 	}
 
-	///r
-	removeFeedsByName := func(ctx context.Context, client *asset.Client, organization, feedName string) (string, error) {
-		logger.Printf("Try to remove feeds with name [%s] from organization [%s]", feedName, organization)
-
-		randomIDPattern := `^organizations/` + organization + `/feeds/fd-cai-monitoring-[0-9a-f]{2}$`
-		regex, err := regexp.Compile(randomIDPattern)
-		if err != nil {
-			return "", fmt.Errorf("Failed to compile the regular expression: %v", err)
-		}
-
+	removeFeedsByName := func(organization string) {
+		logger.Printf("Try to remove feeds from organization [%s]", organization)
 		req := &assetpb.ListFeedsRequest{
 			Parent: fmt.Sprintf("organizations/%s", organization),
 		}
-
-		resp, err := client.ListFeeds(ctx, req)
-		if err != nil {
-			return "", fmt.Errorf("Failed to list feeds from the organization: %v", err)
-		}
-
-		for _, feed := range resp.Feeds {
-			if regex.MatchString(feed.Name) {
+		it := feedsService.ListFeeds(ctx, req)
+		for {
+			resp, err := it.Next()
+			if err == iterator.Done {
+				break
+			}
+			if err != nil {
+				logger.Printf("Failed to list Feeds, error [%s]", err.Error())
+				break
+			}
+			projectID := strings.Split(resp.feeds, "/")[1]
+			if checkIfCaiFeedsShortNameIncluded(resp.Name, IncludedFeeds) && projectDeleteRequestedFilter(projectID) {
 				delReq := &assetpb.DeleteFeedRequest{
-					Name: feed.Name,
+					Name: resp.Name,
 				}
-
-				if err := client.DeleteFeed(ctx, delReq); err != nil {
-					return feedName, fmt.Errorf("Failed to remove the feed %s: %v", feed.Name, err)
+				err = feedsService.DeleteFeed(ctx, delReq)
+				if err != nil {
+					logger.Printf("Failed to remove the feed [%s], error [%s]", resp.Name, err.Error())
+				} else {
+					logger.Printf("Feed [%s] successfully removed.", resp.Name)
 				}
-				logger.Printf("Feed [%s] successfully removed.", feed.Name)
 			}
 		}
-
-		return feedName, nil
 	}
 
 	removeFirewallPolicies := func(folder string) {
@@ -640,10 +633,11 @@ func invoke(ctx context.Context) {
 	if cleanUpTagKeys {
 		removeTagKeys(organizationId)
 	}
-	if cleanUpCaiFeeds {
-		removeFeedsByName(ctx, client, organizationId, feedName)
-	}
 
+	//Only delete Feeds from deleted projects
+	if cleanUpCaiFeeds {
+		removeFeedsByName(organizationId)
+	}
 }
 
 func CleanUpProjects(ctx context.Context, m PubSubMessage) error {
