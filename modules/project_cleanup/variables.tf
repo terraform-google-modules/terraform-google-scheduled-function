@@ -32,9 +32,9 @@ variable "clean_up_org_level_cai_feeds" {
 }
 
 variable "target_included_feeds" {
-  type        = list(regex)
-  description = "List of organization feeds that should be deleted."
-  default     = [regex("^fd-cai-monitoring-.+$")]
+  type        = list(string)
+  description = "List of organization feeds that should be deleted. Regex example: `.*/feeds/fd-cai-monitoring-.*` "
+  default     = ["fd-cai-monitoring-"]
 }
 
 variable "project_id" {

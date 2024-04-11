@@ -33,7 +33,8 @@ resource "google_organization_iam_member" "main" {
     "roles/compute.orgSecurityResourceAdmin",
     "roles/compute.orgSecurityPolicyAdmin",
     "roles/resourcemanager.tagAdmin",
-    "roles/viewer"
+    "roles/viewer",
+    "roles/cloudasset.owner"
   ])
 
   member = "serviceAccount:${google_service_account.project_cleaner_function.email}"
@@ -66,6 +67,6 @@ module "scheduled_project_cleaner" {
     CLEAN_UP_TAG_KEYS       = var.clean_up_org_level_tag_keys
     TARGET_EXCLUDED_TAGKEYS = jsonencode(var.target_excluded_tagkeys)
     CLEAN_UP_CAI_FEEDS      = var.clean_up_org_level_cai_feeds
-    TARGET_INCLUDED_FEEDS = var.target_included_feeds
+    TARGET_INCLUDED_FEEDS   = jsonencode(var.target_included_feeds)
   }
 }
