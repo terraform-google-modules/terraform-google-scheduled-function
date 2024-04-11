@@ -35,13 +35,9 @@ import (
 	cloudresourcemanager3 "google.golang.org/api/cloudresourcemanager/v3"
 	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/googleapi"
-	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
 	"google.golang.org/api/servicemanagement/v1"
 	assetpb "google.golang.org/genproto/googleapis/cloud/asset/v1"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const (
@@ -473,7 +469,7 @@ func invoke(ctx context.Context, IncludedFeeds []*regexp.Regexp) {
 		}
 
 		for _, feed := range resp.Feeds {
-			projectID := strings.Split(feed.Name, "/")[1]
+			projectID := strings.Split(feed.FeedOutputConfig.GetPubsubDestination().Topic, "/")[1]
 			if checkIfCaiFeedsShortNameIncluded(feed.Name, IncludedFeeds) && projectDeleteRequestedFilter(projectID) {
 				delReq := &assetpb.DeleteFeedRequest{
 					Name: feed.Name,
