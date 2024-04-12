@@ -23,7 +23,7 @@ The following services must be enabled on the project housing the cleanup functi
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| clean\_up\_org\_level\_cai\_feeds | Clean up organization level CAI Feeds. | `bool` | `false` | no |
+| clean\_up\_org\_level\_cai\_feeds | Clean up organization level Cloud Asset Inventory Feeds. | `bool` | `false` | no |
 | clean\_up\_org\_level\_tag\_keys | Clean up organization level Tag Keys. | `bool` | `false` | no |
 | function\_timeout\_s | The amount of time in seconds allotted for the execution of the function. | `number` | `500` | no |
 | job\_schedule | Cleaner function run frequency, in cron syntax | `string` | `"*/5 * * * *"` | no |
@@ -34,7 +34,7 @@ The following services must be enabled on the project housing the cleanup functi
 | target\_excluded\_labels | Map of project lablels that won't be deleted. | `map(string)` | `{}` | no |
 | target\_excluded\_tagkeys | List of organization Tag Key short names that won't be deleted. | `list(string)` | `[]` | no |
 | target\_folder\_id | Folder ID to delete all projects under. | `string` | `""` | no |
-| target\_included\_feeds | List of organization feeds that should be deleted. Regex example: `.*/feeds/fd-cai-monitoring-.*` | `list(string)` | <pre>[<br>  "fd-cai-monitoring-"<br>]</pre> | no |
+| target\_included\_feeds | List of organization level Cloud Asset Inventory feeds that should be deleted. Regex example: `.*/feeds/fd-cai-monitoring-.*` | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
 | target\_included\_labels | Map of project lablels that will be deleted. | `map(string)` | `{}` | no |
 | target\_tag\_name | The name of a tag to filter GCP projects on for consideration by the cleanup utility (legacy, use `target_included_labels` map instead). | `string` | `""` | no |
 | target\_tag\_value | The value of a tag to filter GCP projects on for consideration by the cleanup utility (legacy, use `target_included_labels` map instead). | `string` | `""` | no |

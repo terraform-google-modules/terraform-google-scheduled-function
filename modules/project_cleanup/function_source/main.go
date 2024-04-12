@@ -181,12 +181,12 @@ func checkIfTagKeyShortNameExcluded(shortName string, excludedTagKeys []string) 
 	return false
 }
 
-func checkIfCaiFeedsShortNameIncluded(shortName string, IncludedFeeds []*regexp.Regexp) bool {
-	if len(IncludedFeeds) == 0 {
-		return true
+func checkIfCaiFeedsShortNameIncluded(shortName string, includedFeeds []*regexp.Regexp) bool {
+	if len(includedFeeds) == 0 {
+		return false
 	}
 
-	for _, regex := range IncludedFeeds {
+	for _, regex := range includedFeeds {
 		if regex.MatchString(shortName) {
 			return true
 		}
@@ -245,16 +245,16 @@ func getCleanUpTagKeysOrTerminateExecution() bool {
 
 func getFeedsListFromEnv(envVariableName string) []*regexp.Regexp {
 	targetIncludedFeeds := os.Getenv(envVariableName)
-	logger.Println("Try to get Cai Feeds list")
+	logger.Println("Try to get CAI Feeds list")
 	if targetIncludedFeeds == "" {
-		logger.Printf("No Cai Feeds provided.")
+		logger.Printf("No CAI Feeds provided.")
 		return nil
 	}
 
 	var caiFeeds []string
 	err := json.Unmarshal([]byte(targetIncludedFeeds), &caiFeeds)
 	if err != nil {
-		logger.Printf("Failed to get Cai Feeds list from [%s] env variable, error [%s]", envVariableName, err.Error())
+		logger.Printf("Failed to get CAI Feeds list from [%s] env variable, error [%s]", envVariableName, err.Error())
 		return nil
 	}
 
@@ -262,23 +262,23 @@ func getFeedsListFromEnv(envVariableName string) []*regexp.Regexp {
 	for i, feed := range caiFeeds {
 		regexFeeds[i], err = regexp.Compile(feed)
 		if err != nil {
-			logger.Printf("Failed to compile regex for Cai Feed [%s], error [%s]", feed, err.Error())
+			logger.Printf("Failed to compile regex for CAI Feed [%s], error [%s]", feed, err.Error())
 			regexFeeds[i] = regexp.MustCompile(".*")
 		}
 	}
 
-	logger.Printf("Got Cai Feeds list [%v] from [%s] env variable", regexFeeds, envVariableName)
+	logger.Printf("Got CAI Feeds list [%v] from [%s] env variable", regexFeeds, envVariableName)
 	return regexFeeds
 }
 
 func getCleanUpFeedsOrTerminateExecution() bool {
 	cleanUpCaiFeeds, exists := os.LookupEnv(CleanUpCaiFeeds)
 	if !exists {
-		logger.Fatalf("Clean up CaiFeeds environment variable [%s] not set, set the environment variable and try again.", CleanUpCaiFeeds)
+		logger.Fatalf("Clean up CAI Feeds environment variable [%s] not set, set the environment variable and try again.", CleanUpCaiFeeds)
 	}
 	result, err := strconv.ParseBool(cleanUpCaiFeeds)
 	if err != nil {
-		logger.Fatalf("Invalid Clean up CaiFeeds value [%s], specify correct value for environment variable [%s] and try again.", cleanUpCaiFeeds, CleanUpCaiFeeds)
+		logger.Fatalf("Invalid Clean up CAI Feeds value [%s], specify correct value for environment variable [%s] and try again.", cleanUpCaiFeeds, CleanUpCaiFeeds)
 	}
 	return result
 }
@@ -379,8 +379,7 @@ func initializeGoogleClient(ctx context.Context) *http.Client {
 	return client
 }
 
-//func invoke(ctx context.Context) {
-func invoke(ctx context.Context, IncludedFeeds []*regexp.Regexp) {
+func invoke(ctx context.Context) {
 	client := initializeGoogleClient(ctx)
 	cloudResourceManagerService := getResourceManagerServiceOrTerminateExecution(ctx, client)
 	folderService := getFolderServiceOrTerminateExecution(ctx, client)
@@ -455,7 +454,7 @@ func invoke(ctx context.Context, IncludedFeeds []*regexp.Regexp) {
 		}
 	}
 
-	removeFeedsByName := func(organization string, IncludedFeeds []*regexp.Regexp) {
+	removeFeedsByName := func(organization string) {
 		logger.Printf("Try to remove feeds from organization [%s]", organization)
 
 		req := &assetpb.ListFeedsRequest{
@@ -470,7 +469,7 @@ func invoke(ctx context.Context, IncludedFeeds []*regexp.Regexp) {
 
 		for _, feed := range resp.Feeds {
 			projectID := strings.Split(feed.FeedOutputConfig.GetPubsubDestination().Topic, "/")[1]
-			if checkIfCaiFeedsShortNameIncluded(feed.Name, IncludedFeeds) && projectDeleteRequestedFilter(projectID) {
+			if checkIfCaiFeedsShortNameIncluded(feed.Name, includedFeedsList) && projectDeleteRequestedFilter(projectID) {
 				delReq := &assetpb.DeleteFeedRequest{
 					Name: feed.Name,
 				}
@@ -632,12 +631,11 @@ func invoke(ctx context.Context, IncludedFeeds []*regexp.Regexp) {
 
 	//Only delete Feeds from deleted projects
 	if cleanUpCaiFeeds {
-		removeFeedsByName(organizationId, IncludedFeeds)
+		removeFeedsByName(organizationId)
 	}
 }
 
 func CleanUpProjects(ctx context.Context, m PubSubMessage) error {
-	IncludedFeeds := getFeedsListFromEnv(TargetIncludedFeeds)
-	invoke(ctx, IncludedFeeds)
+	invoke(ctx)
 	return nil
 }
