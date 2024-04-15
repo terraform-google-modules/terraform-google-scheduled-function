@@ -28,6 +28,7 @@ import (
 	"time"
 
 	asset "cloud.google.com/go/asset/apiv1"
+	"cloud.google.com/go/asset/apiv1/assetpb"
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/cloudresourcemanager/v1"
@@ -37,7 +38,6 @@ import (
 	"google.golang.org/api/googleapi"
 	"google.golang.org/api/option"
 	"google.golang.org/api/servicemanagement/v1"
-	assetpb "google.golang.org/genproto/googleapis/cloud/asset/v1"
 )
 
 const (
