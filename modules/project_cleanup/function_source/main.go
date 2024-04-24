@@ -216,31 +216,33 @@ func getLabelsMapFromEnv(envVariableName string) map[string]string {
 }
 
 func getSCCNotfiListFromEnv(envVariableName string) []*regexp.Regexp {
+	var compiledRegEx []*regexp.Regexp
 	targetExcludedSCCNotfis := os.Getenv(envVariableName)
 	logger.Println("Try to get SCC Notifications list")
 	if targetExcludedSCCNotfis == "" {
 		logger.Printf("No SCC Notifications provided.")
-		return nil
+		return compiledRegEx
 	}
 
 	var sccNotfis []string
 	err := json.Unmarshal([]byte(targetExcludedSCCNotfis), &sccNotfis)
 	if err != nil {
 		logger.Printf("Failed to get SCC Notifications list from [%s] env variable, error [%s]", envVariableName, err.Error())
+		return compiledRegEx
 	} else {
 		logger.Printf("Got SCC Notifications list [%s] from [%s] env variable", sccNotfis, envVariableName)
 	}
+
 	//build Regexes
-	var reg []*regexp.Regexp
 	for _, r := range sccNotfis {
 		result, err := regexp.Compile(r)
 		if err != nil {
 			logger.Printf("Invalid regular expression [%s] for SCC Notification", r)
 		} else {
-			reg = append(reg, result)
+			compiledRegEx = append(compiledRegEx, result)
 		}
 	}
-	return reg
+	return compiledRegEx
 }
 
 func getTagKeysListFromEnv(envVariableName string) []string {
