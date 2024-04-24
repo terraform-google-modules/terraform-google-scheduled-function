@@ -231,9 +231,14 @@ func getSCCNotfiListFromEnv(envVariableName string) []*regexp.Regexp {
 		logger.Printf("Got SCC Notifications list [%s] from [%s] env variable", sccNotfis, envVariableName)
 	}
 	//build Regexes
-	reg := make([]*regexp.Regexp, len(sccNotfis))
-	for i, r := range sccNotfis {
-		reg[i] = regexp.MustCompile(r)
+	var reg []*regexp.Regexp
+	for _, r := range sccNotfis {
+		result, err := regexp.Compile(r)
+		if err != nil {
+			logger.Printf("Invalid regular expression [%s] for SCC Notification", r)
+		} else {
+			reg = append(reg, result)
+		}
 	}
 	return reg
 }
