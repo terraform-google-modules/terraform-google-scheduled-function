@@ -54,6 +54,7 @@ const (
 	MaxProjectAgeHours            = "MAX_PROJECT_AGE_HOURS"
 	targetFolderRegexp            = `^[0-9]+$`
 	targetOrganizationRegexp      = `^[0-9]+$`
+	SCCNotificationsPageSize      = "SCC_NOTIFICATIONS_PAGE_SIZE"
 )
 
 var (
@@ -67,6 +68,7 @@ var (
 	resourceCreationCutoff = getOldTime(int64(getCorrectMaxAgeInHoursOrTerminateExecution()) * 60 * 60)
 	rootFolderId           = getCorrectFolderIdOrTerminateExecution()
 	organizationId         = getCorrectOrganizationIdOrTerminateExecution()
+	sccPageSize            = getSCCNotificationPageSizeOrTerminateExecution()
 )
 
 type PubSubMessage struct {
@@ -278,6 +280,15 @@ func getCleanUpSCCNotfiOrTerminateExecution() bool {
 	return result
 }
 
+func getSCCNotificationPageSizeOrTerminateExecution() int32 {
+	pageSize := os.Getenv(SCCNotificationsPageSize)
+	size, err := strconv.ParseInt(pageSize, 10, 32)
+	if err != nil {
+		logger.Fatalf("Invalid page size [%s], specify correct value and try again.", pageSize)
+	}
+	return int32(size)
+}
+
 func getCorrectFolderIdOrTerminateExecution() string {
 	targetFolderIdString := os.Getenv(TargetFolderId)
 	matched, err := regexp.MatchString(targetFolderRegexp, targetFolderIdString)
@@ -418,7 +429,8 @@ func invoke(ctx context.Context) {
 	removeSCCNotifications := func(organization string) {
 		logger.Printf("Try to remove SCC Notifications from organization [%s]", organization)
 		req := &securitycenterpb.ListNotificationConfigsRequest{
-			Parent: fmt.Sprintf("organizations/%s", organization),
+			Parent:   fmt.Sprintf("organizations/%s", organization),
+			PageSize: sccPageSize,
 		}
 		it := sccService.ListNotificationConfigs(ctx, req)
 		for {

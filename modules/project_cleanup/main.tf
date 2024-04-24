@@ -68,5 +68,6 @@ module "scheduled_project_cleaner" {
     TARGET_EXCLUDED_TAGKEYS           = jsonencode(var.target_excluded_tagkeys)
     CLEAN_UP_SCC_NOTIFICATIONS        = var.clean_up_org_level_scc_notifications
     TARGET_INCLUDED_SCC_NOTIFICATIONS = jsonencode(var.target_included_scc_notifications)
+    SCC_NOTIFICATIONS_PAGE_SIZE       = var.list_scc_notifications_page_size
   }
 }
