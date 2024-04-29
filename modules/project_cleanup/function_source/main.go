@@ -181,13 +181,12 @@ func checkIfTagKeyShortNameExcluded(shortName string, excludedTagKeys []string) 
 	return false
 }
 
-func checkIfCaiFeedsShortNameIncluded(shortName string, includedFeeds []*regexp.Regexp) bool {
-	if len(includedFeeds) == 0 {
+func checkIfNameIncluded(name string, reg []*regexp.Regexp) bool {
+	if len(reg) == 0 {
 		return false
 	}
-
-	for _, regex := range includedFeeds {
-		if regex.MatchString(shortName) {
+	for _, regex := range reg {
+		if regex.MatchString(name) {
 			return true
 		}
 	}
@@ -244,11 +243,12 @@ func getCleanUpTagKeysOrTerminateExecution() bool {
 }
 
 func getFeedsListFromEnv(envVariableName string) []*regexp.Regexp {
+	var compiledRegEx []*regexp.Regexp
 	targetIncludedFeeds := os.Getenv(envVariableName)
 	logger.Println("Try to get CAI Feeds list")
 	if targetIncludedFeeds == "" {
 		logger.Printf("No CAI Feeds provided.")
-		return nil
+		return compiledRegEx
 	}
 
 	var caiFeeds []string
@@ -256,19 +256,20 @@ func getFeedsListFromEnv(envVariableName string) []*regexp.Regexp {
 	if err != nil {
 		logger.Printf("Failed to get CAI Feeds list from [%s] env variable, error [%s]", envVariableName, err.Error())
 		return nil
+	} else {
+		logger.Printf("Got CAI Feeds list [%s] from [%s] env variable", caiFeeds, envVariableName)
 	}
 
-	regexFeeds := make([]*regexp.Regexp, len(caiFeeds))
-	for i, feed := range caiFeeds {
-		regexFeeds[i], err = regexp.Compile(feed)
+	//build Regexes
+	for _, r := range caiFeeds {
+		result, err := regexp.Compile(r)
 		if err != nil {
-			logger.Printf("Failed to compile regex for CAI Feed [%s], error [%s]", feed, err.Error())
-			regexFeeds[i] = regexp.MustCompile(".*")
+			logger.Printf("Invalid regular expression [%s] for CAI Feed", r)
+		} else {
+			compiledRegEx = append(compiledRegEx, result)
 		}
 	}
-
-	logger.Printf("Got CAI Feeds list [%v] from [%s] env variable", regexFeeds, envVariableName)
-	return regexFeeds
+	return compiledRegEx
 }
 
 func getCleanUpFeedsOrTerminateExecution() bool {
@@ -469,7 +470,7 @@ func invoke(ctx context.Context) {
 
 		for _, feed := range resp.Feeds {
 			projectID := strings.Split(feed.FeedOutputConfig.GetPubsubDestination().Topic, "/")[1]
-			if checkIfCaiFeedsShortNameIncluded(feed.Name, includedFeedsList) && projectDeleteRequestedFilter(projectID) {
+			if checkIfNameIncluded(feed.Name, includedFeedsList) && projectDeleteRequestedFilter(projectID) {
 				delReq := &assetpb.DeleteFeedRequest{
 					Name: feed.Name,
 				}
