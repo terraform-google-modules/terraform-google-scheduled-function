@@ -406,7 +406,8 @@ func invoke(ctx context.Context) {
 			return
 		}
 
-		if len(listResponse.Services) <= 1 {
+		logger.Printf("Got [%d] services for the project [%s]", len(listResponse.Services), projectId)
+		if len(listResponse.Services) == 0 {
 			return
 		}
 
