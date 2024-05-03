@@ -4,6 +4,7 @@ go 1.21
 
 require (
 	cloud.google.com/go/asset v1.17.2
+	cloud.google.com/go/securitycenter v1.28.0
 	golang.org/x/net v0.24.0
 	golang.org/x/oauth2 v0.19.0
 	google.golang.org/api v0.177.0

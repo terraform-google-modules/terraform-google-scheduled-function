@@ -29,6 +29,8 @@ import (
 
 	asset "cloud.google.com/go/asset/apiv1"
 	"cloud.google.com/go/asset/apiv1/assetpb"
+	securitycenter "cloud.google.com/go/securitycenter/apiv1"
+	"cloud.google.com/go/securitycenter/apiv1/securitycenterpb"
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/cloudresourcemanager/v1"
@@ -36,6 +38,7 @@ import (
 	cloudresourcemanager3 "google.golang.org/api/cloudresourcemanager/v3"
 	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/googleapi"
+	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
 	"google.golang.org/api/servicemanagement/v1"
 )
@@ -45,12 +48,15 @@ const (
 	TargetExcludedLabels          = "TARGET_EXCLUDED_LABELS"
 	TargetIncludedLabels          = "TARGET_INCLUDED_LABELS"
 	CleanUpTagKeys                = "CLEAN_UP_TAG_KEYS"
+	CleanUpSCCNotfi               = "CLEAN_UP_SCC_NOTIFICATIONS"
 	TargetExcludedTagKeys         = "TARGET_EXCLUDED_TAGKEYS"
+	TargetIncludedSCCNotfis       = "TARGET_INCLUDED_SCC_NOTIFICATIONS"
 	TargetFolderId                = "TARGET_FOLDER_ID"
 	TargetOrganizationId          = "TARGET_ORGANIZATION_ID"
 	MaxProjectAgeHours            = "MAX_PROJECT_AGE_HOURS"
 	targetFolderRegexp            = `^[0-9]+$`
 	targetOrganizationRegexp      = `^[0-9]+$`
+	SCCNotificationsPageSize      = "SCC_NOTIFICATIONS_PAGE_SIZE"
 	CleanUpCaiFeeds               = "CLEAN_UP_CAI_FEEDS"
 	TargetIncludedFeeds           = "TARGET_INCLUDED_FEEDS"
 )
@@ -60,10 +66,13 @@ var (
 	excludedLabelsMap      = getLabelsMapFromEnv(TargetExcludedLabels)
 	includedLabelsMap      = getLabelsMapFromEnv(TargetIncludedLabels)
 	cleanUpTagKeys         = getCleanUpTagKeysOrTerminateExecution()
+	cleanUpSCCNotfi        = getCleanUpSCCNotfiOrTerminateExecution()
 	excludedTagKeysList    = getTagKeysListFromEnv(TargetExcludedTagKeys)
+	includedSCCNotfisList  = getSCCNotfiListFromEnv(TargetIncludedSCCNotfis)
 	resourceCreationCutoff = getOldTime(int64(getCorrectMaxAgeInHoursOrTerminateExecution()) * 60 * 60)
 	rootFolderId           = getCorrectFolderIdOrTerminateExecution()
 	organizationId         = getCorrectOrganizationIdOrTerminateExecution()
+	sccPageSize            = getSCCNotificationPageSizeOrTerminateExecution()
 	cleanUpCaiFeeds        = getCleanUpFeedsOrTerminateExecution()
 	includedFeedsList      = getFeedsListFromEnv(TargetIncludedFeeds)
 )
@@ -169,24 +178,24 @@ func checkIfAtLeastOneLabelPresentIfAny(project *cloudresourcemanager.Project, l
 	return result
 }
 
-func checkIfTagKeyShortNameExcluded(shortName string, excludedTagKeys []string) bool {
-	if len(excludedTagKeys) == 0 {
-		return false
-	}
-	for _, name := range excludedTagKeys {
-		if shortName == name {
-			return true
-		}
-	}
-	return false
-}
-
 func checkIfNameIncluded(name string, reg []*regexp.Regexp) bool {
 	if len(reg) == 0 {
 		return false
 	}
 	for _, regex := range reg {
 		if regex.MatchString(name) {
+			return true
+		}
+	}
+	return false
+}
+
+func checkIfTagKeyShortNameExcluded(shortName string, excludedTagKeys []string) bool {
+	if len(excludedTagKeys) == 0 {
+		return false
+	}
+	for _, name := range excludedTagKeys {
+		if shortName == name {
 			return true
 		}
 	}
@@ -210,6 +219,36 @@ func getLabelsMapFromEnv(envVariableName string) map[string]string {
 		logger.Printf("Got labels map [%s] from [%s] env variable", labels, envVariableName)
 	}
 	return labels
+}
+
+func getSCCNotfiListFromEnv(envVariableName string) []*regexp.Regexp {
+	var compiledRegEx []*regexp.Regexp
+	targetExcludedSCCNotfis := os.Getenv(envVariableName)
+	logger.Println("Try to get SCC Notifications list")
+	if targetExcludedSCCNotfis == "" {
+		logger.Printf("No SCC Notifications provided.")
+		return compiledRegEx
+	}
+
+	var sccNotfis []string
+	err := json.Unmarshal([]byte(targetExcludedSCCNotfis), &sccNotfis)
+	if err != nil {
+		logger.Printf("Failed to get SCC Notifications list from [%s] env variable, error [%s]", envVariableName, err.Error())
+		return compiledRegEx
+	} else {
+		logger.Printf("Got SCC Notifications list [%s] from [%s] env variable", sccNotfis, envVariableName)
+	}
+
+	//build Regexes
+	for _, r := range sccNotfis {
+		result, err := regexp.Compile(r)
+		if err != nil {
+			logger.Printf("Invalid regular expression [%s] for SCC Notification", r)
+		} else {
+			compiledRegEx = append(compiledRegEx, result)
+		}
+	}
+	return compiledRegEx
 }
 
 func getTagKeysListFromEnv(envVariableName string) []string {
@@ -240,6 +279,27 @@ func getCleanUpTagKeysOrTerminateExecution() bool {
 		logger.Fatalf("Invalid Clean up Tag Keys value [%s], specify correct value for environment variable [%s] and try again.", cleanUpTagKeys, CleanUpTagKeys)
 	}
 	return result
+}
+
+func getCleanUpSCCNotfiOrTerminateExecution() bool {
+	cleanUpSCCNotfiVal, exists := os.LookupEnv(CleanUpSCCNotfi)
+	if !exists {
+		logger.Fatalf("Clean up SCC notifications environment variable [%s] not set, set the environment variable and try again.", CleanUpSCCNotfi)
+	}
+	result, err := strconv.ParseBool(cleanUpSCCNotfiVal)
+	if err != nil {
+		logger.Fatalf("Invalid Clean up SCC notifications value [%s], specify correct value for environment variable [%s] and try again.", cleanUpSCCNotfiVal, CleanUpSCCNotfi)
+	}
+	return result
+}
+
+func getSCCNotificationPageSizeOrTerminateExecution() int32 {
+	pageSize := os.Getenv(SCCNotificationsPageSize)
+	size, err := strconv.ParseInt(pageSize, 10, 32)
+	if err != nil {
+		logger.Fatalf("Invalid page size [%s], specify correct value and try again.", pageSize)
+	}
+	return int32(size)
 }
 
 func getFeedsListFromEnv(envVariableName string) []*regexp.Regexp {
@@ -350,6 +410,16 @@ func getTagValuesServiceOrTerminateExecution(ctx context.Context, client *http.C
 	return cloudResourceManagerService.TagValues
 }
 
+func getSCCNotificationServiceOrTerminateExecution(ctx context.Context, client *http.Client) *securitycenter.Client {
+	logger.Println("Try to get SCC Notification Service")
+	securitycenterClient, err := securitycenter.NewClient(ctx)
+	if err != nil {
+		logger.Fatalf("Failed to get SCC Notification Service with error [%s], terminate execution", err.Error())
+	}
+	logger.Println("Got SCC Notification Service")
+	return securitycenterClient
+}
+
 func getAssetServiceOrTerminateExecution(ctx context.Context, client *http.Client) *asset.Client {
 	logger.Println("Try to get Asset Service")
 	assetService, err := asset.NewClient(ctx)
@@ -385,6 +455,7 @@ func invoke(ctx context.Context) {
 	cloudResourceManagerService := getResourceManagerServiceOrTerminateExecution(ctx, client)
 	folderService := getFolderServiceOrTerminateExecution(ctx, client)
 	tagKeyService := getTagKeysServiceOrTerminateExecution(ctx, client)
+	sccService := getSCCNotificationServiceOrTerminateExecution(ctx, client)
 	tagValuesService := getTagValuesServiceOrTerminateExecution(ctx, client)
 	feedsService := getAssetServiceOrTerminateExecution(ctx, client)
 	firewallPoliciesService := getFirewallPoliciesServiceOrTerminateExecution(ctx, client)
@@ -419,6 +490,37 @@ func invoke(ctx context.Context) {
 			return true
 		}
 		return false
+	}
+
+	removeSCCNotifications := func(organization string) {
+		logger.Printf("Try to remove SCC Notifications from organization [%s]", organization)
+		req := &securitycenterpb.ListNotificationConfigsRequest{
+			Parent:   fmt.Sprintf("organizations/%s", organization),
+			PageSize: sccPageSize,
+		}
+		it := sccService.ListNotificationConfigs(ctx, req)
+		for {
+			resp, err := it.Next()
+			if err == iterator.Done {
+				break
+			}
+			if err != nil {
+				logger.Printf("failed to list SCC notifications, error [%s]", err.Error())
+				break
+			}
+			projectID := strings.Split(resp.PubsubTopic, "/")[1]
+			if checkIfNameIncluded(resp.Name, includedSCCNotfisList) && projectDeleteRequestedFilter(projectID) {
+				delReq := &securitycenterpb.DeleteNotificationConfigRequest{
+					Name: resp.Name,
+				}
+				err = sccService.DeleteNotificationConfig(ctx, delReq)
+				if err != nil {
+					logger.Printf("failed to delete SCC notification [%s], error [%s]", resp.Name, err.Error())
+				} else {
+					logger.Printf("SCC notification [%s] deleted", resp.Name)
+				}
+			}
+		}
 	}
 
 	removeTagValues := func(tagKey string) {
@@ -626,9 +728,15 @@ func invoke(ctx context.Context) {
 	} else {
 		getSubFoldersAndRemoveProjectsFoldersRecursively(rootFolder, getSubFoldersAndRemoveProjectsFoldersRecursively)
 	}
+
 	// Only Tag Keys whose values are not in use can be deleted.
 	if cleanUpTagKeys {
 		removeTagKeys(organizationId)
+	}
+
+	// only delete Security Command Center notifications from deleted projects
+	if cleanUpSCCNotfi {
+		removeSCCNotifications(organizationId)
 	}
 
 	//Only delete Feeds from deleted projects

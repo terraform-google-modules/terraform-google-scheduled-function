@@ -19,6 +19,8 @@ cloud.google.com/go/orgpolicy v1.12.1 h1:2JbXigqBJVp8Dx5dONUttFqewu4fP0p3pgOdIZA
 cloud.google.com/go/orgpolicy v1.12.1/go.mod h1:aibX78RDl5pcK3jA8ysDQCFkVxLj3aOQqrbBaUL2V5I=
 cloud.google.com/go/osconfig v1.12.5 h1:Mo5jGAxOMKH/PmDY7fgY19yFcVbvwREb5D5zMPQjFfo=
 cloud.google.com/go/osconfig v1.12.5/go.mod h1:D9QFdxzfjgw3h/+ZaAb5NypM8bhOMqBzgmbhzWViiW8=
+cloud.google.com/go/securitycenter v1.28.0 h1:NpEJeFbm3ad3ibpbpIBKXJS7eQq1cZhtt9nrDTMO/QQ=
+cloud.google.com/go/securitycenter v1.28.0/go.mod h1:kmS8vAIwPbCIg7dDuiVKF/OTizYfuWe5f0IIW6NihN8=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
