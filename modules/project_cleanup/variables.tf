@@ -77,6 +77,24 @@ variable "target_included_labels" {
   default     = {}
 }
 
+variable "clean_up_org_level_scc_notifications" {
+  type        = bool
+  description = "Clean up organization level Security Command Center notifications."
+  default     = false
+}
+
+variable "target_included_scc_notifications" {
+  type        = list(string)
+  description = "List of organization  Security Command Center notifications names regex that will be deleted. Regex example: `.*/notificationConfigs/scc-notify-.*` "
+  default     = []
+}
+
+variable "list_scc_notifications_page_size" {
+  type        = number
+  description = "The maximum number of notification configs to return in the call to `ListNotificationConfigs` service. The minimun value is 1 and the maximum value is 1000."
+  default     = 500
+}
+
 variable "clean_up_org_level_tag_keys" {
   type        = bool
   description = "Clean up organization level Tag Keys."
