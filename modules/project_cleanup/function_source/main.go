@@ -27,6 +27,8 @@ import (
 	"strings"
 	"time"
 
+	asset "cloud.google.com/go/asset/apiv1"
+	"cloud.google.com/go/asset/apiv1/assetpb"
 	securitycenter "cloud.google.com/go/securitycenter/apiv1"
 	"cloud.google.com/go/securitycenter/apiv1/securitycenterpb"
 	"golang.org/x/net/context"
@@ -55,6 +57,8 @@ const (
 	targetFolderRegexp            = `^[0-9]+$`
 	targetOrganizationRegexp      = `^[0-9]+$`
 	SCCNotificationsPageSize      = "SCC_NOTIFICATIONS_PAGE_SIZE"
+	CleanUpCaiFeeds               = "CLEAN_UP_CAI_FEEDS"
+	TargetIncludedFeeds           = "TARGET_INCLUDED_FEEDS"
 )
 
 var (
@@ -69,6 +73,8 @@ var (
 	rootFolderId           = getCorrectFolderIdOrTerminateExecution()
 	organizationId         = getCorrectOrganizationIdOrTerminateExecution()
 	sccPageSize            = getSCCNotificationPageSizeOrTerminateExecution()
+	cleanUpCaiFeeds        = getCleanUpFeedsOrTerminateExecution()
+	includedFeedsList      = getFeedsListFromEnv(TargetIncludedFeeds)
 )
 
 type PubSubMessage struct {
@@ -172,12 +178,12 @@ func checkIfAtLeastOneLabelPresentIfAny(project *cloudresourcemanager.Project, l
 	return result
 }
 
-func checkIfSCCNotificationNameIncluded(notificationName string, includedSCCNotfis []*regexp.Regexp) bool {
-	if len(includedSCCNotfis) == 0 {
+func checkIfNameIncluded(name string, reg []*regexp.Regexp) bool {
+	if len(reg) == 0 {
 		return false
 	}
-	for _, name := range includedSCCNotfis {
-		if name.MatchString(notificationName) {
+	for _, regex := range reg {
+		if regex.MatchString(name) {
 			return true
 		}
 	}
@@ -296,6 +302,48 @@ func getSCCNotificationPageSizeOrTerminateExecution() int32 {
 	return int32(size)
 }
 
+func getFeedsListFromEnv(envVariableName string) []*regexp.Regexp {
+	var compiledRegEx []*regexp.Regexp
+	targetIncludedFeeds := os.Getenv(envVariableName)
+	logger.Println("Try to get CAI Feeds list")
+	if targetIncludedFeeds == "" {
+		logger.Printf("No CAI Feeds provided.")
+		return compiledRegEx
+	}
+
+	var caiFeeds []string
+	err := json.Unmarshal([]byte(targetIncludedFeeds), &caiFeeds)
+	if err != nil {
+		logger.Printf("Failed to get CAI Feeds list from [%s] env variable, error [%s]", envVariableName, err.Error())
+		return nil
+	} else {
+		logger.Printf("Got CAI Feeds list [%s] from [%s] env variable", caiFeeds, envVariableName)
+	}
+
+	//build Regexes
+	for _, r := range caiFeeds {
+		result, err := regexp.Compile(r)
+		if err != nil {
+			logger.Printf("Invalid regular expression [%s] for CAI Feed", r)
+		} else {
+			compiledRegEx = append(compiledRegEx, result)
+		}
+	}
+	return compiledRegEx
+}
+
+func getCleanUpFeedsOrTerminateExecution() bool {
+	cleanUpCaiFeeds, exists := os.LookupEnv(CleanUpCaiFeeds)
+	if !exists {
+		logger.Fatalf("Clean up CAI Feeds environment variable [%s] not set, set the environment variable and try again.", CleanUpCaiFeeds)
+	}
+	result, err := strconv.ParseBool(cleanUpCaiFeeds)
+	if err != nil {
+		logger.Fatalf("Invalid Clean up CAI Feeds value [%s], specify correct value for environment variable [%s] and try again.", cleanUpCaiFeeds, CleanUpCaiFeeds)
+	}
+	return result
+}
+
 func getCorrectFolderIdOrTerminateExecution() string {
 	targetFolderIdString := os.Getenv(TargetFolderId)
 	matched, err := regexp.MatchString(targetFolderRegexp, targetFolderIdString)
@@ -372,6 +420,16 @@ func getSCCNotificationServiceOrTerminateExecution(ctx context.Context, client *
 	return securitycenterClient
 }
 
+func getAssetServiceOrTerminateExecution(ctx context.Context, client *http.Client) *asset.Client {
+	logger.Println("Try to get Asset Service")
+	assetService, err := asset.NewClient(ctx)
+	if err != nil {
+		logger.Fatalf("Failed to get Asset Service with error [%s], terminate execution", err.Error())
+	}
+	logger.Println("Got Asset Service")
+	return assetService
+}
+
 func getFirewallPoliciesServiceOrTerminateExecution(ctx context.Context, client *http.Client) *compute.FirewallPoliciesService {
 	logger.Println("Try to get Firewall Policies Service")
 	computeService, err := compute.NewService(ctx, option.WithHTTPClient(client))
@@ -399,6 +457,7 @@ func invoke(ctx context.Context) {
 	tagKeyService := getTagKeysServiceOrTerminateExecution(ctx, client)
 	sccService := getSCCNotificationServiceOrTerminateExecution(ctx, client)
 	tagValuesService := getTagValuesServiceOrTerminateExecution(ctx, client)
+	feedsService := getAssetServiceOrTerminateExecution(ctx, client)
 	firewallPoliciesService := getFirewallPoliciesServiceOrTerminateExecution(ctx, client)
 	endpointService := getServiceManagementServiceOrTerminateExecution(ctx, client)
 
@@ -450,7 +509,7 @@ func invoke(ctx context.Context) {
 				break
 			}
 			projectID := strings.Split(resp.PubsubTopic, "/")[1]
-			if checkIfSCCNotificationNameIncluded(resp.Name, includedSCCNotfisList) && projectDeleteRequestedFilter(projectID) {
+			if checkIfNameIncluded(resp.Name, includedSCCNotfisList) && projectDeleteRequestedFilter(projectID) {
 				delReq := &securitycenterpb.DeleteNotificationConfigRequest{
 					Name: resp.Name,
 				}
@@ -493,6 +552,35 @@ func invoke(ctx context.Context) {
 				_, err := tagKeyService.Delete(tagKey.Name).Context(ctx).Do()
 				if err != nil {
 					logger.Printf("Failed to delete tagKey from organization [%s], error [%s]", organization, err.Error())
+				}
+			}
+		}
+	}
+
+	removeFeedsByName := func(organization string) {
+		logger.Printf("Try to remove feeds from organization [%s]", organization)
+
+		req := &assetpb.ListFeedsRequest{
+			Parent: fmt.Sprintf("organizations/%s", organization),
+		}
+
+		resp, err := feedsService.ListFeeds(ctx, req)
+		if err != nil {
+			logger.Printf("Failed to list Feeds, error [%s]", err.Error())
+			return
+		}
+
+		for _, feed := range resp.Feeds {
+			projectID := strings.Split(feed.FeedOutputConfig.GetPubsubDestination().Topic, "/")[1]
+			if checkIfNameIncluded(feed.Name, includedFeedsList) && projectDeleteRequestedFilter(projectID) {
+				delReq := &assetpb.DeleteFeedRequest{
+					Name: feed.Name,
+				}
+				err := feedsService.DeleteFeed(ctx, delReq)
+				if err != nil {
+					logger.Printf("Failed to remove the feed [%s], error [%s]", feed.Name, err.Error())
+				} else {
+					logger.Printf("Feed [%s] successfully removed.", feed.Name)
 				}
 			}
 		}
@@ -640,6 +728,7 @@ func invoke(ctx context.Context) {
 	} else {
 		getSubFoldersAndRemoveProjectsFoldersRecursively(rootFolder, getSubFoldersAndRemoveProjectsFoldersRecursively)
 	}
+
 	// Only Tag Keys whose values are not in use can be deleted.
 	if cleanUpTagKeys {
 		removeTagKeys(organizationId)
@@ -648,6 +737,11 @@ func invoke(ctx context.Context) {
 	// only delete Security Command Center notifications from deleted projects
 	if cleanUpSCCNotfi {
 		removeSCCNotifications(organizationId)
+	}
+
+	//Only delete Feeds from deleted projects
+	if cleanUpCaiFeeds {
+		removeFeedsByName(organizationId)
 	}
 }
 

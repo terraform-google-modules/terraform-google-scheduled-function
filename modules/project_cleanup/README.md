@@ -16,6 +16,7 @@ The following services must be enabled on the project housing the cleanup functi
 - Cloud Scheduler (`cloudscheduler.googleapis.com`)
 - Cloud Resource Manager (`cloudresourcemanager.googleapis.com`)
 - Compute Engine API (`compute.googleapis.com`)
+- Cloud Asset API (`cloudasset.googleapis.com`)
 - Security Command Center API (`securitycenter.googleapis.com`)
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
@@ -23,6 +24,7 @@ The following services must be enabled on the project housing the cleanup functi
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| clean\_up\_org\_level\_cai\_feeds | Clean up organization level Cloud Asset Inventory Feeds. | `bool` | `false` | no |
 | clean\_up\_org\_level\_scc\_notifications | Clean up organization level Security Command Center notifications. | `bool` | `false` | no |
 | clean\_up\_org\_level\_tag\_keys | Clean up organization level Tag Keys. | `bool` | `false` | no |
 | function\_timeout\_s | The amount of time in seconds allotted for the execution of the function. | `number` | `500` | no |
@@ -35,6 +37,7 @@ The following services must be enabled on the project housing the cleanup functi
 | target\_excluded\_labels | Map of project lablels that won't be deleted. | `map(string)` | `{}` | no |
 | target\_excluded\_tagkeys | List of organization Tag Key short names that won't be deleted. | `list(string)` | `[]` | no |
 | target\_folder\_id | Folder ID to delete all projects under. | `string` | `""` | no |
+| target\_included\_feeds | List of organization level Cloud Asset Inventory feeds that should be deleted. Regex example: `.*/feeds/fd-cai-monitoring-.*` | `list(string)` | `[]` | no |
 | target\_included\_labels | Map of project lablels that will be deleted. | `map(string)` | `{}` | no |
 | target\_included\_scc\_notifications | List of organization  Security Command Center notifications names regex that will be deleted. Regex example: `.*/notificationConfigs/scc-notify-.*` | `list(string)` | `[]` | no |
 | target\_tag\_name | The name of a tag to filter GCP projects on for consideration by the cleanup utility (legacy, use `target_included_labels` map instead). | `string` | `""` | no |

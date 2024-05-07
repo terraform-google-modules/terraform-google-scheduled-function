@@ -34,6 +34,7 @@ resource "google_organization_iam_member" "main" {
     "roles/compute.orgSecurityPolicyAdmin",
     "roles/resourcemanager.tagAdmin",
     "roles/viewer",
+    "roles/cloudasset.owner",
     "roles/securitycenter.notificationConfigEditor"
   ])
 
@@ -69,5 +70,7 @@ module "scheduled_project_cleaner" {
     CLEAN_UP_SCC_NOTIFICATIONS        = var.clean_up_org_level_scc_notifications
     TARGET_INCLUDED_SCC_NOTIFICATIONS = jsonencode(var.target_included_scc_notifications)
     SCC_NOTIFICATIONS_PAGE_SIZE       = var.list_scc_notifications_page_size
+    CLEAN_UP_CAI_FEEDS                = var.clean_up_org_level_cai_feeds
+    TARGET_INCLUDED_FEEDS             = jsonencode(var.target_included_feeds)
   }
 }

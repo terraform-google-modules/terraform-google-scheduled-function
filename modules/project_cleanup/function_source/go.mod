@@ -3,6 +3,7 @@ module github.com/terraform-google-modules/terraform-google-scheduled-function/m
 go 1.21
 
 require (
+	cloud.google.com/go/asset v1.17.2
 	cloud.google.com/go/securitycenter v1.29.0
 	golang.org/x/net v0.24.0
 	golang.org/x/oauth2 v0.20.0
@@ -11,11 +12,14 @@ require (
 
 require (
 	cloud.google.com/go v0.112.2 // indirect
+	cloud.google.com/go/accesscontextmanager v1.8.5 // indirect
 	cloud.google.com/go/auth v0.3.0 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.2 // indirect
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	cloud.google.com/go/iam v1.1.7 // indirect
 	cloud.google.com/go/longrunning v0.5.6 // indirect
+	cloud.google.com/go/orgpolicy v1.12.1 // indirect
+	cloud.google.com/go/osconfig v1.12.5 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect

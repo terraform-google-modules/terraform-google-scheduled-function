@@ -25,6 +25,18 @@ variable "organization_id" {
   description = "The organization ID whose projects to clean up"
 }
 
+variable "clean_up_org_level_cai_feeds" {
+  type        = bool
+  description = "Clean up organization level Cloud Asset Inventory Feeds."
+  default     = false
+}
+
+variable "target_included_feeds" {
+  type        = list(string)
+  description = "List of organization level Cloud Asset Inventory feeds that should be deleted. Regex example: `.*/feeds/fd-cai-monitoring-.*` "
+  default     = []
+}
+
 variable "project_id" {
   type        = string
   description = "The project ID to host the scheduled function in"
