@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [4.1.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v4.0.1...v4.1.0) (2024-05-10)
+
+
+### Features
+
+* support deletion of Cloud Asset Inventory feeds not in use in organization ([#198](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/198)) ([bd8f8ad](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/bd8f8ad694edecb290ef8ae39ac5900477c8f6bb))
+* support deletion of SCC Notification not in use in organization ([#196](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/196)) ([b0e3ba0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/b0e3ba0d3f8e115bfb16bda53352b9acd9c3113a))
+
+
+### Bug Fixes
+
+* **deps:** Update go modules ([#217](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/217)) ([ac847ad](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/ac847ad22102beafdb710ca0eacae899e17271fd))
+* **deps:** Update module cloud.google.com/go/asset to v1.19.0 ([#215](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/215)) ([8aecc2d](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/8aecc2df0c1d731281e7574f9d1fec1ce08aad17))
+* **deps:** Update module cloud.google.com/go/securitycenter to v1.29.0 ([#212](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/212)) ([0fdb546](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/0fdb5464e14c84bbd10523b0dabbe0a8cfbec2f4))
+* **deps:** Update module golang.org/x/oauth2 to v0.20.0 ([#213](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/213)) ([6695683](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/66956831e42ae452288ff908c7bf7a6332a7bd50))
+
 ## [4.0.1](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v4.0.0...v4.0.1) (2024-05-01)
 
 
