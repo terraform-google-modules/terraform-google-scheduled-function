@@ -75,15 +75,15 @@ var (
 	cleanUpSCCNotfi        = getBoolFromEnv(CleanUpSCCNotfi)
 	excludedTagKeysList    = getTagKeysListFromEnv(TargetExcludedTagKeys)
 	includedSCCNotfisList  = getRegexListFromEnv(TargetIncludedSCCNotfis)
-	resourceCreationCutoff = getOldTime(int64(getCorrectMaxAgeInHoursOrTerminateExecution()) * 60 * 60)
+	resourceCreationCutoff = getOldTime(getIntFromEnv(MaxProjectAgeHours) * 60 * 60)
 	rootFolderId           = getCorrectFolderIdOrTerminateExecution()
 	organizationId         = getCorrectOrganizationIdOrTerminateExecution()
-	sccPageSize            = getSCCNotificationPageSizeOrTerminateExecution()
-	cleanUpCaiFeeds        = getCleanUpFeedsOrTerminateExecution()
+	sccPageSize            = int32(getIntFromEnv(SCCNotificationsPageSize))
+	cleanUpCaiFeeds        = getBoolFromEnv(CleanUpCaiFeeds)
 	includedFeedsList      = getRegexListFromEnv(TargetIncludedFeeds)
 	billingAccount         = getBillingAccountOrTerminateExecution()
 	cleanUpBillingSinks    = getBoolFromEnv(CleanUpBillingSinks)
-	billingSinksPageSize   = getBillingSinksPageSizeOrTerminateExecution()
+	billingSinksPageSize   = getIntFromEnv(BillingSinksPageSize)
 	targetBillingSinks     = getRegexListFromEnv(TargetBillingSinks)
 )
 
@@ -163,15 +163,6 @@ func processProjectsResponsePage(removeProjectById func(projectId string)) func(
 		}
 		return nil
 	}
-}
-
-func getCorrectMaxAgeInHoursOrTerminateExecution() int64 {
-	maxAgeInHoursStr := os.Getenv(MaxProjectAgeHours)
-	maxAgeInHours, err := strconv.ParseInt(os.Getenv(MaxProjectAgeHours), 10, 0)
-	if err != nil {
-		logger.Fatalf("Could not convert [%s] to integer. Specify correct value for environment variable [%s] and try again.", maxAgeInHoursStr, MaxProjectAgeHours)
-	}
-	return maxAgeInHours
 }
 
 func checkIfAtLeastOneLabelPresentIfAny(project *cloudresourcemanager.Project, labels map[string]string, isExcludeCheck bool) bool {
@@ -291,34 +282,13 @@ func getBoolFromEnv(envVariableName string) bool {
 	return result
 }
 
-func getSCCNotificationPageSizeOrTerminateExecution() int32 {
-	pageSize := os.Getenv(SCCNotificationsPageSize)
-	size, err := strconv.ParseInt(pageSize, 10, 32)
+func getIntFromEnv(envVariableName string) int64 {
+	envVariableStr := os.Getenv(envVariableName)
+	intValue, err := strconv.ParseInt(envVariableStr, 10, 0)
 	if err != nil {
-		logger.Fatalf("Invalid page size [%s], specify correct value and try again.", pageSize)
+		logger.Fatalf("Could not convert [%s] to integer. Specify correct value for environment variable [%s] and try again.", envVariableStr, envVariableName)
 	}
-	return int32(size)
-}
-
-func getBillingSinksPageSizeOrTerminateExecution() int64 {
-	pageSize := os.Getenv(BillingSinksPageSize)
-	size, err := strconv.ParseInt(pageSize, 10, 32)
-	if err != nil {
-		logger.Fatalf("Invalid page size [%s], specify correct value and try again.", pageSize)
-	}
-	return int64(size)
-}
-
-func getCleanUpFeedsOrTerminateExecution() bool {
-	cleanUpCaiFeeds, exists := os.LookupEnv(CleanUpCaiFeeds)
-	if !exists {
-		logger.Fatalf("Clean up CAI Feeds environment variable [%s] not set, set the environment variable and try again.", CleanUpCaiFeeds)
-	}
-	result, err := strconv.ParseBool(cleanUpCaiFeeds)
-	if err != nil {
-		logger.Fatalf("Invalid Clean up CAI Feeds value [%s], specify correct value for environment variable [%s] and try again.", cleanUpCaiFeeds, CleanUpCaiFeeds)
-	}
-	return result
+	return intValue
 }
 
 func getCorrectFolderIdOrTerminateExecution() string {

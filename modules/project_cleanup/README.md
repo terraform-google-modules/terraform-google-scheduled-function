@@ -21,7 +21,6 @@ The following services must be enabled on the project housing the cleanup functi
 - Security Command Center API (`securitycenter.googleapis.com`)
 - Cloud Logging API (`logging.googleapis.com`)
 
-
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
 
