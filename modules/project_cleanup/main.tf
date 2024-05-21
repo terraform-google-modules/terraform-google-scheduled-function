@@ -72,5 +72,9 @@ module "scheduled_project_cleaner" {
     SCC_NOTIFICATIONS_PAGE_SIZE       = var.list_scc_notifications_page_size
     CLEAN_UP_CAI_FEEDS                = var.clean_up_org_level_cai_feeds
     TARGET_INCLUDED_FEEDS             = jsonencode(var.target_included_feeds)
+    BILLING_ACCOUNT                   = var.billing_account
+    CLEAN_UP_BILLING_SINKS            = var.clean_up_billing_sinks
+    TARGET_BILLING_SINKS              = jsonencode(var.target_billing_sinks)
+    BILLING_SINKS_PAGE_SIZE           = var.list_billing_sinks_page_size
   }
 }
