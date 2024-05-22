@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [4.2.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v4.1.0...v4.2.0) (2024-05-22)
+
+
+### Features
+
+* Support deletion of Billing Account Log Sinks ([#227](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/227)) ([e58dc20](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/e58dc20d35745996b9496709e5ed0de43bc558a3))
+
+
+### Bug Fixes
+
+* **deps:** Update go modules ([#221](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/221)) ([f962d8e](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/f962d8e8e4cbcac7fc46f156932e0d24583a6e78))
+* **deps:** Update go modules ([#230](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/230)) ([d9d73b0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/d9d73b0e8b4829527210761ea235a5d81a13cc07))
+
 ## [4.1.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v4.0.1...v4.1.0) (2024-05-10)
 
 
