@@ -1,2 +1,2 @@
-google-cloud-bigquery==3.21.0
-requests==2.32.0
+google-cloud-bigquery==3.22.0
+requests==2.32.2
