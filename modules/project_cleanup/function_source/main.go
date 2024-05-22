@@ -39,6 +39,7 @@ import (
 	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/googleapi"
 	"google.golang.org/api/iterator"
+	"google.golang.org/api/logging/v2"
 	"google.golang.org/api/option"
 	"google.golang.org/api/servicemanagement/v1"
 )
@@ -56,25 +57,34 @@ const (
 	MaxProjectAgeHours            = "MAX_PROJECT_AGE_HOURS"
 	targetFolderRegexp            = `^[0-9]+$`
 	targetOrganizationRegexp      = `^[0-9]+$`
+	billingAccountRegex           = `^[0-9A-Z][-0-9A-Z]{18}[0-9A-Z]$`
 	SCCNotificationsPageSize      = "SCC_NOTIFICATIONS_PAGE_SIZE"
 	CleanUpCaiFeeds               = "CLEAN_UP_CAI_FEEDS"
 	TargetIncludedFeeds           = "TARGET_INCLUDED_FEEDS"
+	BillingAccount                = "BILLING_ACCOUNT"
+	CleanUpBillingSinks           = "CLEAN_UP_BILLING_SINKS"
+	TargetBillingSinks            = "TARGET_BILLING_SINKS"
+	BillingSinksPageSize          = "BILLING_SINKS_PAGE_SIZE"
 )
 
 var (
 	logger                 = log.New(os.Stdout, "", 0)
 	excludedLabelsMap      = getLabelsMapFromEnv(TargetExcludedLabels)
 	includedLabelsMap      = getLabelsMapFromEnv(TargetIncludedLabels)
-	cleanUpTagKeys         = getCleanUpTagKeysOrTerminateExecution()
-	cleanUpSCCNotfi        = getCleanUpSCCNotfiOrTerminateExecution()
+	cleanUpTagKeys         = getBoolFromEnv(CleanUpTagKeys)
+	cleanUpSCCNotfi        = getBoolFromEnv(CleanUpSCCNotfi)
 	excludedTagKeysList    = getTagKeysListFromEnv(TargetExcludedTagKeys)
-	includedSCCNotfisList  = getSCCNotfiListFromEnv(TargetIncludedSCCNotfis)
-	resourceCreationCutoff = getOldTime(int64(getCorrectMaxAgeInHoursOrTerminateExecution()) * 60 * 60)
+	includedSCCNotfisList  = getRegexListFromEnv(TargetIncludedSCCNotfis)
+	resourceCreationCutoff = getOldTime(getIntFromEnv(MaxProjectAgeHours) * 60 * 60)
 	rootFolderId           = getCorrectFolderIdOrTerminateExecution()
 	organizationId         = getCorrectOrganizationIdOrTerminateExecution()
-	sccPageSize            = getSCCNotificationPageSizeOrTerminateExecution()
-	cleanUpCaiFeeds        = getCleanUpFeedsOrTerminateExecution()
-	includedFeedsList      = getFeedsListFromEnv(TargetIncludedFeeds)
+	sccPageSize            = int32(getIntFromEnv(SCCNotificationsPageSize))
+	cleanUpCaiFeeds        = getBoolFromEnv(CleanUpCaiFeeds)
+	includedFeedsList      = getRegexListFromEnv(TargetIncludedFeeds)
+	billingAccount         = getBillingAccountOrTerminateExecution()
+	cleanUpBillingSinks    = getBoolFromEnv(CleanUpBillingSinks)
+	billingSinksPageSize   = getIntFromEnv(BillingSinksPageSize)
+	targetBillingSinks     = getRegexListFromEnv(TargetBillingSinks)
 )
 
 type PubSubMessage struct {
@@ -155,15 +165,6 @@ func processProjectsResponsePage(removeProjectById func(projectId string)) func(
 	}
 }
 
-func getCorrectMaxAgeInHoursOrTerminateExecution() int64 {
-	maxAgeInHoursStr := os.Getenv(MaxProjectAgeHours)
-	maxAgeInHours, err := strconv.ParseInt(os.Getenv(MaxProjectAgeHours), 10, 0)
-	if err != nil {
-		logger.Fatalf("Could not convert [%s] to integer. Specify correct value for environment variable [%s] and try again.", maxAgeInHoursStr, MaxProjectAgeHours)
-	}
-	return maxAgeInHours
-}
-
 func checkIfAtLeastOneLabelPresentIfAny(project *cloudresourcemanager.Project, labels map[string]string, isExcludeCheck bool) bool {
 	if len(labels) == 0 {
 		return !isExcludeCheck
@@ -221,29 +222,29 @@ func getLabelsMapFromEnv(envVariableName string) map[string]string {
 	return labels
 }
 
-func getSCCNotfiListFromEnv(envVariableName string) []*regexp.Regexp {
+func getRegexListFromEnv(envVariableName string) []*regexp.Regexp {
 	var compiledRegEx []*regexp.Regexp
-	targetExcludedSCCNotfis := os.Getenv(envVariableName)
-	logger.Println("Try to get SCC Notifications list")
-	if targetExcludedSCCNotfis == "" {
-		logger.Printf("No SCC Notifications provided.")
+	envListVar := os.Getenv(envVariableName)
+	logger.Printf("Try to get [%s] list", envVariableName)
+	if envListVar == "" {
+		logger.Printf("No value for [%s] list provided.", envVariableName)
 		return compiledRegEx
 	}
 
-	var sccNotfis []string
-	err := json.Unmarshal([]byte(targetExcludedSCCNotfis), &sccNotfis)
+	var regexList []string
+	err := json.Unmarshal([]byte(envListVar), &regexList)
 	if err != nil {
-		logger.Printf("Failed to get SCC Notifications list from [%s] env variable, error [%s]", envVariableName, err.Error())
+		logger.Printf("Failed to get Regex list from [%s] env variable, error [%s]", envVariableName, err.Error())
 		return compiledRegEx
 	} else {
-		logger.Printf("Got SCC Notifications list [%s] from [%s] env variable", sccNotfis, envVariableName)
+		logger.Printf("Got Regex list [%s] from [%s] env variable", regexList, envVariableName)
 	}
 
 	//build Regexes
-	for _, r := range sccNotfis {
+	for _, r := range regexList {
 		result, err := regexp.Compile(r)
 		if err != nil {
-			logger.Printf("Invalid regular expression [%s] for SCC Notification", r)
+			logger.Printf("Invalid regular expression [%s] for [%s]", r, envVariableName)
 		} else {
 			compiledRegEx = append(compiledRegEx, result)
 		}
@@ -269,79 +270,25 @@ func getTagKeysListFromEnv(envVariableName string) []string {
 	return tagKeys
 }
 
-func getCleanUpTagKeysOrTerminateExecution() bool {
-	cleanUpTagKeys, exists := os.LookupEnv(CleanUpTagKeys)
+func getBoolFromEnv(envVariableName string) bool {
+	envVariableNameVal, exists := os.LookupEnv(envVariableName)
 	if !exists {
-		logger.Fatalf("Clean up Tag Keys environment variable [%s] not set, set the environment variable and try again.", CleanUpTagKeys)
+		logger.Fatalf("Environment variable [%s] not set, set the environment variable and try again.", envVariableName)
 	}
-	result, err := strconv.ParseBool(cleanUpTagKeys)
+	result, err := strconv.ParseBool(envVariableNameVal)
 	if err != nil {
-		logger.Fatalf("Invalid Clean up Tag Keys value [%s], specify correct value for environment variable [%s] and try again.", cleanUpTagKeys, CleanUpTagKeys)
+		logger.Fatalf("Invalid bool value [%s], specify correct value for environment variable [%s] and try again.", envVariableNameVal, envVariableName)
 	}
 	return result
 }
 
-func getCleanUpSCCNotfiOrTerminateExecution() bool {
-	cleanUpSCCNotfiVal, exists := os.LookupEnv(CleanUpSCCNotfi)
-	if !exists {
-		logger.Fatalf("Clean up SCC notifications environment variable [%s] not set, set the environment variable and try again.", CleanUpSCCNotfi)
-	}
-	result, err := strconv.ParseBool(cleanUpSCCNotfiVal)
+func getIntFromEnv(envVariableName string) int64 {
+	envVariableStr := os.Getenv(envVariableName)
+	intValue, err := strconv.ParseInt(envVariableStr, 10, 0)
 	if err != nil {
-		logger.Fatalf("Invalid Clean up SCC notifications value [%s], specify correct value for environment variable [%s] and try again.", cleanUpSCCNotfiVal, CleanUpSCCNotfi)
+		logger.Fatalf("Could not convert [%s] to integer. Specify correct value for environment variable [%s] and try again.", envVariableStr, envVariableName)
 	}
-	return result
-}
-
-func getSCCNotificationPageSizeOrTerminateExecution() int32 {
-	pageSize := os.Getenv(SCCNotificationsPageSize)
-	size, err := strconv.ParseInt(pageSize, 10, 32)
-	if err != nil {
-		logger.Fatalf("Invalid page size [%s], specify correct value and try again.", pageSize)
-	}
-	return int32(size)
-}
-
-func getFeedsListFromEnv(envVariableName string) []*regexp.Regexp {
-	var compiledRegEx []*regexp.Regexp
-	targetIncludedFeeds := os.Getenv(envVariableName)
-	logger.Println("Try to get CAI Feeds list")
-	if targetIncludedFeeds == "" {
-		logger.Printf("No CAI Feeds provided.")
-		return compiledRegEx
-	}
-
-	var caiFeeds []string
-	err := json.Unmarshal([]byte(targetIncludedFeeds), &caiFeeds)
-	if err != nil {
-		logger.Printf("Failed to get CAI Feeds list from [%s] env variable, error [%s]", envVariableName, err.Error())
-		return nil
-	} else {
-		logger.Printf("Got CAI Feeds list [%s] from [%s] env variable", caiFeeds, envVariableName)
-	}
-
-	//build Regexes
-	for _, r := range caiFeeds {
-		result, err := regexp.Compile(r)
-		if err != nil {
-			logger.Printf("Invalid regular expression [%s] for CAI Feed", r)
-		} else {
-			compiledRegEx = append(compiledRegEx, result)
-		}
-	}
-	return compiledRegEx
-}
-
-func getCleanUpFeedsOrTerminateExecution() bool {
-	cleanUpCaiFeeds, exists := os.LookupEnv(CleanUpCaiFeeds)
-	if !exists {
-		logger.Fatalf("Clean up CAI Feeds environment variable [%s] not set, set the environment variable and try again.", CleanUpCaiFeeds)
-	}
-	result, err := strconv.ParseBool(cleanUpCaiFeeds)
-	if err != nil {
-		logger.Fatalf("Invalid Clean up CAI Feeds value [%s], specify correct value for environment variable [%s] and try again.", cleanUpCaiFeeds, CleanUpCaiFeeds)
-	}
-	return result
+	return intValue
 }
 
 func getCorrectFolderIdOrTerminateExecution() string {
@@ -351,6 +298,21 @@ func getCorrectFolderIdOrTerminateExecution() string {
 		logger.Fatalf("Invalid folder id [%s], specify correct value and try again.", targetFolderIdString)
 	}
 	return targetFolderIdString
+}
+
+func getBillingAccountOrTerminateExecution() string {
+	billingAccountVal := os.Getenv(BillingAccount)
+	if billingAccountVal == "" {
+		if cleanUpBillingSinks {
+			logger.Fatal("If billing account sink clean up is enabled, billing account id should not be empty, specify correct value and try again.")
+		}
+		return billingAccountVal
+	}
+	matched, err := regexp.MatchString(billingAccountRegex, billingAccountVal)
+	if err != nil || !matched {
+		logger.Fatalf("Invalid billing account id [%s], specify correct value and try again.", billingAccountVal)
+	}
+	return billingAccountVal
 }
 
 func getCorrectOrganizationIdOrTerminateExecution() string {
@@ -410,6 +372,15 @@ func getTagValuesServiceOrTerminateExecution(ctx context.Context, client *http.C
 	return cloudResourceManagerService.TagValues
 }
 
+func getBillingAccountSinkServiceOrTerminateExecution(ctx context.Context, client *http.Client) *logging.BillingAccountsSinksService {
+	loggingService, err := logging.NewService(ctx, option.WithHTTPClient(client))
+	if err != nil {
+		logger.Fatalf("Failed to get Logging Sink Service with error [%s], terminate execution", err.Error())
+	}
+	logger.Println("Got Logging Sink Service")
+	return loggingService.BillingAccounts.Sinks
+}
+
 func getSCCNotificationServiceOrTerminateExecution(ctx context.Context, client *http.Client) *securitycenter.Client {
 	logger.Println("Try to get SCC Notification Service")
 	securitycenterClient, err := securitycenter.NewClient(ctx)
@@ -458,6 +429,7 @@ func invoke(ctx context.Context) {
 	sccService := getSCCNotificationServiceOrTerminateExecution(ctx, client)
 	tagValuesService := getTagValuesServiceOrTerminateExecution(ctx, client)
 	feedsService := getAssetServiceOrTerminateExecution(ctx, client)
+	billingSinkService := getBillingAccountSinkServiceOrTerminateExecution(ctx, client)
 	firewallPoliciesService := getFirewallPoliciesServiceOrTerminateExecution(ctx, client)
 	endpointService := getServiceManagementServiceOrTerminateExecution(ctx, client)
 
@@ -478,6 +450,15 @@ func invoke(ctx context.Context) {
 			return false
 		}
 		return tagKeyCreatedAt.Before(resourceCreationCutoff)
+	}
+
+	billingSinkAgeFilter := func(logSink *logging.LogSink) bool {
+		createdAt, err := time.Parse(time.RFC3339, logSink.CreateTime)
+		if err != nil {
+			logger.Printf("Failed to parse CreateTime for tagKey [%s], skipping it, error [%s]", logSink.ResourceName, err.Error())
+			return false
+		}
+		return createdAt.Before(resourceCreationCutoff)
 	}
 
 	projectDeleteRequestedFilter := func(projectID string) bool {
@@ -581,6 +562,24 @@ func invoke(ctx context.Context) {
 					logger.Printf("Failed to remove the feed [%s], error [%s]", feed.Name, err.Error())
 				} else {
 					logger.Printf("Feed [%s] successfully removed.", feed.Name)
+				}
+			}
+		}
+	}
+
+	removeBillingSinks := func(billing string) {
+		logger.Printf("Try to remove billing account log sinks from billing account [%s]", billing)
+		parent := fmt.Sprintf("billingAccounts/%s", billing)
+		sinkList, err := billingSinkService.List(parent).PageSize(billingSinksPageSize).Context(ctx).Do()
+		if err != nil {
+			logger.Printf("Failed to list billing account log sinks from billing account [%s], error [%s]", billing, err.Error())
+			return
+		}
+		for _, sink := range sinkList.Sinks {
+			if sink.Name != "_Required" && sink.Name != "_Default"  && billingSinkAgeFilter(sink) && checkIfNameIncluded(sink.ResourceName, targetBillingSinks) {
+				_, err = billingSinkService.Delete(sink.ResourceName).Context(ctx).Do()
+				if err != nil {
+					logger.Printf("Failed to delete billing account log sink [%s] from billing account [%s], error [%s]", sink.ResourceName, billing, err.Error())
 				}
 			}
 		}
@@ -742,6 +741,10 @@ func invoke(ctx context.Context) {
 	//Only delete Feeds from deleted projects
 	if cleanUpCaiFeeds {
 		removeFeedsByName(organizationId)
+	}
+
+	if cleanUpBillingSinks {
+		removeBillingSinks(billingAccount)
 	}
 }
 

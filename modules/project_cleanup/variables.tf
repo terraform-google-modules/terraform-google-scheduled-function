@@ -97,7 +97,7 @@ variable "clean_up_org_level_scc_notifications" {
 
 variable "target_included_scc_notifications" {
   type        = list(string)
-  description = "List of organization  Security Command Center notifications names regex that will be deleted. Regex example: `.*/notificationConfigs/scc-notify-.*` "
+  description = "List of organization Security Command Center notifications names regex that will be deleted. Regex example: `.*/notificationConfigs/scc-notify-.*` "
   default     = []
 }
 
@@ -117,6 +117,30 @@ variable "target_excluded_tagkeys" {
   type        = list(string)
   description = "List of organization Tag Key short names that won't be deleted."
   default     = []
+}
+
+variable "clean_up_billing_sinks" {
+  type        = bool
+  description = "Clean up Billing Account Sinks."
+  default     = false
+}
+
+variable "billing_account" {
+  type        = string
+  description = "Billing Account used to provision resources."
+  default     = ""
+}
+
+variable "target_billing_sinks" {
+  type        = list(string)
+  description = "List of Billing Account Log Sinks names regex that will be deleted. Regex example: `.*/sinks/sk-c-logging-.*-billing-.*` "
+  default     = []
+}
+
+variable "list_billing_sinks_page_size" {
+  type        = number
+  description = "The maximum number of Billing Account Log Sinks to return in the call to `BillingAccountsSinksService.List` service."
+  default     = 200
 }
 
 variable "target_folder_id" {
