@@ -1,5 +1,5 @@
 /*
-Copyright 2019 Google LLC
+Copyright 2019-2024 Google LLC
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ import (
 
 	asset "cloud.google.com/go/asset/apiv1"
 	"cloud.google.com/go/asset/apiv1/assetpb"
+	container "cloud.google.com/go/container/apiv1"
+	"cloud.google.com/go/container/apiv1/containerpb"
 	securitycenter "cloud.google.com/go/securitycenter/apiv1"
 	"cloud.google.com/go/securitycenter/apiv1/securitycenterpb"
 	"golang.org/x/net/context"
@@ -240,7 +242,7 @@ func getRegexListFromEnv(envVariableName string) []*regexp.Regexp {
 		logger.Printf("Got Regex list [%s] from [%s] env variable", regexList, envVariableName)
 	}
 
-	//build Regexes
+	// build Regexes
 	for _, r := range regexList {
 		result, err := regexp.Compile(r)
 		if err != nil {
@@ -381,7 +383,7 @@ func getBillingAccountSinkServiceOrTerminateExecution(ctx context.Context, clien
 	return loggingService.BillingAccounts.Sinks
 }
 
-func getSCCNotificationServiceOrTerminateExecution(ctx context.Context, client *http.Client) *securitycenter.Client {
+func getSCCNotificationServiceOrTerminateExecution(ctx context.Context) *securitycenter.Client {
 	logger.Println("Try to get SCC Notification Service")
 	securitycenterClient, err := securitycenter.NewClient(ctx)
 	if err != nil {
@@ -391,7 +393,7 @@ func getSCCNotificationServiceOrTerminateExecution(ctx context.Context, client *
 	return securitycenterClient
 }
 
-func getAssetServiceOrTerminateExecution(ctx context.Context, client *http.Client) *asset.Client {
+func getAssetServiceOrTerminateExecution(ctx context.Context) *asset.Client {
 	logger.Println("Try to get Asset Service")
 	assetService, err := asset.NewClient(ctx)
 	if err != nil {
@@ -399,6 +401,16 @@ func getAssetServiceOrTerminateExecution(ctx context.Context, client *http.Clien
 	}
 	logger.Println("Got Asset Service")
 	return assetService
+}
+
+func getContainerServiceOrTerminateExecution(ctx context.Context) *container.ClusterManagerClient {
+	logger.Println("Try to get Container Service")
+	containerService, err := container.NewClusterManagerClient(ctx)
+	if err != nil {
+		logger.Fatalf("Failed to get Container Service with error [%s], terminate execution", err.Error())
+	}
+	logger.Println("Got Container Service")
+	return containerService
 }
 
 func getFirewallPoliciesServiceOrTerminateExecution(ctx context.Context, client *http.Client) *compute.FirewallPoliciesService {
@@ -426,12 +438,13 @@ func invoke(ctx context.Context) {
 	cloudResourceManagerService := getResourceManagerServiceOrTerminateExecution(ctx, client)
 	folderService := getFolderServiceOrTerminateExecution(ctx, client)
 	tagKeyService := getTagKeysServiceOrTerminateExecution(ctx, client)
-	sccService := getSCCNotificationServiceOrTerminateExecution(ctx, client)
+	sccService := getSCCNotificationServiceOrTerminateExecution(ctx)
 	tagValuesService := getTagValuesServiceOrTerminateExecution(ctx, client)
-	feedsService := getAssetServiceOrTerminateExecution(ctx, client)
+	feedsService := getAssetServiceOrTerminateExecution(ctx)
 	billingSinkService := getBillingAccountSinkServiceOrTerminateExecution(ctx, client)
 	firewallPoliciesService := getFirewallPoliciesServiceOrTerminateExecution(ctx, client)
 	endpointService := getServiceManagementServiceOrTerminateExecution(ctx, client)
+	containerService := getContainerServiceOrTerminateExecution(ctx)
 
 	removeLien := func(name string) {
 		logger.Printf("Try to remove lien [%s]", name)
@@ -576,7 +589,7 @@ func invoke(ctx context.Context) {
 			return
 		}
 		for _, sink := range sinkList.Sinks {
-			if sink.Name != "_Required" && sink.Name != "_Default"  && billingSinkAgeFilter(sink) && checkIfNameIncluded(sink.ResourceName, targetBillingSinks) {
+			if sink.Name != "_Required" && sink.Name != "_Default" && billingSinkAgeFilter(sink) && checkIfNameIncluded(sink.ResourceName, targetBillingSinks) {
 				_, err = billingSinkService.Delete(sink.ResourceName).Context(ctx).Do()
 				if err != nil {
 					logger.Printf("Failed to delete billing account log sink [%s] from billing account [%s], error [%s]", sink.ResourceName, billing, err.Error())
@@ -611,6 +624,33 @@ func invoke(ctx context.Context) {
 		return err
 	}
 
+	removeProjectClusters := func(projectId string) int {
+		logger.Printf("Try to remove clusters for [%s]", projectId)
+		reqLCR := &containerpb.ListClustersRequest{Parent: fmt.Sprintf("projects/%s/locations/*", projectId)}
+		listResponse, err := containerService.ListClusters(ctx, reqLCR)
+		if err != nil {
+			logger.Printf("Failed to list clusters for [%s], error [%s]", projectId, err.Error())
+			return 0
+		}
+
+		logger.Printf("Got [%d] clusters for project [%s]", len(listResponse.Clusters), projectId)
+		if len(listResponse.Clusters) == 0 {
+			return 0
+		}
+
+		for _, cluster := range listResponse.Clusters {
+			logger.Printf("Try to remove cluster: %s", cluster.Name)
+
+			reqDCR := &containerpb.DeleteClusterRequest{Name: fmt.Sprintf("projects/%s/locations/%s/clusters/%s", projectId, cluster.Location, cluster.Name)}
+			_, err := containerService.DeleteCluster(ctx, reqDCR)
+			if err != nil {
+				logger.Printf("Failed to delete cluster [%s] for [%s], error [%s]", cluster.Name, projectId, err.Error())
+			}
+		}
+
+		return len(listResponse.Clusters)
+	}
+
 	removeProjectEndpoints := func(projectId string) {
 		logger.Printf("Try to remove endpoints for [%s]", projectId)
 		listResponse, err := endpointService.Services.List().ProducerProjectId(projectId).Do()
@@ -638,6 +678,9 @@ func invoke(ctx context.Context) {
 
 	cleanupProjectById := func(projectId string) {
 		logger.Printf("Try to remove project [%s]", projectId)
+		if clusters := removeProjectClusters(projectId); clusters != 0 {
+			logger.Printf("Skip removing project [%s], marked %d clusters for deletion", projectId, clusters)
+		}
 		err := removeProjectById(projectId)
 		if err != nil {
 			removeProjectEndpoints(projectId)
@@ -738,7 +781,7 @@ func invoke(ctx context.Context) {
 		removeSCCNotifications(organizationId)
 	}
 
-	//Only delete Feeds from deleted projects
+	// Only delete Feeds from deleted projects
 	if cleanUpCaiFeeds {
 		removeFeedsByName(organizationId)
 	}
