@@ -626,7 +626,7 @@ func invoke(ctx context.Context) {
 
 	removeProjectClusters := func(projectId string) int {
 		logger.Printf("Try to remove clusters for [%s]", projectId)
-		reqLCR := &containerpb.ListClustersRequest{Parent: fmt.Sprintf("projects/%s/locations/*", projectId)}
+		reqLCR := &containerpb.ListClustersRequest{Parent: fmt.Sprintf("projects/%s/locations/-", projectId)}
 		listResponse, err := containerService.ListClusters(ctx, reqLCR)
 		if err != nil {
 			logger.Printf("Failed to list clusters for [%s], error [%s]", projectId, err.Error())
@@ -695,6 +695,7 @@ func invoke(ctx context.Context) {
 		logger.Printf("Try to remove project [%s]", projectId)
 		if clusters := removeProjectClusters(projectId); clusters != 0 {
 			logger.Printf("Defer removing project [%s], %d clusters marked for deletion", projectId, clusters)
+			return
 		}
 		err := removeProjectById(projectId)
 		if err != nil {
