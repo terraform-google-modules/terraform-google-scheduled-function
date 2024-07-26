@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [4.3.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v4.2.0...v4.3.0) (2024-07-26)
+
+
+### Features
+
+* **project_cleanup:** remove clusters prior to project ([#246](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/246)) ([92553eb](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/92553eb2b86a46bc2b30c116c7e77b9446032dd6))
+
+
+### Bug Fixes
+
+* **cleanup:** add missing IAM roles for project_cleanup function ([#233](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/233)) ([21f8d09](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/21f8d09944ca977726a2533f12f2943a6dfac1b2))
+* **deps:** bump google.golang.org/grpc from 1.64.0 to 1.64.1 in /modules/project_cleanup/function_source ([#244](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/244)) ([94d54f7](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/94d54f7955b556f46d7d5feac1b66c655c7b0b51))
+* **deps:** Update go modules ([#242](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/242)) ([9973bcc](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/9973bcc2b33a4836653042603f1523bcbe9ad1d3))
+* **deps:** Update go modules ([#245](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/245)) ([65ae587](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/65ae58756b76c7b33a18bea547a435dab045f17c))
+* **deps:** Update go modules ([#247](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/247)) ([732890b](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/732890b9e5942aa4048a6e2620bb460f5c63631e))
+
 ## [4.2.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v4.1.0...v4.2.0) (2024-05-22)
 
 
