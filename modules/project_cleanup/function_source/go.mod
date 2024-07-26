@@ -3,9 +3,9 @@ module github.com/terraform-google-modules/terraform-google-scheduled-function/m
 go 1.21
 
 require (
-	cloud.google.com/go/asset v1.19.4
+	cloud.google.com/go/asset v1.19.5
 	cloud.google.com/go/container v1.38.0
-	cloud.google.com/go/securitycenter v1.33.0
+	cloud.google.com/go/securitycenter v1.33.1
 	golang.org/x/net v0.27.0
 	golang.org/x/oauth2 v0.21.0
 	google.golang.org/api v0.189.0
