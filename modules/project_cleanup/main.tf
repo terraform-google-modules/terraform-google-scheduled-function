@@ -35,7 +35,8 @@ resource "google_organization_iam_member" "main" {
     "roles/resourcemanager.tagAdmin",
     "roles/viewer",
     "roles/cloudasset.owner",
-    "roles/securitycenter.notificationConfigEditor"
+    "roles/securitycenter.notificationConfigEditor",
+    "roles/logging.configWriter",
   ])
 
   member = "serviceAccount:${google_service_account.project_cleaner_function.email}"
