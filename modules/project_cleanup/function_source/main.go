@@ -638,17 +638,32 @@ func invoke(ctx context.Context) {
 			return 0
 		}
 
+		var pendingDeletion int = 0
 		for _, cluster := range listResponse.Clusters {
-			logger.Printf("Try to remove cluster: %s", cluster.Name)
-
-			reqDCR := &containerpb.DeleteClusterRequest{Name: fmt.Sprintf("projects/%s/locations/%s/clusters/%s", projectId, cluster.Location, cluster.Name)}
-			_, err := containerService.DeleteCluster(ctx, reqDCR)
-			if err != nil {
-				logger.Printf("Failed to delete cluster [%s] for [%s], error [%s]", cluster.Name, projectId, err.Error())
+			switch clusterStatus := cluster.Status.String(); clusterStatus {
+			case "DEGRADED":
+				fallthrough
+			case "RUNNING":
+				logger.Printf("Deleting cluster %s status: %s", cluster.Name, clusterStatus)
+				reqDCR := &containerpb.DeleteClusterRequest{Name: fmt.Sprintf("projects/%s/locations/%s/clusters/%s", projectId, cluster.Location, cluster.Name)}
+				_, err := containerService.DeleteCluster(ctx, reqDCR)
+				if err != nil {
+					logger.Printf("Failed to delete cluster [%s] for [%s], error [%s]", cluster.Name, projectId, err.Error())
+				} else {
+					pendingDeletion++
+				}
+			case "PROVISIONING":
+				fallthrough
+			case "RECONCILING":
+				fallthrough
+			case "STOPPING":
+				logger.Printf("Deferring cluster %s status: %s", cluster.Name, clusterStatus)
+				pendingDeletion++
+			default:
+				logger.Printf("Ignoring cluster %s status: %s", cluster.Name, clusterStatus)
 			}
 		}
-
-		return len(listResponse.Clusters)
+		return pendingDeletion
 	}
 
 	removeProjectEndpoints := func(projectId string) {
@@ -679,7 +694,7 @@ func invoke(ctx context.Context) {
 	cleanupProjectById := func(projectId string) {
 		logger.Printf("Try to remove project [%s]", projectId)
 		if clusters := removeProjectClusters(projectId); clusters != 0 {
-			logger.Printf("Skip removing project [%s], marked %d clusters for deletion", projectId, clusters)
+			logger.Printf("Defer removing project [%s], %d clusters marked for deletion", projectId, clusters)
 		}
 		err := removeProjectById(projectId)
 		if err != nil {
