@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [4.3.1](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v4.3.0...v4.3.1) (2024-07-29)
+
+
+### Bug Fixes
+
+* **project_cleanup:** check all cluster locations and defer when deleting ([#248](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/248)) ([14e7ce1](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/14e7ce18601cd8040d19abe0369048c6cf95dc3f))
+
 ## [4.3.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v4.2.0...v4.3.0) (2024-07-26)
 
 
