@@ -59,6 +59,7 @@ module "scheduled_project_cleaner" {
   function_runtime               = "go121"
   function_service_account_email = google_service_account.project_cleaner_function.email
   function_timeout_s             = var.function_timeout_s
+  function_docker_registry       = var.function_docker_registry
 
   function_environment_variables = {
     TARGET_ORGANIZATION_ID            = var.organization_id
