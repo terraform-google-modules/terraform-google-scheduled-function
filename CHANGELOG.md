@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [4.4.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v4.3.1...v4.4.0) (2024-07-31)
+
+
+### Features
+
+* expose docker registry setting for project cleanup ([#250](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/250)) ([561a6d4](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/561a6d493e22b0fe6c8204993e53c1284178f7ee))
+
 ## [4.3.1](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v4.3.0...v4.3.1) (2024-07-29)
 
 

@@ -25,7 +25,7 @@ terraform {
   }
 
   provider_meta "google" {
-    module_name = "blueprints/terraform/terraform-google-scheduled-function:project_cleanup/v4.3.1"
+    module_name = "blueprints/terraform/terraform-google-scheduled-function:project_cleanup/v4.4.0"
   }
 
 }
