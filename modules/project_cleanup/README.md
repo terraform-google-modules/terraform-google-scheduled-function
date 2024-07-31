@@ -31,6 +31,7 @@ The following services must be enabled on the project housing the cleanup functi
 | clean\_up\_org\_level\_cai\_feeds | Clean up organization level Cloud Asset Inventory Feeds. | `bool` | `false` | no |
 | clean\_up\_org\_level\_scc\_notifications | Clean up organization level Security Command Center notifications. | `bool` | `false` | no |
 | clean\_up\_org\_level\_tag\_keys | Clean up organization level Tag Keys. | `bool` | `false` | no |
+| function\_docker\_registry | Docker Registry to use for storing the function's Docker images. Allowed values are CONTAINER\_REGISTRY (default) and ARTIFACT\_REGISTRY. | `string` | `null` | no |
 | function\_timeout\_s | The amount of time in seconds allotted for the execution of the function. | `number` | `500` | no |
 | job\_schedule | Cleaner function run frequency, in cron syntax | `string` | `"*/5 * * * *"` | no |
 | list\_billing\_sinks\_page\_size | The maximum number of Billing Account Log Sinks to return in the call to `BillingAccountsSinksService.List` service. | `number` | `200` | no |

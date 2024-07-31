@@ -148,3 +148,9 @@ variable "target_folder_id" {
   description = "Folder ID to delete all projects under."
   default     = ""
 }
+
+variable "function_docker_registry" {
+  type        = string
+  default     = null
+  description = "Docker Registry to use for storing the function's Docker images. Allowed values are CONTAINER_REGISTRY (default) and ARTIFACT_REGISTRY."
+}
