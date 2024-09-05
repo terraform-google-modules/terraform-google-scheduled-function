@@ -28,7 +28,7 @@ terraform {
   }
 
   provider_meta "google" {
-    module_name = "blueprints/terraform/terraform-google-scheduled-function/v4.4.0"
+    module_name = "blueprints/terraform/terraform-google-scheduled-function/v5.0.0"
   }
 
 }
