@@ -229,7 +229,7 @@ variable "grant_token_creator" {
 }
 
 variable "files_to_exclude_in_source_dir" {
-  type = list(string)
+  type        = list(string)
   description = "Specify files to ignore when reading the source_dir"
-  default = [ ]
+  default     = []
 }
