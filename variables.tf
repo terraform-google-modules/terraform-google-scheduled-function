@@ -227,3 +227,9 @@ variable "grant_token_creator" {
   description = "Specify true if you want to add token creator role to the default Pub/Sub SA"
   default     = false
 }
+
+variable "files_to_exclude_in_source_dir" {
+  type = list(string)
+  description = "Specify files to ignore when reading the source_dir"
+  default = [ ]
+}
