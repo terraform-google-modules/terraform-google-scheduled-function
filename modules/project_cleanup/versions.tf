@@ -20,12 +20,12 @@ terraform {
 
     google = {
       source  = "hashicorp/google"
-      version = ">= 3.53, < 6"
+      version = ">= 3.53, < 7"
     }
   }
 
   provider_meta "google" {
-    module_name = "blueprints/terraform/terraform-google-scheduled-function:project_cleanup/v4.4.0"
+    module_name = "blueprints/terraform/terraform-google-scheduled-function:project_cleanup/v5.0.0"
   }
 
 }
