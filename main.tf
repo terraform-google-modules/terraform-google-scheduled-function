@@ -84,6 +84,7 @@ module "main" {
   environment_variables              = var.function_environment_variables
   secret_environment_variables       = var.function_secret_environment_variables
   event_trigger_failure_policy_retry = var.function_event_trigger_failure_policy_retry
+  files_to_exclude_in_source_dir     = var.files_to_exclude_in_source_dir
   labels                             = var.function_labels
   service_account_email              = var.function_service_account_email
   timeout_s                          = var.function_timeout_s
