@@ -21,7 +21,7 @@ resource "random_pet" "main" {
 
 module "pubsub_scheduled_example" {
   source  = "terraform-google-modules/scheduled-function/google"
-  version = "~> 5.0"
+  version = "~> 6.0"
 
   project_id                = var.project_id
   job_name                  = "pubsub-example-${random_pet.main.id}"
