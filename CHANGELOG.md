@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [7.0.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v6.0.0...v7.0.0) (2025-08-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* **TF>=1.3:** update terraform, go modules and dev-tools ([#272](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/272))
+
+### Bug Fixes
+
+* **TF>=1.3:** update terraform, go modules and dev-tools ([#272](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/272)) ([d9feac0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/d9feac02fa65ea075daeeced1abb81ffbef078b8))
+
 ## [6.0.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v5.0.0...v6.0.0) (2024-10-11)
 
 
