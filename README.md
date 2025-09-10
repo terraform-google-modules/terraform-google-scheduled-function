@@ -53,7 +53,7 @@ Then perform the following commands on the root folder:
 | function\_labels | A set of key/value label pairs to assign to the function. | `map(string)` | `{}` | no |
 | function\_max\_instances | The maximum number of parallel executions of the function. | `number` | `null` | no |
 | function\_name | The name to apply to the function | `string` | n/a | yes |
-| function\_runtime | The runtime in which the function will be executed. | `string` | `"nodejs10"` | no |
+| function\_runtime | The runtime in which the function will be executed. | `string` | `"nodejs20"` | no |
 | function\_secret\_environment\_variables | A list of maps which contains key, project\_id, secret\_name (not the full secret id) and version to assign to the function as a set of secret environment variables. | `list(map(string))` | `[]` | no |
 | function\_service\_account\_email | The service account to run the function as. | `string` | `""` | no |
 | function\_source\_archive\_bucket\_labels | A set of key/value label pairs to assign to the function source archive bucket. | `map(string)` | `{}` | no |

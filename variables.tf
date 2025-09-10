@@ -80,7 +80,7 @@ variable "function_labels" {
 
 variable "function_runtime" {
   type        = string
-  default     = "nodejs10"
+  default     = "nodejs20"
   description = "The runtime in which the function will be executed."
 }
 
