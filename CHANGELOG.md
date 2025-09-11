@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [7.0.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v6.0.0...v7.0.0) (2025-09-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** Update Terraform terraform-google-modules/pubsub/google to v8 ([#285](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/285))
+* **deps:** Update Terraform terraform-google-modules/event-function/google to v5 ([#293](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/293))
+* **deps:** update function_runtime to nodejs20 ([#281](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/281))
+* **TF>=1.3:** update terraform, go modules and dev-tools ([#272](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/272))
+
+### Features
+
+* **deps:** Update Terraform Google Provider to v7 (major) ([#322](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/322)) ([9ec5b41](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/9ec5b41b08089856a3e0eb0658124571946f8729))
+
+
+### Bug Fixes
+
+* **deps:** update function_runtime to nodejs20 ([#281](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/281)) ([405010d](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/405010d95090282aa080b91c2a82437ad5af8b1e))
+* **deps:** Update Terraform terraform-google-modules/event-function/google to v5 ([#293](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/293)) ([4608425](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/4608425cd3ed764bd76935cb1248f890e44d5be3))
+* **deps:** Update Terraform terraform-google-modules/pubsub/google to v8 ([#285](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/285)) ([b01ce38](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/b01ce3872504b7dcb32fc4d80912451c167c1961))
+* **TF>=1.3:** update terraform, go modules and dev-tools ([#272](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/272)) ([d9feac0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/d9feac02fa65ea075daeeced1abb81ffbef078b8))
+
 ## [6.0.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v5.0.0...v6.0.0) (2024-10-11)
 
 
