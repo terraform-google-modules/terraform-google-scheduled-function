@@ -16,7 +16,7 @@
 
 module "pubsub_scheduled_1" {
   source  = "terraform-google-modules/scheduled-function/google"
-  version = "~> 6.0"
+  version = "~> 7.0"
 
   project_id                = var.project_id
   job_name                  = "pubsub-example"
@@ -30,7 +30,7 @@ module "pubsub_scheduled_1" {
 
 module "pubsub_scheduled_2" {
   source  = "terraform-google-modules/scheduled-function/google"
-  version = "~> 6.0"
+  version = "~> 7.0"
 
   project_id                = var.project_id
   function_entry_point      = "doSomething2"
