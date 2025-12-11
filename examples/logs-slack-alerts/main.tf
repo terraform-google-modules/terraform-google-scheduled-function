@@ -16,7 +16,7 @@
 
 module "log_slack_alerts_example" {
   source  = "terraform-google-modules/scheduled-function/google"
-  version = "~> 7.0"
+  version = "~> 8.0"
 
   project_id                = var.project_id
   job_name                  = "logs_query"
