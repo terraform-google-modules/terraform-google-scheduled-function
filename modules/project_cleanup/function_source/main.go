@@ -17,6 +17,7 @@ limitations under the License.
 package project_cleanup
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -33,7 +34,6 @@ import (
 	"cloud.google.com/go/container/apiv1/containerpb"
 	securitycenter "cloud.google.com/go/securitycenter/apiv1"
 	"cloud.google.com/go/securitycenter/apiv1/securitycenterpb"
-	"golang.org/x/net/context"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/cloudresourcemanager/v1"
 	cloudresourcemanager2 "google.golang.org/api/cloudresourcemanager/v2"
@@ -123,7 +123,7 @@ func retry(retryFunc func() error, tries int, duration time.Duration) error {
 		return nil
 	}
 	if tries < 1 {
-		return fmt.Errorf("Exhausted retries: %v", err)
+		return fmt.Errorf("exhausted retries: %v", err)
 	}
 	if isRetryableError(err) {
 		time.Sleep(duration)
@@ -638,7 +638,7 @@ func invoke(ctx context.Context) {
 			return 0
 		}
 
-		var pendingDeletion int = 0
+		pendingDeletion := 0
 		for _, cluster := range listResponse.Clusters {
 			switch clusterStatus := cluster.Status.String(); clusterStatus {
 			case "DEGRADED":
