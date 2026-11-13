@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog-site],
 and this project adheres to [Semantic Versioning][semver-site].
 
+## [8.1.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v8.0.0...v8.1.0) (2026-11-13)
+
+
+### Features
+
+* **deps:** Update Terraform Google Provider to v8 ([#364](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/364)) ([99d9df7](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/99d9df7af59c3adbf2c8177fde8b217277bf9a7d))
+
+
+### Bug Fixes
+
+* **deps:** Update module golang.org/x/oauth2 to v0.38.0 ([#366](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/366)) ([c3e7fbf](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/c3e7fbf7c6670fc686315eba93ea030b5a63aa8b))
+* **deps:** Update modules/project_cleanup/function_source deps ([#361](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/361)) ([61181d9](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/61181d95c414b139e47ce6234d4b9325fc0438ff))
+* **deps:** Update modules/project_cleanup/function_source security deps [SECURITY] ([#358](https://github.com/terraform-google-modules/terraform-google-scheduled-function/issues/358)) ([748c860](https://github.com/terraform-google-modules/terraform-google-scheduled-function/commit/748c86041160bada2d799f359492a1ea42f172e1))
+
 ## [8.0.0](https://github.com/terraform-google-modules/terraform-google-scheduled-function/compare/v7.0.0...v8.0.0) (2025-10-28)
 
 
