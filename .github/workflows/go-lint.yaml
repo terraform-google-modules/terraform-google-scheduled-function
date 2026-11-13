@@ -16,7 +16,7 @@ name: go-lint
 on:
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - ".github/workflows/go-lint.yaml"
       - "modules/project_cleanup/function_source/**"
@@ -24,7 +24,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: '$${{ github.workflow }}-$${{ github.head_ref || github.ref }}'
+  group: '${{ github.workflow }}-${{ github.head_ref || github.ref }}'
   cancel-in-progress: true
 
 jobs:
