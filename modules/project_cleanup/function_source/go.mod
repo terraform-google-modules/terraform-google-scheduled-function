@@ -8,7 +8,7 @@ require (
 	cloud.google.com/go/asset v1.30.1
 	cloud.google.com/go/container v1.56.1
 	cloud.google.com/go/securitycenter v1.49.1
-	golang.org/x/oauth2 v0.37.0
+	golang.org/x/oauth2 v0.38.0
 	google.golang.org/api v0.311.0
 )
 
