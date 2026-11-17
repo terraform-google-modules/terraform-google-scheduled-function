@@ -161,3 +161,10 @@ variable "dry_run" {
   description = "If true, the cleanup function will only log what it would delete without performing deletions."
 }
 
+variable "target_excluded_folders" {
+  type        = set(string)
+  default     = []
+  description = "List of folder IDs (e.g., ['1234567890']) to exclude from the entire cleanup process. Projects and subfolders within these folders will be ignored."
+}
+
+
