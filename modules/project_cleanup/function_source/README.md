@@ -21,6 +21,7 @@ The following environment variables may be specified to configure the cleanup ut
 | `CLEAN_UP_CAI_FEEDS`| Clean up organization level Cloud Asset Inventory Feeds. | `bool` | n/a | yes |
 | `CLEAN_UP_SCC_NOTIFICATIONS` | Clean up organization level Security Command Center notifications. | `bool` | n/a | yes |
 | `CLEAN_UP_TAG_KEYS` | Clean up organization level Tag Keys. | `bool` | n/a | yes |
+| `DRY_RUN` | If `true`, the function will only log what it would delete without performing deletions. | `bool` | n/a | yes |
 | `MAX_PROJECT_AGE_HOURS` | The project age, in hours, at which point deletion should be considered | integer | n/a | yes |
 | `SCC_NOTIFICATIONS_PAGE_SIZE` | The maximum number of notification configs to return in the call to `ListNotificationConfigs` service. The minimun value is 1 and the maximum value is 1000. | `number` | n/a | yes |
 | `TARGET_BILLING_SINKS` | List of Billing Account Log Sinks names regex that will be deleted. Regex example: `.*/sinks/sk-c-logging-.*-billing-.*` | `list(string)` | n/a | no |

@@ -67,6 +67,7 @@ const (
 	CleanUpBillingSinks           = "CLEAN_UP_BILLING_SINKS"
 	TargetBillingSinks            = "TARGET_BILLING_SINKS"
 	BillingSinksPageSize          = "BILLING_SINKS_PAGE_SIZE"
+	DryRunMode                    = "DRY_RUN"
 )
 
 var (
@@ -87,6 +88,7 @@ var (
 	cleanUpBillingSinks    = getBoolFromEnv(CleanUpBillingSinks)
 	billingSinksPageSize   = getIntFromEnv(BillingSinksPageSize)
 	targetBillingSinks     = getRegexListFromEnv(TargetBillingSinks)
+	isDryRun               = getBoolFromEnv(DryRunMode)
 )
 
 type PubSubMessage struct {
@@ -434,6 +436,7 @@ func initializeGoogleClient(ctx context.Context) *http.Client {
 }
 
 func invoke(ctx context.Context) {
+
 	client := initializeGoogleClient(ctx)
 	cloudResourceManagerService := getResourceManagerServiceOrTerminateExecution(ctx, client)
 	folderService := getFolderServiceOrTerminateExecution(ctx, client)
@@ -448,6 +451,10 @@ func invoke(ctx context.Context) {
 
 	removeLien := func(name string) {
 		logger.Printf("Try to remove lien [%s]", name)
+		if isDryRun {
+			logger.Printf("[DRY RUN] Would remove lien: %s", name)
+			return
+		}
 		_, err := cloudResourceManagerService.Liens.Delete(name).Context(ctx).Do()
 		if err != nil {
 			logger.Printf("Failed to remove lien [%s], error [%s]", name, err.Error())
@@ -504,6 +511,10 @@ func invoke(ctx context.Context) {
 			}
 			projectID := strings.Split(resp.PubsubTopic, "/")[1]
 			if checkIfNameIncluded(resp.Name, includedSCCNotfisList) && projectDeleteRequestedFilter(projectID) {
+				if isDryRun {
+					logger.Printf("[DRY RUN] Would delete SCC notification [%s]", resp.Name)
+					continue
+				}
 				delReq := &securitycenterpb.DeleteNotificationConfigRequest{
 					Name: resp.Name,
 				}
@@ -525,6 +536,10 @@ func invoke(ctx context.Context) {
 			return
 		}
 		for _, tagValue := range tagValuesList.TagValues {
+			if isDryRun {
+				logger.Printf("[DRY RUN] Would delete tagValue [%s] from TagKey [%s]", tagValue.Name, tagKey)
+				continue
+			}
 			_, err := tagValuesService.Delete(tagValue.Name).Context(ctx).Do()
 			if err != nil {
 				logger.Printf("Failed to delete tagValue from TagKey [%s], error [%s]", tagKey, err.Error())
@@ -542,6 +557,10 @@ func invoke(ctx context.Context) {
 		}
 		for _, tagKey := range tagKeysList.TagKeys {
 			if !checkIfTagKeyShortNameExcluded(tagKey.ShortName, excludedTagKeysList) && tagKeyAgeFilter(tagKey) {
+				if isDryRun {
+					logger.Printf("[DRY RUN] Would delete tagKey [%s] from organization [%s]", tagKey.Name, organization)
+					continue
+				}
 				removeTagValues(tagKey.Name)
 				_, err := tagKeyService.Delete(tagKey.Name).Context(ctx).Do()
 				if err != nil {
@@ -567,6 +586,10 @@ func invoke(ctx context.Context) {
 		for _, feed := range resp.Feeds {
 			projectID := strings.Split(feed.FeedOutputConfig.GetPubsubDestination().Topic, "/")[1]
 			if checkIfNameIncluded(feed.Name, includedFeedsList) && projectDeleteRequestedFilter(projectID) {
+				if isDryRun {
+					logger.Printf("[DRY RUN] Would remove feed [%s]", feed.Name)
+					continue
+				}
 				delReq := &assetpb.DeleteFeedRequest{
 					Name: feed.Name,
 				}
@@ -590,6 +613,10 @@ func invoke(ctx context.Context) {
 		}
 		for _, sink := range sinkList.Sinks {
 			if sink.Name != "_Required" && sink.Name != "_Default" && billingSinkAgeFilter(sink) && checkIfNameIncluded(sink.ResourceName, targetBillingSinks) {
+				if isDryRun {
+					logger.Printf("[DRY RUN] Would delete billing account log sink [%s] from billing account [%s]", sink.ResourceName, billing)
+					continue
+				}
 				_, err = billingSinkService.Delete(sink.ResourceName).Context(ctx).Do()
 				if err != nil {
 					logger.Printf("Failed to delete billing account log sink [%s] from billing account [%s], error [%s]", sink.ResourceName, billing, err.Error())
@@ -607,10 +634,18 @@ func invoke(ctx context.Context) {
 		}
 		for _, policy := range firewallPolicyList.Items {
 			for _, association := range policy.Associations {
+				if isDryRun {
+					logger.Printf("[DRY RUN] Would remove association for Firewall Policy [%s] from folder [%s]", association.Name, folder)
+					continue
+				}
 				_, err := firewallPoliciesService.RemoveAssociation(policy.Name).Name(association.Name).Context(ctx).Do()
 				if err != nil {
 					logger.Printf("Failed to Remove Association for Firewall Policies from folder [%s], error [%s]", folder, err.Error())
 				}
+			}
+			if isDryRun {
+				logger.Printf("[DRY RUN] Would delete Firewall Policy [%s] from folder [%s]", policy.Name, folder)
+				continue
 			}
 			_, err := firewallPoliciesService.Delete(policy.Name).Context(ctx).Do()
 			if err != nil {
@@ -620,6 +655,10 @@ func invoke(ctx context.Context) {
 	}
 
 	removeProjectById := func(projectId string) error {
+		if isDryRun {
+			logger.Printf("[DRY RUN] Would request deletion for project: %s", projectId)
+			return nil
+		}
 		_, err := cloudResourceManagerService.Projects.Delete(projectId).Context(ctx).Do()
 		return err
 	}
@@ -645,6 +684,11 @@ func invoke(ctx context.Context) {
 				fallthrough
 			case "RUNNING":
 				logger.Printf("Deleting cluster %s status: %s", cluster.Name, clusterStatus)
+				if isDryRun {
+					logger.Printf("[DRY RUN] Would delete cluster [%s] for project [%s]", cluster.Name, projectId)
+					pendingDeletion++
+					continue
+				}
 				reqDCR := &containerpb.DeleteClusterRequest{Name: fmt.Sprintf("projects/%s/locations/%s/clusters/%s", projectId, cluster.Location, cluster.Name)}
 				_, err := containerService.DeleteCluster(ctx, reqDCR)
 				if err != nil {
@@ -681,6 +725,10 @@ func invoke(ctx context.Context) {
 
 		for _, service := range listResponse.Services {
 			logger.Printf("Try to remove service: %s", service.ServiceName)
+			if isDryRun {
+				logger.Printf("[DRY RUN] Would delete service [%s] for project [%s]", service.ServiceName, projectId)
+				continue
+			}
 			_, err = endpointService.Services.Delete(service.ServiceName).Do()
 			if err != nil {
 				logger.Printf("Failed to delete service [%s] for [%s], error [%s]", service.ServiceName, projectId, err.Error())
@@ -704,7 +752,7 @@ func invoke(ctx context.Context) {
 		}
 		if err != nil {
 			logger.Printf("Failed to remove project [%s], error [%s]", projectId, err.Error())
-		} else {
+		} else if !isDryRun {
 			logger.Printf("Removed project [%s]", projectId)
 		}
 	}
@@ -754,6 +802,10 @@ func invoke(ctx context.Context) {
 		folderId := folder.Name
 		removeFirewallPolicies(folderId)
 		logger.Printf("Try to delete folder with id [%s]", folderId)
+		if isDryRun {
+			logger.Printf("[DRY RUN] Would delete folder [%s]", folderId)
+			return
+		}
 		_, err := folderService.Delete(folderId).Do()
 		if err != nil {
 			logger.Printf("Failed to delete folder [%s], error [%s]", folderId, err.Error())
