@@ -6,6 +6,7 @@ This is a simple utility that scans a GCP organization for projects matching cer
 - **Key-Value Pair Include:** Only projects whose labels contain the provided key-value pair will be marked for deletion.
 - **Key-Value Pair Exclude:** Projects whose labels contain the provided key-value pair won't be marked for deletion.
 - **Folder ID:** Only projects under this Folder ID will be recursively marked for deletion.
+- **Folder ID Exclude:** Folders in this list (and their sub-folders/projects) won't be traversed or marked for deletion.
 
 Both of these criteria must be met for a project to be deleted.
 
@@ -25,6 +26,7 @@ The following environment variables may be specified to configure the cleanup ut
 | `MAX_PROJECT_AGE_HOURS` | The project age, in hours, at which point deletion should be considered | integer | n/a | yes |
 | `SCC_NOTIFICATIONS_PAGE_SIZE` | The maximum number of notification configs to return in the call to `ListNotificationConfigs` service. The minimun value is 1 and the maximum value is 1000. | `number` | n/a | yes |
 | `TARGET_BILLING_SINKS` | List of Billing Account Log Sinks names regex that will be deleted. Regex example: `.*/sinks/sk-c-logging-.*-billing-.*` | `list(string)` | n/a | no |
+| `TARGET_EXCLUDED_FOLDERS` | List of Folder IDs to exclude from recursion and project cleanup. | `list(string)` | n/a | no |
 | `TARGET_EXCLUDED_LABELS` | Labels to match on for identifying projects to avoid deletion | string | n/a | no |
 | `TARGET_EXCLUDED_TAGKEYS` | List of organization Tag Key short names that won't be deleted. | `list(string)` | n/a | no |
 | `TARGET_FOLDER_ID` | Folder ID to delete projects under | string | n/a | yes |

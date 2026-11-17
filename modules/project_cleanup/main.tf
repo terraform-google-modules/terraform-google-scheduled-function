@@ -79,5 +79,6 @@ module "scheduled_project_cleaner" {
     TARGET_BILLING_SINKS              = jsonencode(var.target_billing_sinks)
     BILLING_SINKS_PAGE_SIZE           = var.list_billing_sinks_page_size
     DRY_RUN                           = var.dry_run
+    TARGET_EXCLUDED_FOLDERS           = jsonencode(var.target_excluded_folders)
   }
 }

@@ -42,6 +42,7 @@ The following services must be enabled on the project housing the cleanup functi
 | project\_id | The project ID to host the scheduled function in | `string` | n/a | yes |
 | region | The region the project is in (App Engine specific) | `string` | n/a | yes |
 | target\_billing\_sinks | List of Billing Account Log Sinks names regex that will be deleted. Regex example: `.*/sinks/sk-c-logging-.*-billing-.*` | `list(string)` | `[]` | no |
+| target\_excluded\_folders | Set of folder IDs to exclude from recursion and project cleanup. | `set(string)` | `[]` | no |
 | target\_excluded\_labels | Map of project lablels that won't be deleted. | `map(string)` | `{}` | no |
 | target\_excluded\_tagkeys | List of organization Tag Key short names that won't be deleted. | `list(string)` | `[]` | no |
 | target\_folder\_id | Folder ID to delete all projects under. | `string` | `""` | no |

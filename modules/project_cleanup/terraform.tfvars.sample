@@ -6,3 +6,5 @@ region = ""
 
 dry_run = false
 
+target_excluded_folders = []
+
