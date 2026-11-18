@@ -81,15 +81,17 @@ resource "google_storage_bucket_object" "main" {
 }
 
 resource "google_cloudfunctions2_function" "main" {
-  name        = var.function_name
-  location    = var.region
-  project     = var.project_id
-  description = var.function_description
-  labels      = var.function_labels
+  name         = var.function_name
+  location     = var.region
+  project      = var.project_id
+  description  = var.function_description
+  labels       = var.function_labels
+  kms_key_name = var.function_kms_key_name
 
   build_config {
-    runtime     = var.function_runtime
-    entry_point = var.function_entry_point
+    runtime           = var.function_runtime
+    entry_point       = var.function_entry_point
+    docker_repository = var.function_docker_repository
     source {
       storage_source {
         bucket = var.create_bucket ? google_storage_bucket.main[0].name : var.bucket_name
@@ -99,12 +101,14 @@ resource "google_cloudfunctions2_function" "main" {
   }
 
   service_config {
-    max_instance_count    = var.function_max_instances
-    available_memory      = "${var.function_available_memory_mb}Mi"
-    timeout_seconds       = var.function_timeout_s
-    service_account_email = var.function_service_account_email
-    environment_variables = var.function_environment_variables
-    ingress_settings      = var.ingress_settings
+    max_instance_count            = var.function_max_instances
+    available_memory              = "${var.function_available_memory_mb}Mi"
+    timeout_seconds               = var.function_timeout_s
+    service_account_email         = var.function_service_account_email
+    environment_variables         = var.function_environment_variables
+    ingress_settings              = var.ingress_settings
+    vpc_connector                 = var.vpc_connector
+    vpc_connector_egress_settings = var.vpc_connector_egress_settings
 
     dynamic "secret_environment_variables" {
       for_each = var.function_secret_environment_variables
