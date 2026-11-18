@@ -54,45 +54,74 @@ module "pubsub_topic" {
  *****************************************/
 
 resource "random_id" "suffix" {
-
   byte_length = 4
 }
 
-module "main" {
-  source  = "terraform-google-modules/event-function/google"
-  version = "~> 6.0"
-
-  entry_point = var.function_entry_point
-  event_trigger = {
-    event_type = "google.pubsub.topic.publish"
-    resource   = var.scheduler_job == null ? module.pubsub_topic.topic : var.topic_name
-  }
-  name             = var.function_name
-  project_id       = var.project_id
-  region           = var.region
-  runtime          = var.function_runtime
-  source_directory = var.function_source_directory
-
-  source_dependent_files = var.function_source_dependent_files
-
-  available_memory_mb                = var.function_available_memory_mb
-  bucket_force_destroy               = var.bucket_force_destroy
-  bucket_labels                      = var.function_source_archive_bucket_labels
-  bucket_name                        = var.bucket_name == "" ? "${var.project_id}-scheduled-function-${random_id.suffix.hex}" : var.bucket_name
-  create_bucket                      = var.create_bucket
-  description                        = var.function_description
-  environment_variables              = var.function_environment_variables
-  secret_environment_variables       = var.function_secret_environment_variables
-  event_trigger_failure_policy_retry = var.function_event_trigger_failure_policy_retry
-  files_to_exclude_in_source_dir     = var.files_to_exclude_in_source_dir
-  labels                             = var.function_labels
-  service_account_email              = var.function_service_account_email
-  timeout_s                          = var.function_timeout_s
-  max_instances                      = var.function_max_instances
-  ingress_settings                   = var.ingress_settings
-  docker_registry                    = var.function_docker_registry
-  docker_repository                  = var.function_docker_repository
-  kms_key_name                       = var.function_kms_key_name
-  vpc_connector                      = var.vpc_connector
-  vpc_connector_egress_settings      = var.vpc_connector_egress_settings
+data "archive_file" "main" {
+  type        = "zip"
+  source_dir  = var.function_source_directory
+  output_path = "${path.module}/.temp/${var.function_name}.zip"
+  excludes    = concat([".gcloudignore", "README.md", ".git", ".gitignore"], var.files_to_exclude_in_source_dir)
 }
+
+resource "google_storage_bucket" "main" {
+  count                       = var.create_bucket ? 1 : 0
+  name                        = var.bucket_name == "" ? "${var.project_id}-scheduled-function-${random_id.suffix.hex}" : var.bucket_name
+  project                     = var.project_id
+  location                    = var.region
+  force_destroy               = var.bucket_force_destroy
+  uniform_bucket_level_access = true
+  labels                      = var.function_source_archive_bucket_labels
+}
+
+resource "google_storage_bucket_object" "main" {
+  name   = "${var.function_name}-${data.archive_file.main.output_md5}.zip"
+  bucket = var.create_bucket ? google_storage_bucket.main[0].name : var.bucket_name
+  source = data.archive_file.main.output_path
+}
+
+resource "google_cloudfunctions2_function" "main" {
+  name        = var.function_name
+  location    = var.region
+  project     = var.project_id
+  description = var.function_description
+  labels      = var.function_labels
+
+  build_config {
+    runtime     = var.function_runtime
+    entry_point = var.function_entry_point
+    source {
+      storage_source {
+        bucket = var.create_bucket ? google_storage_bucket.main[0].name : var.bucket_name
+        object = google_storage_bucket_object.main.name
+      }
+    }
+  }
+
+  service_config {
+    max_instance_count    = var.function_max_instances
+    available_memory      = "${var.function_available_memory_mb}Mi"
+    timeout_seconds       = var.function_timeout_s
+    service_account_email = var.function_service_account_email
+    environment_variables = var.function_environment_variables
+    ingress_settings      = var.ingress_settings
+
+    dynamic "secret_environment_variables" {
+      for_each = var.function_secret_environment_variables
+      content {
+        key        = secret_environment_variables.value["key"]
+        project_id = secret_environment_variables.value["project_id"]
+        secret     = secret_environment_variables.value["secret_name"]
+        version    = secret_environment_variables.value["version"]
+      }
+    }
+  }
+
+  event_trigger {
+    trigger_region = var.region
+    event_type     = "google.cloud.pubsub.topic.v1.messagePublished"
+    pubsub_topic   = var.scheduler_job == null ? module.pubsub_topic.id : "projects/${var.project_id}/topics/${var.topic_name}"
+    retry_policy   = var.function_event_trigger_failure_policy_retry ? "RETRY_POLICY_RETRY" : "RETRY_POLICY_DO_NOT_RETRY"
+  }
+}
+
