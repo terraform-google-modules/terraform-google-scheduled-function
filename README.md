@@ -131,6 +131,9 @@ resources of this module:
 - Cloud Functions API: `cloudfunctions.googleapis.com`
 - Cloud Build API: `cloudbuild.googleapis.com`
 - App Engine Admin API: `appengine.googleapis.com`
+- Eventarc API: `eventarc.googleapis.com`
+- Cloud Run Admin API: `run.googleapis.com`
+- Artifact Registry API: `artifactregistry.googleapis.com`
 
 The [Project Factory module][project-factory-module] can be used to
 provision a project with the necessary APIs enabled.
