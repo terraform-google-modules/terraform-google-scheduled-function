@@ -116,6 +116,7 @@ the resources of this module:
 - Cloudscheduler Admin: `roles/cloudscheduler.admin`
 - Cloudfunctions Developer: `roles/cloudfunctions.developer`
 - IAM ServiceAccount User: `roles/iam.serviceAccountUser`
+- Service Usage Consumer: `roles/serviceusage.serviceUsageConsumer`
 
 The [Project Factory module][project-factory-module] and the
 [IAM module][iam-module] may be used in combination to provision a
