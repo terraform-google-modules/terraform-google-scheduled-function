@@ -62,6 +62,7 @@ data "archive_file" "main" {
   source_dir  = var.function_source_directory
   output_path = "${path.module}/.temp/${var.function_name}.zip"
   excludes    = concat([".gcloudignore", "README.md", ".git", ".gitignore"], var.files_to_exclude_in_source_dir)
+  depends_on  = [var.function_source_dependent_files]
 }
 
 resource "google_storage_bucket" "main" {
@@ -91,7 +92,7 @@ resource "google_cloudfunctions2_function" "main" {
   build_config {
     runtime           = var.function_runtime
     entry_point       = var.function_entry_point
-    docker_repository = var.function_docker_repository
+    docker_repository = var.function_docker_repository != null ? var.function_docker_repository : (var.function_docker_registry != null ? null : null)
     source {
       storage_source {
         bucket = var.create_bucket ? google_storage_bucket.main[0].name : var.bucket_name
