@@ -18,13 +18,21 @@ locals {
   int_required_roles = [
     "roles/storage.admin",
     "roles/pubsub.admin",
-    "roles/resourcemanager.projectIamAdmin",
     "roles/cloudscheduler.admin",
     "roles/cloudfunctions.developer",
     "roles/iam.serviceAccountUser",
-    "roles/resourcemanager.projectIamAdmin",
-    "roles/pubsub.subscriber"
+    "roles/serviceusage.serviceUsageConsumer",
   ]
+
+  default_compute_roles = [
+    "roles/serviceusage.serviceUsageConsumer",
+    "roles/eventarc.eventReceiver",
+    "roles/run.invoker",
+  ]
+}
+
+data "google_project" "project" {
+  project_id = module.project.project_id
 }
 
 resource "google_service_account" "int_test" {
@@ -41,6 +49,26 @@ resource "google_project_iam_member" "int_test" {
   member  = "serviceAccount:${google_service_account.int_test.email}"
 }
 
+resource "google_project_iam_member" "default_compute" {
+  count = length(local.default_compute_roles)
+
+  project = module.project.project_id
+  role    = local.default_compute_roles[count.index]
+  member  = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
+}
+
 resource "google_service_account_key" "int_test" {
   service_account_id = google_service_account.int_test.id
+}
+
+resource "google_project_service_identity" "pubsub" {
+  provider = google-beta
+  project  = module.project.project_id
+  service  = "pubsub.googleapis.com"
+}
+
+resource "google_project_iam_member" "pubsub_token_creator" {
+  project = module.project.project_id
+  role    = "roles/iam.serviceAccountTokenCreator"
+  member  = "serviceAccount:${google_project_service_identity.pubsub.email}"
 }
