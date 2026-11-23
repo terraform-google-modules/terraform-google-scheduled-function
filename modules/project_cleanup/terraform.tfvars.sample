@@ -3,3 +3,8 @@ organization_id = ""
 project_id = ""
 
 region = ""
+
+dry_run = false
+
+target_excluded_folders = []
+
