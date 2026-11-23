@@ -60,10 +60,6 @@ resource "google_project_iam_member" "default_compute" {
   member  = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
 }
 
-resource "google_service_account_key" "int_test" {
-  service_account_id = google_service_account.int_test.id
-}
-
 resource "google_project_service_identity" "pubsub" {
   provider = google-beta
   project  = module.project.project_id
@@ -74,4 +70,19 @@ resource "google_project_iam_member" "pubsub_token_creator" {
   project = module.project.project_id
   role    = "roles/iam.serviceAccountTokenCreator"
   member  = "serviceAccount:${google_project_service_identity.pubsub.email}"
+}
+
+resource "time_sleep" "wait_for_iam" {
+  create_duration = "60s"
+
+  depends_on = [
+    google_project_iam_member.int_test,
+    google_project_iam_member.default_compute,
+    google_project_iam_member.pubsub_token_creator,
+  ]
+}
+
+resource "google_service_account_key" "int_test" {
+  service_account_id = google_service_account.int_test.id
+  depends_on         = [time_sleep.wait_for_iam]
 }
