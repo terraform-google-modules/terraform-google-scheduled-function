@@ -128,6 +128,7 @@ variable "ingress_settings" {
   description = "The ingress settings for the function. Allowed values are ALLOW_ALL, ALLOW_INTERNAL_AND_GCLB and ALLOW_INTERNAL_ONLY. Changes to this field will recreate the cloud function."
 }
 
+# tflint-ignore: terraform_unused_declarations
 variable "function_docker_registry" {
   type        = string
   default     = null

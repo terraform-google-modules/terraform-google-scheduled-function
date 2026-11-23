@@ -21,7 +21,7 @@ If not using the default App Engine default service account (PROJECT_ID@appspot.
 | dataset\_name | BigQuery Dataset where logs are sent | `string` | n/a | yes |
 | error\_message\_column | BigQuery Column in audit log table representing logging error | `string` | n/a | yes |
 | project\_id | The project ID to host the network in | `string` | n/a | yes |
-| region | The region the project is in (App Engine specific) | `string` | `"us-central1"` | no |
+| region | The region the project is in | `string` | `"us-central1"` | no |
 | slack\_webhook | Slack webhook to send alerts | `string` | n/a | yes |
 | time\_column | BigQuery Column in audit log table representing logging time | `string` | n/a | yes |
 

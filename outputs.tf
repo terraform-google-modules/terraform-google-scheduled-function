@@ -28,3 +28,8 @@ output "pubsub_topic_name" {
   value       = var.scheduler_job == null ? module.pubsub_topic.topic : var.topic_name
   description = "PubSub topic name"
 }
+
+output "function_name" {
+  value       = google_cloudfunctions2_function.main.name
+  description = "The name of the Cloud Function (2nd gen)"
+}

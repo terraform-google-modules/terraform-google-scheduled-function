@@ -33,6 +33,13 @@ func TestPubsubScheduled(t *testing.T) {
 
 		op := gcloud.Runf(t, "beta scheduler jobs describe %s --location us-central1 --project=%s", name, projectId)
 		assert.Contains(op.Get("state").String(), "ENABLED", "should be enabled")
+
+		functionName := bpt.GetStringOutput("function_name")
+
+		fn := gcloud.Runf(t, "functions describe %s --gen2 --region us-central1 --project=%s", functionName, projectId)
+		assert.Equal("ACTIVE", fn.Get("state").String(), "function should be active")
+		assert.Equal("GEN_2", fn.Get("environment").String(), "function should be 2nd gen")
+		assert.Equal("google.cloud.pubsub.topic.v1.messagePublished", fn.Get("eventTrigger.eventType").String(), "function should be triggered by Pub/Sub")
 	})
 
 	bpt.Test()

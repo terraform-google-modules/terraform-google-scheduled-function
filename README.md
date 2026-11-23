@@ -80,6 +80,7 @@ Then perform the following commands on the root folder:
 
 | Name | Description |
 |------|-------------|
+| function\_name | The name of the Cloud Function (2nd gen) |
 | name | The name of the job created |
 | pubsub\_topic\_name | PubSub topic name |
 | scheduler\_job | The Cloud Scheduler job instance |
@@ -96,15 +97,6 @@ The following dependencies must be available:
 
 - [Terraform](https://www.terraform.io/downloads.html) >= 1.3
 - [Terraform Provider for GCP][terraform-provider-gcp] plugin v4.23
-
-### App Engine
-Note that this module requires App Engine being configured in the specified project/region.
-This is because Google Cloud Scheduler is dependent on the project being configured with App Engine.
-Refer to the [Google Cloud Scheduler documentation][cloud-scheduler-documentation]
-information on the App Engine dependency.
-
-The recommended way to create projects with App Engine enabled is via the [Project Factory module](https://github.com/terraform-google-modules/terraform-google-project-factory).
-There is an example of how to create the project [within that module](https://github.com/terraform-google-modules/terraform-google-project-factory/tree/master/examples/app_engine)
 
 ### Service Account
 
@@ -131,7 +123,6 @@ resources of this module:
 - Cloud PubSub API: `pubsub.googleapis.com`
 - Cloud Functions API: `cloudfunctions.googleapis.com`
 - Cloud Build API: `cloudbuild.googleapis.com`
-- App Engine Admin API: `appengine.googleapis.com`
 - Eventarc API: `eventarc.googleapis.com`
 - Cloud Run Admin API: `run.googleapis.com`
 - Artifact Registry API: `artifactregistry.googleapis.com`
@@ -148,4 +139,3 @@ information on contributing to this module.
 [project-factory-module]: https://registry.terraform.io/modules/terraform-google-modules/project-factory/google
 [terraform-provider-gcp]: https://www.terraform.io/docs/providers/google/index.html
 [terraform]: https://www.terraform.io/downloads.html
-[cloud-scheduler-documentation]: https://cloud.google.com/scheduler/docs/

@@ -22,6 +22,6 @@ variable "project_id" {
 
 variable "region" {
   type        = string
-  description = "The region the project is in (App Engine specific)"
+  description = "The region the project is in"
   default     = "us-central1"
 }

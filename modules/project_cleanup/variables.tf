@@ -44,7 +44,7 @@ variable "project_id" {
 
 variable "region" {
   type        = string
-  description = "The region the project is in (App Engine specific)"
+  description = "The region the project is in"
 }
 
 variable "job_schedule" {

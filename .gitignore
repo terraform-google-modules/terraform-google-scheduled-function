@@ -9,8 +9,6 @@ credentials.json
 .kitchen
 go.work.sum
 .temp/
-**/.temp/
-*.zip
 
 examples/**/*.zip
 examples/**/terraform.tfvars

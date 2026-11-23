@@ -35,7 +35,6 @@ module "project" {
     "cloudscheduler.googleapis.com",
     "storage-component.googleapis.com",
     "pubsub.googleapis.com",
-    "appengine.googleapis.com",
     "eventarc.googleapis.com",
     "run.googleapis.com",
     "artifactregistry.googleapis.com"

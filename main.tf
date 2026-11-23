@@ -65,6 +65,11 @@ data "archive_file" "main" {
   depends_on  = [var.function_source_dependent_files]
 }
 
+moved {
+  from = module.main.google_storage_bucket.main
+  to   = google_storage_bucket.main
+}
+
 resource "google_storage_bucket" "main" {
   count                       = var.create_bucket ? 1 : 0
   name                        = var.bucket_name == "" ? "${var.project_id}-scheduled-function-${random_id.suffix.hex}" : var.bucket_name
@@ -92,7 +97,7 @@ resource "google_cloudfunctions2_function" "main" {
   build_config {
     runtime           = var.function_runtime
     entry_point       = var.function_entry_point
-    docker_repository = var.function_docker_repository != null ? var.function_docker_repository : (var.function_docker_registry != null ? null : null)
+    docker_repository = var.function_docker_repository
     source {
       storage_source {
         bucket = var.create_bucket ? google_storage_bucket.main[0].name : var.bucket_name
