@@ -28,6 +28,7 @@ module "project" {
   activate_apis = [
     "cloudresourcemanager.googleapis.com",
     "cloudbuild.googleapis.com",
+    "compute.googleapis.com",
     "storage-api.googleapis.com",
     "serviceusage.googleapis.com",
     "cloudfunctions.googleapis.com",
@@ -40,4 +41,3 @@ module "project" {
     "artifactregistry.googleapis.com"
   ]
 }
-

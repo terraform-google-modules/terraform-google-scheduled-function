@@ -28,6 +28,9 @@ locals {
     "roles/serviceusage.serviceUsageConsumer",
     "roles/eventarc.eventReceiver",
     "roles/run.invoker",
+    "roles/logging.logWriter",
+    "roles/artifactregistry.writer",
+    "roles/storage.objectViewer",
   ]
 }
 
