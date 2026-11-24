@@ -25,6 +25,8 @@ locals {
   ]
 
   default_compute_roles = [
+    "roles/serviceusage.serviceUsageConsumer",
+    "roles/eventarc.eventReceiver",
     "roles/run.invoker",
     "roles/logging.logWriter",
     "roles/artifactregistry.writer",
