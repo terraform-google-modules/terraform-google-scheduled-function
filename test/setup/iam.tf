@@ -22,6 +22,8 @@ locals {
     "roles/cloudfunctions.developer",
     "roles/iam.serviceAccountUser",
     "roles/serviceusage.serviceUsageConsumer",
+    "roles/eventarc.developer",
+    "roles/run.developer",
   ]
 
   default_compute_roles = [
@@ -60,12 +62,25 @@ resource "google_project_iam_member" "default_compute" {
   member  = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
 }
 
+resource "google_project_service_identity" "pubsub" {
+  provider = google-beta
+  project  = module.project.project_id
+  service  = "pubsub.googleapis.com"
+}
+
+resource "google_project_iam_member" "pubsub_token_creator" {
+  project = module.project.project_id
+  role    = "roles/iam.serviceAccountTokenCreator"
+  member  = "serviceAccount:${google_project_service_identity.pubsub.email}"
+}
+
 resource "time_sleep" "wait_for_iam" {
-  create_duration = "60s"
+  create_duration = "120s"
 
   depends_on = [
     google_project_iam_member.int_test,
     google_project_iam_member.default_compute,
+    google_project_iam_member.pubsub_token_creator,
   ]
 }
 
