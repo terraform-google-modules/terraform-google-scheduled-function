@@ -39,4 +39,13 @@ module "project" {
     "run.googleapis.com",
     "artifactregistry.googleapis.com"
   ]
+
+  activate_api_identities = [
+    {
+      api = "eventarc.googleapis.com"
+      roles = [
+        "roles/eventarc.serviceAgent",
+      ]
+    }
+  ]
 }
