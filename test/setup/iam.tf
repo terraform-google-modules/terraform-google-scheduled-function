@@ -68,10 +68,28 @@ resource "google_project_service_identity" "pubsub" {
   service  = "pubsub.googleapis.com"
 }
 
+resource "google_project_service_identity" "eventarc" {
+  provider = google-beta
+  project  = module.project.project_id
+  service  = "eventarc.googleapis.com"
+}
+
 resource "google_project_iam_member" "pubsub_token_creator" {
   project = module.project.project_id
   role    = "roles/iam.serviceAccountTokenCreator"
   member  = "serviceAccount:${google_project_service_identity.pubsub.email}"
+}
+
+resource "google_project_iam_member" "pubsub_service_usage" {
+  project = module.project.project_id
+  role    = "roles/serviceusage.serviceUsageConsumer"
+  member  = "serviceAccount:${google_project_service_identity.pubsub.email}"
+}
+
+resource "google_project_iam_member" "eventarc_service_agent" {
+  project = module.project.project_id
+  role    = "roles/eventarc.serviceAgent"
+  member  = "serviceAccount:${google_project_service_identity.eventarc.email}"
 }
 
 resource "time_sleep" "wait_for_iam" {
@@ -81,6 +99,8 @@ resource "time_sleep" "wait_for_iam" {
     google_project_iam_member.int_test,
     google_project_iam_member.default_compute,
     google_project_iam_member.pubsub_token_creator,
+    google_project_iam_member.pubsub_service_usage,
+    google_project_iam_member.eventarc_service_agent,
   ]
 }
 
