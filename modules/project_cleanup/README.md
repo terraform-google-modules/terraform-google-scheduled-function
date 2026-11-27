@@ -16,6 +16,10 @@ The following services must be enabled on the project housing the cleanup functi
 - Cloud Asset API (`cloudasset.googleapis.com`)
 - Security Command Center API (`securitycenter.googleapis.com`)
 - Cloud Logging API (`logging.googleapis.com`)
+- Eventarc API (`eventarc.googleapis.com`)
+- Cloud Run Admin API (`run.googleapis.com`)
+
+For Eventarc service agent requirements, refer to the [root module README](../../README.md#eventarc-service-agent).
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs

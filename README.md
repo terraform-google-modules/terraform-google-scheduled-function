@@ -114,6 +114,41 @@ The [Project Factory module][project-factory-module] and the
 [IAM module][iam-module] may be used in combination to provision a
 service account with the necessary roles applied.
 
+### Function Identity
+
+Cloud Functions (2nd gen) requires a runtime service account. If no service account is provided via `function_service_account_email`, the Compute Engine default service account (`PROJECT_NUMBER-compute@developer.gserviceaccount.com`) is used.
+
+The runtime identity requires the following roles:
+- Cloud Run Invoker: `roles/run.invoker`
+- Logs Writer: `roles/logging.logWriter`
+- Artifact Registry Writer: `roles/artifactregistry.writer` (for build image storage)
+- Storage Object Viewer: `roles/storage.objectViewer` (to read function source archive)
+
+### Eventarc Service Agent
+
+Cloud Functions (2nd gen) uses Eventarc for event routing. In newly created projects, the Eventarc service agent (`service-PROJECT_NUMBER@gcp-sa-eventarc.iam.gserviceaccount.com`) must be provisioned and assigned `roles/eventarc.serviceAgent` to avoid trigger validation errors.
+
+When using the [Project Factory module][project-factory-module], you can configure `activate_api_identities`:
+
+```hcl
+module "project-factory" {
+  source  = "terraform-google-modules/project-factory/google"
+  version = "~> 18.0"
+
+  name = "my-project"
+  # ... other project-factory variables ...
+
+  activate_api_identities = [
+    {
+      api = "eventarc.googleapis.com"
+      roles = [
+        "roles/eventarc.serviceAgent",
+      ]
+    }
+  ]
+}
+```
+
 ### APIs
 
 A project with the following APIs enabled must be used to host the
@@ -126,6 +161,7 @@ resources of this module:
 - Eventarc API: `eventarc.googleapis.com`
 - Cloud Run Admin API: `run.googleapis.com`
 - Artifact Registry API: `artifactregistry.googleapis.com`
+- Compute Engine API: `compute.googleapis.com`
 
 The [Project Factory module][project-factory-module] can be used to
 provision a project with the necessary APIs enabled.
