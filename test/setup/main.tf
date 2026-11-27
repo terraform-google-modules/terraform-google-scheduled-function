@@ -28,13 +28,24 @@ module "project" {
   activate_apis = [
     "cloudresourcemanager.googleapis.com",
     "cloudbuild.googleapis.com",
+    "compute.googleapis.com",
     "storage-api.googleapis.com",
     "serviceusage.googleapis.com",
     "cloudfunctions.googleapis.com",
     "cloudscheduler.googleapis.com",
     "storage-component.googleapis.com",
     "pubsub.googleapis.com",
-    "appengine.googleapis.com"
+    "eventarc.googleapis.com",
+    "run.googleapis.com",
+    "artifactregistry.googleapis.com"
+  ]
+
+  activate_api_identities = [
+    {
+      api = "eventarc.googleapis.com"
+      roles = [
+        "roles/eventarc.serviceAgent",
+      ]
+    }
   ]
 }
-

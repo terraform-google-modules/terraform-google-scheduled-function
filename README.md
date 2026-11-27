@@ -80,6 +80,7 @@ Then perform the following commands on the root folder:
 
 | Name | Description |
 |------|-------------|
+| function\_name | The name of the Cloud Function (2nd gen) |
 | name | The name of the job created |
 | pubsub\_topic\_name | PubSub topic name |
 | scheduler\_job | The Cloud Scheduler job instance |
@@ -97,15 +98,6 @@ The following dependencies must be available:
 - [Terraform](https://www.terraform.io/downloads.html) >= 1.3
 - [Terraform Provider for GCP][terraform-provider-gcp] plugin v4.23
 
-### App Engine
-Note that this module requires App Engine being configured in the specified project/region.
-This is because Google Cloud Scheduler is dependent on the project being configured with App Engine.
-Refer to the [Google Cloud Scheduler documentation][cloud-scheduler-documentation]
-information on the App Engine dependency.
-
-The recommended way to create projects with App Engine enabled is via the [Project Factory module](https://github.com/terraform-google-modules/terraform-google-project-factory).
-There is an example of how to create the project [within that module](https://github.com/terraform-google-modules/terraform-google-project-factory/tree/master/examples/app_engine)
-
 ### Service Account
 
 A service account with the following roles must be used to provision
@@ -116,10 +108,46 @@ the resources of this module:
 - Cloudscheduler Admin: `roles/cloudscheduler.admin`
 - Cloudfunctions Developer: `roles/cloudfunctions.developer`
 - IAM ServiceAccount User: `roles/iam.serviceAccountUser`
+- Service Usage Consumer: `roles/serviceusage.serviceUsageConsumer`
 
 The [Project Factory module][project-factory-module] and the
 [IAM module][iam-module] may be used in combination to provision a
 service account with the necessary roles applied.
+
+### Function Identity
+
+Cloud Functions (2nd gen) requires a runtime service account. If no service account is provided via `function_service_account_email`, the Compute Engine default service account (`PROJECT_NUMBER-compute@developer.gserviceaccount.com`) is used.
+
+The runtime identity requires the following roles:
+- Cloud Run Invoker: `roles/run.invoker`
+- Logs Writer: `roles/logging.logWriter`
+- Artifact Registry Writer: `roles/artifactregistry.writer` (for build image storage)
+- Storage Object Viewer: `roles/storage.objectViewer` (to read function source archive)
+
+### Eventarc Service Agent
+
+Cloud Functions (2nd gen) uses Eventarc for event routing. In newly created projects, the Eventarc service agent (`service-PROJECT_NUMBER@gcp-sa-eventarc.iam.gserviceaccount.com`) must be provisioned and assigned `roles/eventarc.serviceAgent` to avoid trigger validation errors.
+
+When using the [Project Factory module][project-factory-module], you can configure `activate_api_identities`:
+
+```hcl
+module "project-factory" {
+  source  = "terraform-google-modules/project-factory/google"
+  version = "~> 18.0"
+
+  name = "my-project"
+  # ... other project-factory variables ...
+
+  activate_api_identities = [
+    {
+      api = "eventarc.googleapis.com"
+      roles = [
+        "roles/eventarc.serviceAgent",
+      ]
+    }
+  ]
+}
+```
 
 ### APIs
 
@@ -130,7 +158,10 @@ resources of this module:
 - Cloud PubSub API: `pubsub.googleapis.com`
 - Cloud Functions API: `cloudfunctions.googleapis.com`
 - Cloud Build API: `cloudbuild.googleapis.com`
-- App Engine Admin API: `appengine.googleapis.com`
+- Eventarc API: `eventarc.googleapis.com`
+- Cloud Run Admin API: `run.googleapis.com`
+- Artifact Registry API: `artifactregistry.googleapis.com`
+- Compute Engine API: `compute.googleapis.com`
 
 The [Project Factory module][project-factory-module] can be used to
 provision a project with the necessary APIs enabled.
@@ -144,4 +175,3 @@ information on contributing to this module.
 [project-factory-module]: https://registry.terraform.io/modules/terraform-google-modules/project-factory/google
 [terraform-provider-gcp]: https://www.terraform.io/docs/providers/google/index.html
 [terraform]: https://www.terraform.io/downloads.html
-[cloud-scheduler-documentation]: https://cloud.google.com/scheduler/docs/

@@ -4,10 +4,6 @@ This module schedules a job to clean up GCP projects older than a specified leng
 
 ## Requirements
 
-### App Engine
-
-Running this module requires an App Engine app in the specified project/region. More information is in the [root readme](../../README.md#app-engine).
-
 ### Enabled Services
 
 The following services must be enabled on the project housing the cleanup function prior to invoking this module:
@@ -20,6 +16,10 @@ The following services must be enabled on the project housing the cleanup functi
 - Cloud Asset API (`cloudasset.googleapis.com`)
 - Security Command Center API (`securitycenter.googleapis.com`)
 - Cloud Logging API (`logging.googleapis.com`)
+- Eventarc API (`eventarc.googleapis.com`)
+- Cloud Run Admin API (`run.googleapis.com`)
+
+For Eventarc service agent requirements, refer to the [root module README](../../README.md#eventarc-service-agent).
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
@@ -39,7 +39,7 @@ The following services must be enabled on the project housing the cleanup functi
 | max\_project\_age\_in\_hours | The maximum number of hours that a GCP project, selected by `target_tag_name` and `target_tag_value`, can exist | `number` | `6` | no |
 | organization\_id | The organization ID whose projects to clean up | `string` | n/a | yes |
 | project\_id | The project ID to host the scheduled function in | `string` | n/a | yes |
-| region | The region the project is in (App Engine specific) | `string` | n/a | yes |
+| region | The region the project is in | `string` | n/a | yes |
 | target\_billing\_sinks | List of Billing Account Log Sinks names regex that will be deleted. Regex example: `.*/sinks/sk-c-logging-.*-billing-.*` | `list(string)` | `[]` | no |
 | target\_excluded\_labels | Map of project lablels that won't be deleted. | `map(string)` | `{}` | no |
 | target\_excluded\_tagkeys | List of organization Tag Key short names that won't be deleted. | `list(string)` | `[]` | no |

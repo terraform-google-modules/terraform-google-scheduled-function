@@ -18,13 +18,22 @@ locals {
   int_required_roles = [
     "roles/storage.admin",
     "roles/pubsub.admin",
-    "roles/resourcemanager.projectIamAdmin",
     "roles/cloudscheduler.admin",
     "roles/cloudfunctions.developer",
     "roles/iam.serviceAccountUser",
-    "roles/resourcemanager.projectIamAdmin",
-    "roles/pubsub.subscriber"
+    "roles/serviceusage.serviceUsageConsumer",
   ]
+
+  default_compute_roles = [
+    "roles/run.invoker",
+    "roles/logging.logWriter",
+    "roles/artifactregistry.writer",
+    "roles/storage.objectViewer",
+  ]
+}
+
+data "google_project" "project" {
+  project_id = module.project.project_id
 }
 
 resource "google_service_account" "int_test" {
@@ -41,6 +50,25 @@ resource "google_project_iam_member" "int_test" {
   member  = "serviceAccount:${google_service_account.int_test.email}"
 }
 
+resource "google_project_iam_member" "default_compute" {
+  count = length(local.default_compute_roles)
+
+  project = module.project.project_id
+  role    = local.default_compute_roles[count.index]
+  member  = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
+}
+
+resource "time_sleep" "wait_for_iam" {
+  create_duration = "120s"
+
+  depends_on = [
+    google_project_iam_member.int_test,
+    google_project_iam_member.default_compute,
+    module.project,
+  ]
+}
+
 resource "google_service_account_key" "int_test" {
   service_account_id = google_service_account.int_test.id
+  depends_on         = [time_sleep.wait_for_iam]
 }

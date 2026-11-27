@@ -23,3 +23,8 @@ output "project_id" {
   value       = var.project_id
   description = "The project ID"
 }
+
+output "function_name" {
+  value       = module.pubsub_scheduled_example.function_name
+  description = "The name of the Cloud Function"
+}

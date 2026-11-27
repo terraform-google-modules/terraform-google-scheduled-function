@@ -45,7 +45,7 @@ variable "error_message_column" {
 }
 
 variable "region" {
-  description = "The region the project is in (App Engine specific)"
+  description = "The region the project is in"
   type        = string
   default     = "us-central1"
 }
